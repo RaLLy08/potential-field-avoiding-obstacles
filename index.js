@@ -1,33 +1,60 @@
+const obstacles = []
 /**
  * abstart between canvas api and required rendering
  */
-class Canvas {
+ class Canvas {
     static WIDTH = 900;
     static HEIGHT = 900;
+    #ctx;
 
     constructor() {
-        const canvas = document.getElementById('canvas');
+        this.element = document.getElementById('canvas');
 
-        canvas.width = Canvas.WIDTH;
-        canvas.height = Canvas.HEIGHT;
+        this.element.width = Canvas.WIDTH;
+        this.element.height = Canvas.HEIGHT;
 
-        this.ctx = canvas.getContext('2d');
+        this.#ctx = this.element.getContext('2d');
+
+        this.hashVectors = new Map();
     }
 
     #drawPoint(x, y, r, color) {
-        this.ctx.beginPath();
-        this.ctx.arc(x, y, r, 0, 2 * Math.PI);
-        this.ctx.fillStyle = color;
-        this.ctx.fill();
-        this.ctx.closePath();
+        this.#ctx.beginPath();
+        this.#ctx.arc(x, y, r, 0, 2 * Math.PI);
+        this.#ctx.fillStyle = color;
+        this.#ctx.fill();
+        this.#ctx.closePath();
+    }
+
+    #drawCircle(x, y, r, color) {
+        this.#ctx.beginPath();
+
+        this.#ctx.arc(x, y, r, 0, 2 * Math.PI);
+        this.#ctx.strokeStyle = 'black';
+        this.#ctx.stroke();
+    
+        this.#ctx.closePath();
+    }
+
+    #drawLine(fromX, fromY, toX, toY, width, color) {
+        this.#ctx.beginPath(); 
+        this.#ctx.lineWidth = width;
+        this.#ctx.strokeStyle = color; 
+        this.#ctx.moveTo(fromX, fromY); 
+        this.#ctx.lineTo(toX, toY); 
+        
+        this.#ctx.stroke(); 
+        
+        this.#ctx.closePath();
     }
     
     clear() {
-        this.ctx.clearRect(0, 0, Canvas.WIDTH, Canvas.HEIGHT);
+        this.#ctx.clearRect(0, 0, Canvas.WIDTH, Canvas.HEIGHT);
     }
 
     drawObstacle({x, y, r}) {
-        this.#drawPoint(x, y, r, 'black');
+        this.#drawCircle(x, y, r, 'black');
+        this.#drawPoint(x, y, 4, 'black');
     }
 
     drawTarget({x, y, r}) {
@@ -36,6 +63,45 @@ class Canvas {
 
     drawVehicle({x, y, r}) {
         this.#drawPoint(x, y, r, '#1bb21b');
+    }
+    /**
+     * 
+     * @param {Target} target 
+     */
+    drawTargetVectorsFlow(target) {
+        const xPoints = 50;
+        const yPoints = 50;
+        const pointWidth = 0.5;
+        const spaceX = (Canvas.HEIGHT / xPoints);
+        const spaceY = (Canvas.WIDTH / yPoints);
+        const color = '#0096FF'
+        const maxLineX = 10;
+        const maxLineY = 10;
+    
+        for (let i = 0; i <= xPoints; i++) { 
+            for (let j = 0; j <= yPoints; j++) { 
+                const fromX = i*spaceX;
+                const fromY = j*spaceY;
+                let toX = 0;
+                let toY = 0;
+
+                const vectorAsVehicle = { x: i*spaceX, y: j*spaceY, vx: maxLineX, vy: maxLineY, r: pointWidth }
+
+                const { vx: vxA, vy: vyA } = target.getFieldAttraction(vectorAsVehicle);
+    
+                toX = i*spaceX + vxA;
+                toY = j*spaceY + vyA;
+
+                for (const obstacle of obstacles) {
+                    const { vx: vxR, vy: vyR } = obstacle.getFieldRepulsion(vectorAsVehicle);
+
+                    toX += vxR;
+                    toY += vyR;
+                }
+
+                this.#drawLine(fromX, fromY, toX, toY, pointWidth, color); 
+            }
+        }
     }
 }
 
@@ -46,13 +112,6 @@ class Utils {
     static getRandomInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
-
-    static getRandomPoint(min, max) {
-        return {
-            x: Utils.getRandomInt(min, max),
-            y: Utils.getRandomInt(min, max)
-        };
-    }
 }
 
 /**
@@ -62,56 +121,14 @@ class Calculation {
     static getDistance(obj1, obj2) {
         return Math.hypot(obj2.x - obj1.x, obj2.y - obj1.y) - obj1.r - obj2.r;
     }
+
     static detectIntersection(obj1, obj2) {
         return Math.pow(obj1.x - obj2.x, 2) + Math.pow(obj1.y - obj2.y, 2) <= Math.pow(obj1.r + obj2.r, 2)
-    }
-    static getFieldRepulsion(vehicle, obstacle) {
-        // out of field
-        if (!Calculation.detectIntersection(vehicle, obstacle)) {
-            return {
-                vx: 0,
-                vy: 0
-            }
-        }
-
-        const oX  = (vehicle.x - obstacle.x); 
-        const oY  = (vehicle.y - obstacle.y);
-
-        const distance = Math.hypot(oX, oY);
-
-        const vxNorm = (oX / distance) || 0; // in the case 0/0
-        const vyNorm = (oY / distance) || 0;
-       
-        const trueOx = (vxNorm) * (vehicle.r + obstacle.r); 
-        const trueOy = (vyNorm) * (vehicle.r + obstacle.r);
-
-        const allowError = 0.5;
-
-        return {
-            vx: trueOx - oX + allowError,
-            vy: trueOy - oY + allowError
-        }
-    }
-
-    static getAttraction(vehicle, target) { 
-        const oX = (vehicle.x - target.x);
-        const oY = (vehicle.y - target.y);
-
-        const resultVehicle = Math.hypot(vehicle.vx, vehicle.vy);
-        const tanRad = oY / oX
-
-        const newVx = resultVehicle * Math.cos(tanRad) * Math.sign(-oX);
-        const newVy = resultVehicle * Math.sin(tanRad) * Math.sign(oY);
-
-        return {
-            vx: newVx,
-            vy: newVy
-        }
     }
 }
 
 /**
- * basic Entity 
+ * basic entity 
  */
 class Entity {
     constructor(x, y, r) {
@@ -120,15 +137,74 @@ class Entity {
         this.r = r;
     }
 } 
+/**
+ * define target with own attraction field
+ */
+class Target extends Entity {
+    constructor(x, y, r) {
+        super(x, y, r);
+    }
 
+    getFieldAttraction(vehicle) { 
+        const oX = vehicle.x - this.x;
+        const oY = vehicle.y - this.y;
+
+        const resultVehicle = Math.hypot(vehicle.vx, vehicle.vy);
+        const tanRad = Math.abs(oY / oX)
+
+        const newVx = resultVehicle * Math.cos(Math.atan(tanRad)) * Math.sign(-oX);
+        const newVy = resultVehicle * Math.sin(Math.atan(tanRad)) * Math.sign(-oY);
+    
+        return {
+            vx: newVx,
+            vy: newVy
+        }
+    }
+} 
+/**
+ * define obstacle with own repulsion field
+ */
+class Obstacle extends Entity {
+    constructor(x, y, r) {
+        super(x, y, r);
+    }
+
+    getFieldRepulsion(vehicle) {
+        // out of field
+        if (!Calculation.detectIntersection(vehicle, this)) {
+            return {
+                vx: 0,
+                vy: 0
+            }
+        }
+
+        const oX  = (vehicle.x - this.x); 
+        const oY  = (vehicle.y - this.y);
+
+        const distance = Math.hypot(oX, oY);
+
+        const vxNorm = (oX / distance) || 0; // in the case 0/0
+        const vyNorm = (oY / distance) || 0;
+       
+        const trueOx = (vxNorm) * (vehicle.r + this.r); 
+        const trueOy = (vyNorm) * (vehicle.r + this.r);
+
+        const allowError = Math.hypot(vehicle.vx, vehicle.vy) / 2;
+
+        return {
+            vx: trueOx - oX + allowError,
+            vy: trueOy - oY + allowError
+        }
+    }
+} 
 /**
  * vehile with applied functions 
  */
 class Vehicle extends Entity {
-    constructor(x, y, r) {
+    constructor(x, y, r, vx, vy) {
         super(x, y, r);
-        this.vx = 1;
-        this.vy = 0;
+        this.vx = vx || 0;
+        this.vy = vy || 0;
     }
 
     move(vx, vy) {
@@ -148,25 +224,27 @@ class Vehicle extends Entity {
 }
 
 const canvas = new Canvas();
-const obstacles = [
-    new Entity(250, 500, 70),
-    new Entity(400, 600, 30),
-    new Entity(490, 500, 30)
-]
 
-const target = new Entity(800, 495, 20);
-const vehicle = new Vehicle(50, 510, 20)
+obstacles.push(
+    new Obstacle(250, 500, 70),
+    new Obstacle(400, 600, 30),
+    new Obstacle(490, 500, 30)
+);
 
-setInterval(() => {
+const target = new Target(800, 495, 20);
+const vehicle = new Vehicle(100, 510, 20, 2)
+
+const frame = () => {
     canvas.clear()
 
+    canvas.drawTargetVectorsFlow(target);
     canvas.drawTarget(target);
     canvas.drawVehicle(vehicle);
 
-    const { vx: vxA, vy: vyA } = Calculation.getAttraction(vehicle, target);
+    const { vx: vxA, vy: vyA } = target.getFieldAttraction(vehicle);
 
     for (const obstacle of obstacles) {     
-        const { vx: vxR, vy: vyR } = Calculation.getFieldRepulsion(vehicle, obstacle);
+        const { vx: vxR, vy: vyR } = obstacle.getFieldRepulsion(vehicle);
 
         vehicle.move(vxR, vyR);
 
@@ -175,5 +253,13 @@ setInterval(() => {
 
     vehicle.move(vxA, vyA);
 
-}, 10);
+    window.requestAnimationFrame(frame)
+}
 
+
+frame();
+
+canvas.element.onmousemove = (e) => {
+    target.x = e.offsetX;
+    target.y = e.offsetY;
+}
