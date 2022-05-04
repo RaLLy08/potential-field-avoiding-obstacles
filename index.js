@@ -111,9 +111,9 @@ class Calculation {
 }
 
 /**
- * basic object 
+ * basic Entity 
  */
-class Object {
+class Entity {
     constructor(x, y, r) {
         this.x = x;
         this.y = y;
@@ -124,7 +124,7 @@ class Object {
 /**
  * vehile with applied functions 
  */
-class Vehicle extends Object {
+class Vehicle extends Entity {
     constructor(x, y, r) {
         super(x, y, r);
         this.vx = 1;
@@ -149,12 +149,12 @@ class Vehicle extends Object {
 
 const canvas = new Canvas();
 const obstacles = [
-    new Object(250, 500, 70),
-    new Object(400, 600, 30),
-    new Object(490, 500, 30)
+    new Entity(250, 500, 70),
+    new Entity(400, 600, 30),
+    new Entity(490, 500, 30)
 ]
 
-const target = new Object(800, 495, 20);
+const target = new Entity(800, 495, 20);
 const vehicle = new Vehicle(50, 510, 20)
 
 setInterval(() => {
