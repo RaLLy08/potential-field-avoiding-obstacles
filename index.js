@@ -74,8 +74,8 @@ class Calculation {
             }
         }
 
-        const oX  = Math.abs(vehicle.x - obstacle.x); 
-        const oY  = Math.abs(vehicle.y - obstacle.y);
+        const oX  = (vehicle.x - obstacle.x); 
+        const oY  = (vehicle.y - obstacle.y);
 
         const distance = Math.hypot(oX, oY);
 
@@ -85,39 +85,23 @@ class Calculation {
         const trueOx = (vxNorm) * (vehicle.r + obstacle.r); 
         const trueOy = (vyNorm) * (vehicle.r + obstacle.r);
 
-        let oXSign = 0;
-        let oYSign = 0;
-
-        if (vehicle.x > obstacle.x) oXSign = 1;
-        if (vehicle.y < obstacle.y) oYSign = -1;
-        if (vehicle.x < obstacle.x) oXSign = -1;
-        if (vehicle.y > obstacle.y) oYSign = 1;
-
         const allowError = 0.5;
 
         return {
-            vx: trueOx*oXSign + oX*(-oXSign) + allowError*(-oXSign),
-            vy: trueOy*oYSign + oY*(-oYSign) + allowError*(oYSign)
+            vx: trueOx - oX + allowError,
+            vy: trueOy - oY + allowError
         }
     }
 
     static getAttraction(vehicle, target) { 
-        const oX = Math.abs(vehicle.x - target.x);
-        const oY = Math.abs(vehicle.y - target.y);
+        const oX = (vehicle.x - target.x);
+        const oY = (vehicle.y - target.y);
 
         const resultVehicle = Math.hypot(vehicle.vx, vehicle.vy);
-        const tanRad = oY/oX
-        
-        let oXSign = 0;
-        let oYSign = 0;
+        const tanRad = oY / oX
 
-        if (vehicle.x > target.x) oXSign = 1;
-        if (vehicle.y < target.y) oYSign = -1;
-        if (vehicle.x < target.x) oXSign = -1;
-        if (vehicle.y > target.y) oYSign = 1;
-
-        const newVx = resultVehicle * Math.cos(tanRad) * -oXSign;
-        const newVy = resultVehicle * Math.sin(tanRad) * -oYSign;
+        const newVx = resultVehicle * Math.cos(tanRad) * Math.sign(-oX);
+        const newVy = resultVehicle * Math.sin(tanRad) * Math.sign(oY);
 
         return {
             vx: newVx,
