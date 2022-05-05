@@ -14,8 +14,6 @@ const obstacles = []
         this.element.height = Canvas.HEIGHT;
 
         this.#ctx = this.element.getContext('2d');
-
-        this.hashVectors = new Map();
     }
 
     #drawPoint(x, y, r, color) {
@@ -69,8 +67,8 @@ const obstacles = []
      * @param {Target} target 
      */
     drawTargetVectorsFlow(target) {
-        const xPoints = 80;
-        const yPoints = 80;
+        const xPoints = 50;
+        const yPoints = 50;
         const pointWidth = 0.5;
         const spaceX = (Canvas.HEIGHT / xPoints);
         const spaceY = (Canvas.WIDTH / yPoints);
@@ -79,8 +77,6 @@ const obstacles = []
         const maxLineY = 10;
         // draw separatly two fields
         for (let i = 0; i <= xPoints; i++) { 
-            // if (i !== 25) continue
-
             for (let j = 0; j <= yPoints; j++) { 
                 // if (j !== 28) continue
 
@@ -126,7 +122,6 @@ class Calculation {
     static getDistance(obj1, obj2) {
         return Math.hypot(obj2.x - obj1.x, obj2.y - obj1.y) - obj1.r - obj2.r;
     }
-
     static detectIntersection(obj1, obj2) {
         return Math.pow(obj1.x - obj2.x, 2) + Math.pow(obj1.y - obj2.y, 2) <= Math.pow(obj1.r + obj2.r, 2)
     }
@@ -174,25 +169,45 @@ class Obstacle extends Entity {
         super(x, y, r);
     }
 
+    // #getDistance(vehicle) {
+    //     return Math.hypot(this.x - vehicle.x, this.y - vehicle.y);
+    // }
+
+    #unitVectorTowardVehicle(vehicle) {
+        const deltaX = vehicle.x - this.x;
+        const deltaY = vehicle.y - this.y;
+        const distance = Math.hypot(deltaX, deltaY);
+
+        return (deltaX + deltaY) / distance;
+    }
+
     getFieldRepulsion(vehicle) {
- 
+        
         const oX  = (vehicle.x - this.x); 
         const oY  = (vehicle.y - this.y);
 
-        const obstacleRadius = 80;
-        const fieldWidth = this.r;
+        const obstacleRadius = 10; // maximum force
+        const fieldWidth = this.r; // maximum field radius
 
-        const distance = Math.hypot(oX, oY);
+        const distance = Math.hypot(oX, oY); 
+        // obstacleRadius * Math.exp(-fieldWidth * (distance**2)) * this.#unitVectorTowardVehicle(vehicle);
 
-        let forceAtPoint = 80 / distance;
+        const k = (obstacleRadius/fieldWidth);
 
+        let forceAtPoint = obstacleRadius -  k * (distance);
+        // let forceAtPoint = fieldWidth/distance;
 
         // otherwise
-        if (distance > fieldWidth + vehicle.r) {
-            forceAtPoint = 0
+        if (distance > fieldWidth) {
+            // forceAtPoint = 0
+            return {
+                vx: 0,
+                vy: 0
+            }
         }
+        // console.log(forceAtPoint, distance);
 
-        const oXOyTan = Math.abs((oX / oY) || 1);
+        const oXOyTan = Math.abs((oX / oY) || 1); // 
 
         const newVy = forceAtPoint * Math.sin(Math.atan(oXOyTan)) * Math.sign(oX);
         const newVx = forceAtPoint * Math.cos(Math.atan(oXOyTan)) * Math.sign(oY);
@@ -239,20 +254,20 @@ class Vehicle extends Entity {
 const canvas = new Canvas();
 
 obstacles.push(
-    new Obstacle(450, 500, 390),
-    // new Obstacle(250, 500, 70),
-    // new Obstacle(400, 600, 30),
-    // new Obstacle(490, 500, 30)
+    // new Obstacle(450, 500, 100),
+    new Obstacle(250, 500, 70),
+    new Obstacle(400, 600, 30),
+    new Obstacle(490, 500, 30)
 );
 
-const target = {getFieldAttraction: () => ({vx: 0, vy: 0})}
-// const target = new Target(800, 495, 20);
-const vehicle = new Vehicle(100, 510, 20, 0)
+// const target = {getFieldAttraction: () => ({vx: 0, vy: 0})}
+const target = new Target(800, 495, 20);
+const vehicle = new Vehicle(100, 510, 20, 2)
 
 const frame = () => {
     canvas.clear()
 
-    canvas.drawTargetVectorsFlow(target);
+    // canvas.drawTargetVectorsFlow(target);
     canvas.drawTarget(target);
     canvas.drawVehicle(vehicle);
 
