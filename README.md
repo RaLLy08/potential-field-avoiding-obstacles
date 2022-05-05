@@ -1,1 +1,1 @@
-# potential-field-avoiding-obstacles
+# Avoiding obstacles by Potential field method 
