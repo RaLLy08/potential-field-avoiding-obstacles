@@ -262,13 +262,17 @@ const frame = () => {
 
 frame();
 
-// for viewing
+// skip it, only for viewing
+let pressed = false;
+
 canvas.element.onmousemove = (e) => {
+    if (!pressed) return;
     target.x = e.offsetX;
     target.y = e.offsetY;
 }
 
 canvas.element.onmousedown = (e) => {
+    pressed = true;
     const mouseAsVehicle = { x: e.offsetX, y: e.offsetY, vx: 0, vy: 0, r: 1 }
 
     for (const obstacle of obstacles) {
@@ -276,4 +280,8 @@ canvas.element.onmousedown = (e) => {
         
         console.log( Math.hypot(vxR, vyR), Math.hypot(obstacle.x - mouseAsVehicle.x, obstacle.y - mouseAsVehicle.y));
     }
+}
+
+canvas.element.onmouseup = (e) => {
+    pressed = false;
 }
