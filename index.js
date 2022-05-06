@@ -118,16 +118,14 @@ class Entity {
  * define target with own attraction field
  */
 class Target extends Entity {
-    constructor(x, y, r, maxAttractionForce) {
+    constructor(x, y, r, maxAttractionForce, distributionWidth) {
         super(x, y, r);
-        this.distributionWidth = Canvas.WIDTH / 2;
+        this.distributionWidth = distributionWidth;
         this.maxAttractionForce = maxAttractionForce;
     }
     #attractionForce(distance) {
-        const reducingKoef = 1000000;
- 
         return this.maxAttractionForce * (1 - Math.exp(
-            -this.distributionWidth * (Math.pow(distance, 2) / reducingKoef)
+            -this.distributionWidth * Math.pow(distance, 2)
         ))
     }
 
@@ -156,16 +154,14 @@ class Target extends Entity {
  * define obstacle with own repulsion field
  */
 class Obstacle extends Entity {
-    constructor(x, y, r, maxRepulsiveForce) {
+    constructor(x, y, r, maxRepulsiveForce, distributionWidth) {
         super(x, y, r);
         this.maxRepulsiveForce = maxRepulsiveForce || 0;
-        this.distributionWidth = r || 0;
+        this.distributionWidth = distributionWidth;
     }
     #repulsiveForce(distance) {
-        const reducingKoef = 100000;
-
         return this.maxRepulsiveForce * Math.exp(
-            -this.distributionWidth * (Math.pow(distance, 2) / reducingKoef)
+            -this.distributionWidth * Math.pow(distance, 2)
         )
     }
 
@@ -174,8 +170,9 @@ class Obstacle extends Entity {
         const oY  = (vehicle.y - this.y);
 
         const distance = Math.hypot(oX, oY); 
-        // const k = (obstacleRadius/fieldWidth);
-        // let forceAtPoint = obstacleRadius -  k * (distance);
+        // const k = (this.maxRepulsiveForce / this.distributionWidth);
+        // let forceAtPoint = this.maxRepulsiveForce -  k * (distance);
+
         const forceAtPoint = this.#repulsiveForce(distance)
 
         // otherwise
@@ -229,13 +226,13 @@ class Vehicle extends Entity {
 const canvas = new Canvas();
 
 obstacles.push(
-    // new Obstacle(450, 500, 500),
-    new Obstacle(250, 500, 70, 10),
-    new Obstacle(400, 600, 40, 3),
-    new Obstacle(490, 500, 40, 3)
+    // new Obstacle(450, 500, 500, 100, 1/50000),
+    new Obstacle(250, 500, 70, 7, 0.0005),
+    new Obstacle(400, 600, 40, 8, 0.00125),
+    new Obstacle(490, 500, 40, 8, 0.00125)
 );
 
-const target = new Target(800, 495, 20, 2.5);
+const target = new Target(800, 495, 20, 2.5, 0.0005);
 const vehicle = new Vehicle(100, 510, 20)
 
 const frame = () => {
