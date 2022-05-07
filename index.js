@@ -1,11 +1,18 @@
 const obstacles = [];
 const VIEW_OPTIONS = { 
-    VECTOR_FLOW: true,
+    // VECTOR_FLOW: true,
     // fieldRadius: true,
+    ATTRACTIVE_VECTOR: true,
+    REPULSIVE_VECTOR: true,
+    TOTAL_VECTOR: true,
+}
+
+const CONSTS = {
     ATTRACTIVE_VECTOR_COLOR: 'blue',
     REPULSIVE_VECTOR_COLOR: 'red',
     TOTAL_VECTOR_COLOR: 'black',
 }
+
 /**
  * abstart between canvas api and required rendering
  */
@@ -73,6 +80,7 @@ class Canvas {
 
     drawVehicle({x, y, r}) {
         this.#drawPoint(x, y, r, '#1bb21b');
+
         // const a = (2*r)/Math.sqrt(2);
         // this.#ctx.strokeRect(x - a/2,y - a/2,a,a);
     }
@@ -177,8 +185,8 @@ class Target extends Vector {
     }
 
     getFieldAttraction(vehicle) { 
-        const attractedVector = vehicle.sub(this);
-        const distance = attractedVector.mag(); 
+        const difference = vehicle.sub(this);
+        const distance = difference.mag(); 
     
         const forceAtPoint = this.#attractionForce(distance);
         
@@ -187,7 +195,9 @@ class Target extends Vector {
         const vx = forceAtPoint * Math.sin(Math.atan(oXOyTan)) * -1;
         const vy = forceAtPoint * Math.cos(Math.atan(oXOyTan)) * -1;
         */
-        return attractedVector.scaleBy(forceAtPoint / distance).negate();
+
+        // vector towards the robot from the detected 𝑘  obstacle
+        return difference.scaleBy(forceAtPoint / distance).negate();
     }
 } 
 /**
@@ -205,14 +215,10 @@ class Obstacle extends Vector {
             -this.distributionWidth * Math.pow(distance, 2)
         )
     }
-
-    #newRepulsiveForce() {
-    }
-
     getFieldRepulsion(vehicle) {
-        const repulsedVector = vehicle.sub(this);
+        const difference = vehicle.sub(this);
 
-        const distance = repulsedVector.mag(); 
+        const distance = difference.mag(); 
         // const k = (this.maxRepulsiveForce / this.distributionWidth);
         // let forceAtPoint = this.maxRepulsiveForce -  k * (distance);
 
@@ -222,7 +228,11 @@ class Obstacle extends Vector {
         if (distance > this.fieldRadius) {
             return new Vector(0, 0);
         }
-        return repulsedVector.scaleBy(forceAtPoint / distance);
+
+        const repulsedVector = difference.scaleBy(forceAtPoint / distance);
+
+
+        return repulsedVector;
         /** the same as:
         const oXOyTan = Math.abs((oX / oY) || 1);
         const vx = forceAtPoint * Math.sin(Math.atan(oXOyTan)) * Math.sign(oX);
@@ -269,7 +279,7 @@ obstacles.push(
 );
 
 const target = new Target(800, 495, 2.5, 0.0005);
-const vehicle = new Vehicle(100, 510, 20)
+const vehicle = new Vehicle(100, 499, 20)
 
 const frame = () => {
     canvas.clear()
@@ -279,40 +289,51 @@ const frame = () => {
     canvas.drawTarget(target);
     canvas.drawVehicle(vehicle);
 
-    const attractiveForceVector = target.getFieldAttraction(vehicle, { color: VIEW_OPTIONS.ATTRACTIVE_VECTOR_COLOR});
+    const attractiveForceVector = target.getFieldAttraction(vehicle, { color: CONSTS.ATTRACTIVE_VECTOR_COLOR});
 
     // sum of each of obstacles repulsion force
-    let repulsiveForceVector = new Vector(0, 0, { color: VIEW_OPTIONS.REPULSIVE_VECTOR_COLOR});
+    let repulsiveForceVector = new Vector(0, 0, { color: CONSTS.REPULSIVE_VECTOR_COLOR});
     //
     for (const obstacle of obstacles) {     
-        const obstacleRepulsedVector = obstacle.getFieldRepulsion(vehicle);
+        const obstacleRepulsedVector = obstacle.getFieldRepulsion(vehicle, attractiveForceVector);
         repulsiveForceVector = repulsiveForceVector.sum(obstacleRepulsedVector);
 
         canvas.drawObstacle(obstacle);
     }
 
     const totalForceVector = repulsiveForceVector.sum(attractiveForceVector)
-        .bindParams({ color: VIEW_OPTIONS.TOTAL_VECTOR_COLOR });
+        .bindParams({ color: CONSTS.TOTAL_VECTOR_COLOR });
     
     // angle between Total force and Attractive force (tetha)
     // console.log(Utils.toDegree(attractiveForceVector.angle(totalForceVector)), 'Attractive');
     // angle between Total force and Repulsive force (sigma)
     // console.log(Utils.toDegree(repulsiveForceVector.angle(totalForceVector)), 'Repulsive');
 
-    vehicle.move(totalForceVector.x, totalForceVector.y);
+    // normilize to attractive speed
+    const toAttractiveSpeedVector = totalForceVector.scaleBy(attractiveForceVector.mag() / totalForceVector.mag());
 
+    vehicle.move(toAttractiveSpeedVector.x, toAttractiveSpeedVector.y);
+
+    if (VIEW_OPTIONS.ATTRACTIVE_VECTOR) {
+        // display attractive force direction
+        const { x: aFx, y: aFy } = attractiveForceVector.scaleBy(100).sum(vehicle);
+        canvas.drawVector(vehicle.x, vehicle.y, aFx, aFy, 1, attractiveForceVector.params.color);
+    }
+    if (VIEW_OPTIONS.REPULSIVE_VECTOR) {
+        // display repulsive force direction
+        const { x: rFx, y: rFy } = repulsiveForceVector.scaleBy(100).sum(vehicle);
+        canvas.drawVector(vehicle.x, vehicle.y, rFx, rFy, 1, repulsiveForceVector.params.color);
+    }
     // display total force direction
-    const { x: tFx, y: tFy } = totalForceVector.scaleBy(100).sum(vehicle);
-    canvas.drawVector(vehicle.x, vehicle.y, tFx, tFy, 1, totalForceVector.params.color);
-    //
+    if (VIEW_OPTIONS.TOTAL_VECTOR) {
+        const { x: tFx, y: tFy } = totalForceVector.scaleBy(100).sum(vehicle);
+        canvas.drawVector(vehicle.x, vehicle.y, tFx, tFy, 1, totalForceVector.params.color);
+    }
 
-    // display attractive force direction
-    const { x: aFx, y: aFy } = attractiveForceVector.scaleBy(100).sum(vehicle);
-    canvas.drawVector(vehicle.x, vehicle.y, aFx, aFy, 1, attractiveForceVector.params.color);
 
-    // display repulsive force direction
-    const { x: rFx, y: rFy } = repulsiveForceVector.scaleBy(100).sum(vehicle);
-    canvas.drawVector(vehicle.x, vehicle.y, rFx, rFy, 1, repulsiveForceVector.params.color);
+    // change canvas to vectors drawing
+    // change for of obstacles to common sum
+
     window.requestAnimationFrame(frame)
 }
 
