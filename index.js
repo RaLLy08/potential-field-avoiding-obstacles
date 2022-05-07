@@ -1,6 +1,6 @@
 const obstacles = [];
 const VIEW_OPTIONS = { 
-    vectorFlow: true,
+    // vectorFlow: true,
     // fieldRadius: true,
 }
 /**
@@ -93,7 +93,7 @@ class Canvas {
          
                 const vectorAsVehicle = new Vector(i*spaceX, j*spaceY);
 
-                const { vx: vxA, vy: vyA } = target.getFieldAttraction(vectorAsVehicle);
+                const { x: vxA, y: vyA } = target.getFieldAttraction(vectorAsVehicle);
       
                 toX += vxA * arrowScale;
                 toY += vyA * arrowScale;
@@ -120,14 +120,14 @@ class Utils {
     }
 }
 
-
 /**
  * basic entity 
  */
 class Vector {
-    constructor(x, y) {
+    constructor(x, y, color) {
         this.x = x;
         this.y = y;
+        this.color = color;
     }
     dot(vector) {
         return this.x * vector.x + this.y * vector.y;
@@ -135,11 +135,14 @@ class Vector {
     mag() {
         return Math.hypot(this.x, this.y);
     }
-    angle(vector) {
-        return Math.acos(this.dot(vector) / (this.mag() * vector.mag()))
+    angle(other) {
+        return Math.acos(this.dot(other) / (this.mag() * other.mag()))
     }
-    sum(vector) {
-        return new Vector(vector.x + this.x, vector.y + this.y);
+    sum(other) {
+        return new Vector(other.x + this.x, other.y + this.y);
+    }
+    sub(other) {
+        return new Vector(this.x - other.x, this.y - other.y);
     }
     scaleBy(koef) {
         return new Vector(this.x * koef, this.y * koef);
@@ -161,24 +164,17 @@ class Target extends Vector {
     }
 
     getFieldAttraction(vehicle) { 
-        const oX = vehicle.x - this.x;
-        const oY = vehicle.y - this.y;
-
-        const distance = Math.hypot(oX, oY); 
+        const attrectedVector = vehicle.sub(this);
+        const distance = attrectedVector.mag(); 
+    
         const forceAtPoint = this.#attractionForce(distance);
-        
-        const vx = forceAtPoint * (oX / distance) * -1;
-        const vy = forceAtPoint * (oY / distance) * -1;
         
         /** the same as:
         const oXOyTan = Math.abs((oX / oY) || 1);
         const vx = forceAtPoint * Math.sin(Math.atan(oXOyTan)) * -1;
         const vy = forceAtPoint * Math.cos(Math.atan(oXOyTan)) * -1;
         */
-        return {
-            vx,
-            vy
-        }
+        return attrectedVector.scaleBy(-forceAtPoint / distance);
     }
 } 
 /**
@@ -282,7 +278,7 @@ const frame = () => {
     canvas.drawTarget(target);
     canvas.drawVehicle(vehicle);
 
-    const { vx: vxAttractive, vy: vyAttractive } = target.getFieldAttraction(vehicle);
+    const { x: vxAttractive, y: vyAttractive } = target.getFieldAttraction(vehicle);
 
     // sum of each of obstacles repulsion force
     let vxRepulsive = 0;
