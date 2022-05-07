@@ -1,6 +1,6 @@
 const obstacles = [];
 const VIEW_OPTIONS = { 
-    // vectorFlow: true,
+    VECTOR_FLOW: true,
     // fieldRadius: true,
     ATTRACTIVE_VECTOR_COLOR: 'blue',
     REPULSIVE_VECTOR_COLOR: 'red',
@@ -97,12 +97,12 @@ class Canvas {
                 const vectorAsVehicle = new Vector(i*spaceX, j*spaceY);
 
                 const { x: vxA, y: vyA } = target.getFieldAttraction(vectorAsVehicle);
-      
+           
                 toX += vxA * arrowScale;
                 toY += vyA * arrowScale;
-
+   
                 for (const obstacle of obstacles) {
-                    const { vx: vxR, vy: vyR } = obstacle.getFieldRepulsion(vectorAsVehicle);
+                    const { x: vxR, y: vyR } = obstacle.getFieldRepulsion(vectorAsVehicle);
 
                     toX += vxR;
                     toY += vyR;
@@ -274,7 +274,7 @@ const vehicle = new Vehicle(100, 510, 20)
 const frame = () => {
     canvas.clear()
 
-    VIEW_OPTIONS.vectorFlow && canvas.drawTargetVectorsFlow(target);
+    VIEW_OPTIONS.VECTOR_FLOW && canvas.drawTargetVectorsFlow(target);
 
     canvas.drawTarget(target);
     canvas.drawVehicle(vehicle);
@@ -318,7 +318,7 @@ const frame = () => {
 
 frame();
 
-// skip it, only for viewing
+// skip it, only for testing
 let pressed = false;
 
 canvas.element.onmousemove = (e) => {
@@ -342,6 +342,8 @@ canvas.element.onmouseup = (e) => {
     pressed = false;
 }
 
-window.onkeydown = () => {
-    alert()
+window.onkeydown = (e) => {
+    if (e.code === 'KeyS') {
+        alert()
+    }
 }
