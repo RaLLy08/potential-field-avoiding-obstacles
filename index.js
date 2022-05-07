@@ -135,8 +135,11 @@ class Vector {
     mag() {
         return Math.hypot(this.x, this.y);
     }
+    negate() {
+        return this.scaleBy(-1);
+    }
     angle(other) {
-        return Math.acos(this.dot(other) / (this.mag() * other.mag()))
+        return Math.acos(this.dot(other) / (this.mag() * other.mag()));
     }
     sum(other) {
         return new Vector(other.x + this.x, other.y + this.y);
@@ -174,7 +177,7 @@ class Target extends Vector {
         const vx = forceAtPoint * Math.sin(Math.atan(oXOyTan)) * -1;
         const vy = forceAtPoint * Math.cos(Math.atan(oXOyTan)) * -1;
         */
-        return attrectedVector.scaleBy(-forceAtPoint / distance);
+        return attrectedVector.scaleBy(forceAtPoint / distance).negate();
     }
 } 
 /**
