@@ -1,8 +1,12 @@
-const obstacles = []
+const obstacles = [];
+const VIEW_OPTIONS = { 
+    vectorFlow: true,
+    // fieldRadius: true,
+}
 /**
  * abstart between canvas api and required rendering
  */
- class Canvas {
+class Canvas {
     static WIDTH = 900;
     static HEIGHT = 900;
     #ctx;
@@ -50,13 +54,18 @@ const obstacles = []
         this.#ctx.clearRect(0, 0, Canvas.WIDTH, Canvas.HEIGHT);
     }
 
-    drawObstacle({x, y, r}) {
-        this.#drawCircle(x, y, r, 'black');
+    drawVector(fromX, fromY, toX, toY, pointWidth = 0.5, color = '#0096FF') {
+        this.#drawLine(fromX, fromY, toX, toY, pointWidth, color); 
+        this.#drawPoint(toX, toY, 1, 'red')
+    }
+
+    drawObstacle({x, y, fieldRadius}) {
+        this.#drawCircle(x, y, fieldRadius, 'black');
         this.#drawPoint(x, y, 4, 'black');
     }
 
-    drawTarget({x, y, r}) {
-        this.#drawPoint(x, y, r, 'red');
+    drawTarget({x, y}) {
+        this.#drawPoint(x, y, 20, 'red');
     }
 
     drawVehicle({x, y, r}) {
@@ -71,10 +80,8 @@ const obstacles = []
     drawTargetVectorsFlow(target) {
         const xPoints = 50;
         const yPoints = 50;
-        const pointWidth = 0.5;
         const spaceX = (Canvas.HEIGHT / xPoints);
         const spaceY = (Canvas.WIDTH / yPoints);
-        const color = '#0096FF'
         const arrowScale = 6;
 
         for (let i = 0; i <= xPoints; i++) { 
@@ -83,8 +90,8 @@ const obstacles = []
                 const fromY = j*spaceY;
                 let toX = fromX;
                 let toY = fromY;
-
-                const vectorAsVehicle = { x: i*spaceX, y: j*spaceY, r: pointWidth }
+         
+                const vectorAsVehicle = new Vector(i*spaceX, j*spaceY);
 
                 const { vx: vxA, vy: vyA } = target.getFieldAttraction(vectorAsVehicle);
       
@@ -97,29 +104,53 @@ const obstacles = []
                     toX += vxR;
                     toY += vyR;
                 }
-                this.#drawLine(fromX, fromY, toX, toY, pointWidth, color); 
-                this.#drawPoint(toX, toY, 1, 'red')
+
+                this.drawVector(fromX, fromY, toX, toY);
             }
         }
     }
 }
 
 /**
+ * helper functions
+ */
+class Utils {
+    static toDegree(rads) {
+        return (rads / Math.PI) * 180;
+    }
+}
+
+
+/**
  * basic entity 
  */
-class Entity {
-    constructor(x, y, r) {
+class Vector {
+    constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.r = r;
+    }
+    dot(vector) {
+        return this.x * vector.x + this.y * vector.y;
+    }
+    mag() {
+        return Math.hypot(this.x, this.y);
+    }
+    angle(vector) {
+        return Math.acos(this.dot(vector) / (this.mag() * vector.mag()))
+    }
+    sum(vector) {
+        return new Vector(vector.x + this.x, vector.y + this.y);
+    }
+    scaleBy(koef) {
+        return new Vector(this.x * koef, this.y * koef);
     }
 } 
 /**
  * define target with own attraction field
  */
-class Target extends Entity {
-    constructor(x, y, r, maxAttractionForce, distributionWidth) {
-        super(x, y, r);
+class Target extends Vector {
+    constructor(x, y, maxAttractionForce, distributionWidth) {
+        super(x, y);
         this.distributionWidth = distributionWidth;
         this.maxAttractionForce = maxAttractionForce;
     }
@@ -153,9 +184,10 @@ class Target extends Entity {
 /**
  * define obstacle with own repulsion field
  */
-class Obstacle extends Entity {
-    constructor(x, y, r, maxRepulsiveForce, distributionWidth) {
-        super(x, y, r);
+class Obstacle extends Vector {
+    constructor(x, y, fieldRadius, maxRepulsiveForce, distributionWidth) {
+        super(x, y);
+        this.fieldRadius = fieldRadius;
         this.maxRepulsiveForce = maxRepulsiveForce || 0;
         this.distributionWidth = distributionWidth;
     }
@@ -163,6 +195,10 @@ class Obstacle extends Entity {
         return this.maxRepulsiveForce * Math.exp(
             -this.distributionWidth * Math.pow(distance, 2)
         )
+    }
+
+    #newRepulsiveForce() {
+
     }
 
     getFieldRepulsion(vehicle) {
@@ -176,7 +212,7 @@ class Obstacle extends Entity {
         const forceAtPoint = this.#repulsiveForce(distance)
 
         // otherwise
-        if (distance > this.r) {
+        if (distance > this.fieldRadius) {
             return {
                 vx: 0,
                 vy: 0
@@ -200,9 +236,10 @@ class Obstacle extends Entity {
 /**
  * vehile with applied functions 
  */
-class Vehicle extends Entity {
+class Vehicle extends Vector {
     constructor(x, y, r, vx, vy) {
-        super(x, y, r);
+        super(x, y);
+        this.r = r;
         this.vx = vx || 0;
         this.vy = vy || 0;
     }
@@ -217,7 +254,9 @@ class Vehicle extends Entity {
     getSpeed() {
         return Math.hypot(this.vx, this.vy);
     }
-
+    /**
+     * angle between vx, vy in radians 
+    */
     getAngle() {
         return Math.atan2(this.vy, this.vx);
     }
@@ -232,27 +271,60 @@ obstacles.push(
     new Obstacle(490, 500, 40, 8, 0.00125)
 );
 
-const target = new Target(800, 495, 20, 2.5, 0.0005);
+const target = new Target(800, 495, 2.5, 0.0005);
 const vehicle = new Vehicle(100, 510, 20)
 
 const frame = () => {
     canvas.clear()
 
-    canvas.drawTargetVectorsFlow(target);
+    VIEW_OPTIONS.vectorFlow && canvas.drawTargetVectorsFlow(target);
+
     canvas.drawTarget(target);
     canvas.drawVehicle(vehicle);
 
-    const { vx: vxA, vy: vyA } = target.getFieldAttraction(vehicle);
+    const { vx: vxAttractive, vy: vyAttractive } = target.getFieldAttraction(vehicle);
 
+    // sum of each of obstacles repulsion force
+    let vxRepulsive = 0;
+    let vyRepulsive = 0;
+    //
     for (const obstacle of obstacles) {     
         const { vx: vxR, vy: vyR } = obstacle.getFieldRepulsion(vehicle);
 
-        vehicle.move(vxR, vyR);
+        vxRepulsive += vxR;
+        vyRepulsive += vyR;
 
         canvas.drawObstacle(obstacle);
     }
+ 
+    const vxTotal = vxRepulsive + vxAttractive;
+    const vyTotal = vyRepulsive + vyAttractive;
 
-    vehicle.move(vxA, vyA);
+    const attractiveForceVector = new Vector(vxAttractive, vyAttractive);
+    const totalForceVector = new Vector(vxTotal, vyTotal);
+    const repulsiveForceVector = new Vector(vxRepulsive, vyRepulsive);
+
+    // angle between Total force and Attractive force (tetha)
+    // console.log(Utils.toDegree(attractiveForceVector.angle(totalForceVector)), 'Attractive');
+    // angle between Total force and Repulsive force (sigma)
+    // console.log(Utils.toDegree(repulsiveForceVector.angle(totalForceVector)), 'Repulsive');
+
+    vehicle.move(vxTotal, vyTotal);
+
+
+    // display total force direction
+    const { x: tFx, y: tFy } = totalForceVector.scaleBy(100).sum(vehicle);
+    
+    canvas.drawVector(vehicle.x, vehicle.y, tFx, tFy, 1, 'blue');
+    //
+
+    // display attractive force direction
+    const { x: aFx, y: aFy } = attractiveForceVector.scaleBy(100).sum(vehicle);
+    canvas.drawVector(vehicle.x, vehicle.y, aFx, aFy, 1, 'green');
+
+    // display repulsive force direction
+    const { x: rFx, y: rFy } = repulsiveForceVector.scaleBy(100).sum(vehicle);
+    canvas.drawVector(vehicle.x, vehicle.y, rFx, rFy, 1, 'red');
 
     window.requestAnimationFrame(frame)
 }
@@ -281,4 +353,8 @@ canvas.element.onmousedown = (e) => {
 
 canvas.element.onmouseup = (e) => {
     pressed = false;
+}
+
+window.onkeydown = () => {
+    alert()
 }
