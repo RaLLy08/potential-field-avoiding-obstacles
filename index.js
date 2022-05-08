@@ -5,6 +5,7 @@ const VIEW_OPTIONS = {
     ATTRACTIVE_VECTOR: true,
     REPULSIVE_VECTOR: true,
     TOTAL_VECTOR: true,
+    REPULSIVE_NEW_VECTOR: true,
 }
 
 
@@ -39,8 +40,7 @@ const frame = () => {
 
         canvas.drawObstacle(obstacle);
     }
-    const totalForceVector = repulsiveForceVector.sum(attractiveForceVector);
-
+    let totalForceVector = repulsiveForceVector.sum(attractiveForceVector);
 
     let repulsiveNewForceVector = new Vector(0, 0);
       // sum of each of obstacles Repulsion New Force
@@ -50,21 +50,28 @@ const frame = () => {
         repulsiveNewForceVector = repulsiveNewForceVector.sum(obstacleNewRepulsedVector);
     }
 
-    const { x: rnFx, y: rnFy } = repulsiveNewForceVector.scaleBy(100).sum(vehicle);
-    canvas.drawVector(vehicle.x, vehicle.y, rnFx, rnFy, 1.5, COLOR.REPULSIVE_NEW_FORCE);
+    totalForceVector = totalForceVector.sum(repulsiveNewForceVector)
+    displayParams.setTotalForceSpeed(totalForceVector.mag());
+    displayParams.setAttractiveForce(attractiveForceVector.mag());
+    displayParams.setRepulsiveForce(repulsiveForceVector.mag());
+    displayParams.setRepulsiveNewForce(repulsiveNewForceVector.mag());
 
-
-    totalForceVector.x += repulsiveNewForceVector.x;
-    totalForceVector.y += repulsiveNewForceVector.y;
+    
     // angle between Total force and Attractive force (tetha)
     // console.log(Utils.toDegree(attractiveForceVector.angle(totalForceVector)), 'Attractive');
     // angle between Total force and Repulsive force (sigma)
     // console.log(Utils.toDegree(repulsiveForceVector.angle(totalForceVector)), 'Repulsive');
 
     // normilize to attractive speed
-    const toAttractiveSpeedVector = totalForceVector.normalize().scaleBy(attractiveForceVector.mag());
+    // const toAttractiveSpeedVector = totalForceVector.normalize().scaleBy(attractiveForceVector.mag());
 
     vehicle.move(totalForceVector.x, totalForceVector.y);
+
+
+    if (VIEW_OPTIONS.REPULSIVE_NEW_VECTOR) {
+        const { x: rnFx, y: rnFy } = repulsiveNewForceVector.scaleBy(100).sum(vehicle);
+        canvas.drawVector(vehicle.x, vehicle.y, rnFx, rnFy, 1.5, COLOR.REPULSIVE_NEW_FORCE);
+    }
 
     if (VIEW_OPTIONS.ATTRACTIVE_VECTOR) {
         // display attractive force direction

@@ -5,14 +5,105 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PF Avoiding obstacles</title>
+    <script src="./view/DisplayParams.js" defer></script>
     <script src="./index.js" defer ></script>
     <script src="./consts.js"></script>
     <script src="./Vector.js"></script>
     <script src="./Entity.js"></script>
     <script src="./Canvas.js"></script>
     <script src="./Utils.js"></script>
+    <style>
+        body {
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }
+        .color-box {
+            width: 20px;
+            height: 20.5px;
+            display: inline-block;
+        }
+        .display-input {
+            max-width: 60px
+        }
+        .displayParams__wrapper {
+            font-size: 0.9em;
+            position: fixed;
+            z-index: 999;
+        }
+        .displayParams__displayWrapper {
+            display: flex;
+        }
+        .displayParams__actions {
+            display: block;
+            margin: 0.25em;
+            float: right
+        }
+        .actions__showHide {
+            cursor: pointer;
+        }
+        label {
+            cursor: pointer;
+            margin-left: 8px;
+        }
+    </style>
 </head>
 <body>
-    <canvas id="canvas" style="transform: translate(-50%, -50%); position: absolute; top: 50%; left:50%; border: dashed 1px"></canvas>
+    <div id="root">
+        <div class="displayParams__wrapper">
+            <div class="displayParams" id="display-params">
+                <table>
+                    <tr class="displayParams__row">
+                        <td>
+                            <div class="displayParams__displayWrapper">
+                                <input id="total-force" class="display-input" readonly>
+                                <div id="total-force-color" class="color-box"></div>
+                            </div>
+                        </td>
+                        <td>
+                            <label title="Total Force/Speed"> ( V )</label>
+                        </td>
+                    </tr>
+                    <tr class="displayParams__row">
+                        <td>
+                            <div class="displayParams__displayWrapper">
+                                <input id="attractive-force" class="display-input" readonly>
+                                <div id="attractive-force-color" class="color-box"></div>
+                            </div>
+                        </td>
+                        <td>
+                            <label title="Attractive Force"> ( F(att) ) </label>
+                        </td>
+                    </tr>
+                    <tr class="displayParams__row">
+                        <td>
+                            <div class="displayParams__displayWrapper">
+                                <input id="repulsive-force" class="display-input" readonly>
+                                <div id="repulsive-force-color" class="color-box"></div>
+                            </div>
+                        </td>
+                        <td>
+                            <label title="Repulsive Force"> ( F(rep) ) </label>
+                        </td>
+                    </tr>
+                    <tr class="displayParams__row">
+                        <td>
+                            <div class="displayParams__displayWrapper">
+                                <input id="repulsive-new-force" class="display-input" readonly>
+                                <div id="repulsive-new-force-color" class="color-box"></div>
+                            </div>
+                        </td>
+                        <td>
+                            <label title="Repulsive New Force"> ( F(rep_new) ) </label>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="displayParams__actions">
+                <button class="actions__showHide" id="actions-show-hide">
+                    hide 
+                </button>
+            </div>
+        </div>
+        <canvas id="canvas" style="transform: translate(-50%, -50%); position: absolute; top: 50%; left:50%; border: dashed 1px"></canvas>
+    </div>
 </body>
 </html>

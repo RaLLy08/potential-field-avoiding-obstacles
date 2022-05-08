@@ -2,8 +2,8 @@
  * abstart between canvas api and required rendering
  */
 class Canvas {
-    static WIDTH = 900;
-    static HEIGHT = 900;
+    static WIDTH = 1128;
+    static HEIGHT = 768;
     #ctx;
 
     constructor() {
@@ -111,3 +111,4 @@ class Canvas {
         }
     }
 }
+
