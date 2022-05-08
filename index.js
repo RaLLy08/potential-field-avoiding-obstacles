@@ -42,7 +42,8 @@ class Canvas {
         this.#ctx.beginPath();
 
         this.#ctx.arc(x, y, r, 0, 2 * Math.PI);
-        this.#ctx.strokeStyle = 'black';
+        this.#ctx.strokeStyle = color;
+        this.#ctx.lineWidth = 1;
         this.#ctx.stroke();
     
         this.#ctx.closePath();
@@ -78,11 +79,15 @@ class Canvas {
         this.#drawPoint(x, y, 20, 'red');
     }
 
-    drawVehicle({x, y, r}) {
-        this.#drawPoint(x, y, r, '#1bb21b');
+    drawVehicle(vehicle) {
+        const { x, y, r, vx, vy } = vehicle;
+        const width = 30;
+        const height = 40;
 
-        // const a = (2*r)/Math.sqrt(2);
-        // this.#ctx.strokeRect(x - a/2,y - a/2,a,a);
+        const speedVector = new Vector(vx, vy).normalize().scaleBy(height)
+        this.#drawLine(x, y, x + speedVector.x, y + speedVector.y, width, '#1bb21b')
+        
+        // this.#drawPoint(x, y, r, '#1bb21b');
     }
     /**
      * 
@@ -112,8 +117,8 @@ class Canvas {
                 for (const obstacle of obstacles) {
                     const { x: vxR, y: vyR } = obstacle.getFieldRepulsion(vectorAsVehicle);
 
-                    toX += vxR;
-                    toY += vyR;
+                    toX += (vxR* arrowScale);
+                    toY += (vxR* arrowScale);
                 }
 
                 this.drawVector(fromX, fromY, toX, toY);
@@ -149,11 +154,13 @@ class Vector {
     mag() {
         return Math.hypot(this.x, this.y);
     }
-    negate() {
-        return this.scaleBy(-1);
-    }
     angle(other) {
-        return Math.acos(this.dot(other) / (this.mag() * other.mag()));
+        const dotOther = this.dot(other);
+        const magMult = this.mag() * other.mag();
+
+        // if (magMult === 0) return 1;
+
+        return Math.acos(dotOther / magMult);
     }
     sum(other) {
         return new Vector(other.x + this.x, other.y + this.y, this.params);
@@ -163,6 +170,12 @@ class Vector {
     }
     scaleBy(koef) {
         return new Vector(this.x * koef, this.y * koef, this.params);
+    }
+    normalize() {
+        return this.scaleBy(1 / this.mag())
+    }
+    negate() {
+        return this.scaleBy(-1);
     }
     bindParams(params) {
         this.params = params;
@@ -197,7 +210,7 @@ class Target extends Vector {
         */
 
         // vector towards the robot from the detected 𝑘  obstacle
-        return difference.scaleBy(forceAtPoint / distance).negate();
+        return difference.normalize().scaleBy(forceAtPoint).negate();
     }
 } 
 /**
@@ -215,6 +228,38 @@ class Obstacle extends Vector {
             -this.distributionWidth * Math.pow(distance, 2)
         )
     }
+
+    getFieldNewRepulsion(r, a, t) {
+        const difference = vehicle.sub(this);
+
+        const distance = difference.mag(); 
+        const newRepulsionVector = new Vector(0, 0)
+
+        if (distance > this.fieldRadius) {
+            return newRepulsionVector;
+        }
+        
+        // indirect proportion of angle between Total Force and Attractive Force
+        const k = Math.abs(Math.cos(t.angle(a)));
+
+        if (Utils.toDegree(r.angle(a)) > 120) {
+
+            // direction of New Repulsion force from full angle between RF and TF
+            const clockDirectionSign = Math.sign(Math.atan2(r.x * t.y - r.y* t.x, r.x*t.x + r.y*t.y));
+
+            const rXrYTan = Math.abs(r.x / r.y);
+
+            // normilize vector by Repilsive force magniture, reduce by angle between TF. and AF.
+            const vx = k * r.mag() * (Math.sin(Math.atan(rXrYTan) - (Math.PI/2)*Math.sign(Math.atan(r.x / r.y))*clockDirectionSign  )) * Math.sign(r.x);
+            const vy = k * r.mag() * (Math.cos(Math.atan(rXrYTan) - (Math.PI/2)*Math.sign(Math.atan(r.x / r.y))*clockDirectionSign  )) * Math.sign(r.y);
+          
+            newRepulsionVector.x = vx;
+            newRepulsionVector.y = vy;
+        } 
+ 
+        return newRepulsionVector;
+    }
+
     getFieldRepulsion(vehicle) {
         const difference = vehicle.sub(this);
 
@@ -228,9 +273,8 @@ class Obstacle extends Vector {
         if (distance > this.fieldRadius) {
             return new Vector(0, 0);
         }
-
-        const repulsedVector = difference.scaleBy(forceAtPoint / distance);
-
+        // normalize by force
+        const repulsedVector = difference.normalize().scaleBy(forceAtPoint);
 
         return repulsedVector;
         /** the same as:
@@ -273,12 +317,13 @@ const canvas = new Canvas();
 
 obstacles.push(
     // new Obstacle(450, 500, 500, 100, 1/50000),
-    new Obstacle(250, 500, 70, 7, 0.0005),
-    new Obstacle(400, 600, 40, 8, 0.00125),
-    new Obstacle(490, 500, 40, 8, 0.00125)
+    new Obstacle(250, 500, 80, 1.2, 0.00045),
+    // new Obstacle(250, 500, 70, 1.4, 0.00005),
+    new Obstacle(400, 600, 40, 2, 0.00125),
+    new Obstacle(490, 500, 40, 2, 0.00125)
 );
 
-const target = new Target(800, 495, 2.5, 0.0005);
+const target = new Target(800, 495, 2.5, 0.00015);
 const vehicle = new Vehicle(100, 499, 20)
 
 const frame = () => {
@@ -291,7 +336,7 @@ const frame = () => {
 
     const attractiveForceVector = target.getFieldAttraction(vehicle, { color: CONSTS.ATTRACTIVE_VECTOR_COLOR});
 
-    // sum of each of obstacles repulsion force
+    // sum of each of obstacles Repulsion Force
     let repulsiveForceVector = new Vector(0, 0, { color: CONSTS.REPULSIVE_VECTOR_COLOR});
     //
     for (const obstacle of obstacles) {     
@@ -300,9 +345,24 @@ const frame = () => {
 
         canvas.drawObstacle(obstacle);
     }
-
     const totalForceVector = repulsiveForceVector.sum(attractiveForceVector)
         .bindParams({ color: CONSTS.TOTAL_VECTOR_COLOR });
+
+
+    let repulsiveNewForceVector = new Vector(0, 0, { color: 'pink'});
+      // sum of each of obstacles Repulsion New Force
+    for (const obstacle of obstacles) {     
+        const obstacleNewRepulsedVector = obstacle.getFieldNewRepulsion(repulsiveForceVector, attractiveForceVector, totalForceVector);
+        
+        repulsiveNewForceVector = repulsiveNewForceVector.sum(obstacleNewRepulsedVector);
+    }
+
+    const { x: rnFx, y: rnFy } = repulsiveNewForceVector.scaleBy(100).sum(vehicle);
+    canvas.drawVector(vehicle.x, vehicle.y, rnFx, rnFy, 1.5, repulsiveNewForceVector.params.color);
+
+
+    totalForceVector.x += repulsiveNewForceVector.x;
+    totalForceVector.y += repulsiveNewForceVector.y;
     
     // angle between Total force and Attractive force (tetha)
     // console.log(Utils.toDegree(attractiveForceVector.angle(totalForceVector)), 'Attractive');
@@ -310,30 +370,34 @@ const frame = () => {
     // console.log(Utils.toDegree(repulsiveForceVector.angle(totalForceVector)), 'Repulsive');
 
     // normilize to attractive speed
-    const toAttractiveSpeedVector = totalForceVector.scaleBy(attractiveForceVector.mag() / totalForceVector.mag());
+    const toAttractiveSpeedVector = totalForceVector.normalize().scaleBy(attractiveForceVector.mag());
 
-    vehicle.move(toAttractiveSpeedVector.x, toAttractiveSpeedVector.y);
+    vehicle.move(totalForceVector.x, totalForceVector.y);
 
     if (VIEW_OPTIONS.ATTRACTIVE_VECTOR) {
         // display attractive force direction
         const { x: aFx, y: aFy } = attractiveForceVector.scaleBy(100).sum(vehicle);
-        canvas.drawVector(vehicle.x, vehicle.y, aFx, aFy, 1, attractiveForceVector.params.color);
+        canvas.drawVector(vehicle.x, vehicle.y, aFx, aFy, 1.5, attractiveForceVector.params.color);
     }
     if (VIEW_OPTIONS.REPULSIVE_VECTOR) {
         // display repulsive force direction
         const { x: rFx, y: rFy } = repulsiveForceVector.scaleBy(100).sum(vehicle);
-        canvas.drawVector(vehicle.x, vehicle.y, rFx, rFy, 1, repulsiveForceVector.params.color);
+        canvas.drawVector(vehicle.x, vehicle.y, rFx, rFy, 1.5, repulsiveForceVector.params.color);
     }
     // display total force direction
     if (VIEW_OPTIONS.TOTAL_VECTOR) {
         const { x: tFx, y: tFy } = totalForceVector.scaleBy(100).sum(vehicle);
-        canvas.drawVector(vehicle.x, vehicle.y, tFx, tFy, 1, totalForceVector.params.color);
+        canvas.drawVector(vehicle.x, vehicle.y, tFx, tFy, 1.5, totalForceVector.params.color);
     }
 
-
+    // **TODO**
     // change canvas to vectors drawing
     // change for of obstacles to common sum
+    // deepht field vectors
+    // reset vehicle
 
+    // add remove forces
+    // edit obstacles  
     window.requestAnimationFrame(frame)
 }
 
@@ -355,7 +419,9 @@ canvas.element.onmousedown = (e) => {
     for (const obstacle of obstacles) {
         const { x: vxR, y: vyR } = obstacle.getFieldRepulsion(mouseAsVehicle);
         
-        console.log( Math.hypot(vxR, vyR), Math.hypot(obstacle.x - mouseAsVehicle.x, obstacle.y - mouseAsVehicle.y));
+        if (!Math.hypot(vxR, vyR)) return
+
+        console.log( Math.hypot(vxR, vyR).toPrecision(4), Math.hypot(obstacle.x - mouseAsVehicle.x, obstacle.y - mouseAsVehicle.y));
     }
 }
 
