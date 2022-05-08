@@ -2,13 +2,11 @@
  * basic vector
  * @param {number} x
  * @param {number} y
- * @param {{color: string}} params parameters which belongs to constructor assigned vector
  */
 class Vector {
-    constructor(x, y, params = {}) {
+    constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.params = params;
     }
     dot(vector) {
         return this.x * vector.x + this.y * vector.y;
@@ -38,9 +36,5 @@ class Vector {
     }
     negate() {
         return this.scaleBy(-1);
-    }
-    bindParams(params) {
-        this.params = params;
-        return this;
     }
 } 
