@@ -24,7 +24,7 @@
         .display-input {
             max-width: 60px
         }
-        .displayParams__wrapper {
+        .displayParams {
             font-size: 0.9em;
             position: fixed;
             z-index: 999;
@@ -42,16 +42,19 @@
         }
         label {
             cursor: pointer;
-            margin-left: 8px;
+            margin-left: 0.2em;
         }
     </style>
 </head>
 <body>
     <div id="root">
-        <div class="displayParams__wrapper">
-            <div class="displayParams" id="display-params">
+        <div class="displayParams">
+            <details>
+                <summary>Vehicle</summary>
                 <table>
                     <tr class="displayParams__row">
+                        <td>
+                        </td>
                         <td>
                             <div class="displayParams__displayWrapper">
                                 <input id="total-force" class="display-input" readonly>
@@ -59,10 +62,13 @@
                             </div>
                         </td>
                         <td>
-                            <label title="Total Force/Speed"> ( V )</label>
+                            <label title="Total Force/Speed"> ( F(tot) or V)</label>
                         </td>
                     </tr>
                     <tr class="displayParams__row">
+                        <td>
+                            <input checked type="checkbox"></input>
+                        </td>
                         <td>
                             <div class="displayParams__displayWrapper">
                                 <input id="attractive-force" class="display-input" readonly>
@@ -75,6 +81,9 @@
                     </tr>
                     <tr class="displayParams__row">
                         <td>
+                            <input checked type="checkbox"></input>
+                        </td>
+                        <td>
                             <div class="displayParams__displayWrapper">
                                 <input id="repulsive-force" class="display-input" readonly>
                                 <div id="repulsive-force-color" class="color-box"></div>
@@ -86,6 +95,9 @@
                     </tr>
                     <tr class="displayParams__row">
                         <td>
+                            <input checked type="checkbox"></input>
+                        </td>
+                        <td>
                             <div class="displayParams__displayWrapper">
                                 <input id="repulsive-new-force" class="display-input" readonly>
                                 <div id="repulsive-new-force-color" class="color-box"></div>
@@ -96,13 +108,10 @@
                         </td>
                     </tr>
                 </table>
-            </div>
-            <div class="displayParams__actions">
-                <button class="actions__showHide" id="actions-show-hide">
-                    hide 
-                </button>
-            </div>
+            </details>
+           
         </div>
+        
         <canvas id="canvas" style="transform: translate(-50%, -50%); position: absolute; top: 50%; left:50%; border: dashed 1px"></canvas>
     </div>
 </body>
