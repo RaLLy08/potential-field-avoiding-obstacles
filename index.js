@@ -11,11 +11,19 @@ obstacles.push(
     new Obstacle(700, 600, 40, 2, 0.00125),
     new Obstacle(600, 530, 40, 2, 0.00125),
 
-    // new Obstacle(370, 200, 40, 2, 0.00125),
-    // new Obstacle(400, 280, 40, 2, 0.00125),
-    // new Obstacle(370, 360, 40, 2, 0.00125),
-    // new Obstacle(400, 440, 40, 2, 0.00125),
-    // new Obstacle(370, 520, 40, 2, 0.00125),
+    // new Obstacle(400, 200, 100, 2, 0.00015, 18),
+    // new Obstacle(400, 240, 100, 2, 0.00015, 18),
+    // new Obstacle(400, 280, 100, 2, 0.00015, 18),
+    // new Obstacle(400, 300, 100, 2, 0.00015, 18),
+    // new Obstacle(400, 320, 100, 2, 0.00015, 18),
+    // new Obstacle(400, 340, 100, 2, 0.00015, 18),
+    // new Obstacle(400, 360, 100, 2, 0.00015, 18),
+    // new Obstacle(400, 380, 100, 2, 0.00015, 18),
+    // new Obstacle(400, 400, 100, 2, 0.00015, 18),
+    // new Obstacle(400, 440, 100, 2, 0.00015, 18),
+    // new Obstacle(400, 500, 100, 2, 0.00015, 18),
+    // new Obstacle(400, 530, 100, 2, 0.00015, 18),
+    // new Obstacle(400, 550, 100, 2, 0.00015, 18),
 );
 
 const target = new Target(1000, Canvas.HEIGHT/2, 2.5, 0.00015);
@@ -42,6 +50,12 @@ const frame = () => {
 
         canvas.drawObstacle(obstacle);
     }
+        // escaped from all fields
+    if (repulsiveForceVector.mag() === 0 && vehicle.clockDirectionSign) {
+        vehicle.clockDirectionSign = 0;
+    }
+
+
     let totalForceVector = repulsiveForceVector.sum(attractiveForceVector);
 
     let repulsiveNewForceVector = new Vector(0, 0);

@@ -104,6 +104,11 @@ class Canvas {
                     repulsiveForceVector = repulsiveForceVector.sum(obstacleRepulsedVector);
                 }
 
+                // escaped from all fields
+                if (repulsiveForceVector.mag() === 0 && vectorAsVehicle.clockDirectionSign) {
+                    vectorAsVehicle.clockDirectionSign = 0;
+                }
+                
                 totalForceVector = totalForceVector.sum(repulsiveForceVector);
 
                 let repulsiveNewForceVector = new Vector(0, 0);

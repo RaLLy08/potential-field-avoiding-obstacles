@@ -39,6 +39,8 @@ class Obstacle extends Vector {
         this.obstacleRadius = obstacleRadius || 4;
         this.maxRepulsiveForce = maxRepulsiveForce || 0;
         this.distributionWidth = distributionWidth;
+        // this show us direction when the vehicle is inside the fields
+        this.clockDirectionSign = 0;
     }
     #repulsiveForce(distance) {
         return this.maxRepulsiveForce * Math.exp(
@@ -65,14 +67,18 @@ class Obstacle extends Vector {
 
         const k = kMax / (1 + Math.exp(sigma / tau));
 
-        // direction of New Repulsion force from full angle between RF and TF
-        const clockDirectionSign = Math.sign(Math.atan2(r.x * t.y - r.y* t.x, r.x*t.x + r.y*t.y));
+
+        if (!vehicle.clockDirectionSign) {
+            // direction of New Repulsion force from full angle between RF and TF
+            vehicle.clockDirectionSign = Math.sign(Math.atan2(r.x * t.y - r.y* t.x, r.x*t.x + r.y*t.y))
+        }
+        // const clockDirectionSign = Math.sign(Math.atan2(r.x * t.y - r.y* t.x, r.x*t.x + r.y*t.y));
 
         const rXrYTan = Math.abs(r.x / r.y);
 
         // normilize vector by Repilsive force magniture, reduce by angle between TF. and AF.
-        const vx = k * r.mag() * (Math.sin(Math.atan(rXrYTan) - (Math.PI/2)*Math.sign(Math.atan(r.x / r.y))*clockDirectionSign  )) * Math.sign(r.x);
-        const vy = k * r.mag() * (Math.cos(Math.atan(rXrYTan) - (Math.PI/2)*Math.sign(Math.atan(r.x / r.y))*clockDirectionSign  )) * Math.sign(r.y);
+        const vx = k * r.mag() * (Math.sin(Math.atan(rXrYTan) - (Math.PI/2)*Math.sign(Math.atan(r.x / r.y))*vehicle.clockDirectionSign  )) * Math.sign(r.x);
+        const vy = k * r.mag() * (Math.cos(Math.atan(rXrYTan) - (Math.PI/2)*Math.sign(Math.atan(r.x / r.y))*vehicle.clockDirectionSign  )) * Math.sign(r.y);
           
         newRepulsionVector.x = vx;
         newRepulsionVector.y = vy;
