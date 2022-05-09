@@ -58,8 +58,9 @@ class Obstacle extends Vector {
         
         // indirect proportion of angle between Total Force and Attractive Force
         const k = Math.abs(Math.cos(t.angle(a)));
+        const maxBankAngle = 120;
 
-        if (Utils.toDegree(r.angle(a)) > 120) {
+        if (Utils.toDegree(r.angle(a)) > maxBankAngle) {
 
             // direction of New Repulsion force from full angle between RF and TF
             const clockDirectionSign = Math.sign(Math.atan2(r.x * t.y - r.y* t.x, r.x*t.x + r.y*t.y));

@@ -8,7 +8,7 @@ class Canvas {
 
     constructor() {
         this.element = document.getElementById('canvas');
-
+        
         this.element.width = Canvas.WIDTH;
         this.element.height = Canvas.HEIGHT;
 
@@ -50,9 +50,9 @@ class Canvas {
         this.#ctx.clearRect(0, 0, Canvas.WIDTH, Canvas.HEIGHT);
     }
 
-    drawVector(fromX, fromY, toX, toY, pointWidth = 0.5, color = COLOR.VECTOR) {
-        this.#drawLine(fromX, fromY, toX, toY, pointWidth, color); 
-        this.#drawPoint(toX, toY, 1, 'red')
+    drawVector(fromX, fromY, toX, toY, pointWidth = 1, lineWidth = 0.5, color = COLOR.VECTOR) {
+        this.#drawLine(fromX, fromY, toX, toY, lineWidth, color); 
+        this.#drawPoint(toX, toY, pointWidth, 'red')
     }
 
     drawObstacle({x, y, fieldRadius, obstacleRadius}) {
