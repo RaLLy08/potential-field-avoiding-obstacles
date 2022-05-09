@@ -121,8 +121,6 @@ let pressed = false;
 
 canvas.element.onmousedown = (e) => {
     pressed = true;
-    target.x = e.offsetX;
-    target.y = e.offsetY;
 }
 
 canvas.element.onmousemove = (e) => {
