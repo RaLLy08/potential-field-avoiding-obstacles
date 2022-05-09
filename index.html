@@ -21,9 +21,8 @@
             margin: 0;
         }
         .color-box {
-            width: 20px;
-            height: 20.5px;
-            display: inline-block;
+            width: 1em;
+            height: 1em;
         }
         .display-input {
             max-width: 60px
@@ -38,6 +37,7 @@
         }
         .displayParams__displayWrapper {
             display: flex;
+            align-items: center;
         }
         .displayParams__actions {
             display: block;
@@ -49,6 +49,8 @@
         }
         label {
             cursor: pointer;
+        }
+        label[title] {
             margin-left: 0.2em;
         }
         .displayParams table {
@@ -85,10 +87,7 @@
                         <td>
                         </td>
                         <td>
-                            <div class="displayParams__displayWrapper">
-                                <input id="total-force" class="display-input" readonly>
-                                <div id="total-force-color" class="color-box"></div>
-                            </div>
+                            <input id="total-force" class="display-input" readonly>            
                         </td>
                         <td>
                             <label title="Total Force/Speed"> ( F(tot) or V)</label>
@@ -98,10 +97,7 @@
                         <td>
                         </td>
                         <td>
-                            <div class="displayParams__displayWrapper">
-                                <input id="attractive-force" class="display-input" readonly>
-                                <div id="attractive-force-color" class="color-box"></div>
-                            </div>
+                            <input id="attractive-force" class="display-input" readonly>
                         </td>
                         <td>
                             <label title="Attractive Force"> ( F(att) ) </label>
@@ -111,10 +107,7 @@
                         <td>
                         </td>
                         <td>
-                            <div class="displayParams__displayWrapper">
-                                <input id="repulsive-force" class="display-input" readonly>
-                                <div id="repulsive-force-color" class="color-box"></div>
-                            </div>
+                            <input id="repulsive-force" class="display-input" readonly>
                         </td>
                         <td>
                             <label title="Repulsive Force"> ( F(rep) ) </label>
@@ -124,10 +117,7 @@
                         <td>
                         </td>
                         <td>
-                            <div class="displayParams__displayWrapper">
-                                <input id="repulsive-force-new" class="display-input" readonly>
-                                <div id="repulsive-force-new-color" class="color-box"></div>
-                            </div>
+                            <input id="repulsive-force-new" class="display-input" readonly>
                         </td>
                         <td>
                             <label title="Repulsive New Force"> ( F(rep_new) ) </label>
@@ -140,7 +130,10 @@
                 <table>
                     <tr>
                         <td>
-                            <input id="vectors-flow-field-checkbox" type="checkbox"></input>
+                            <div class="displayParams__displayWrapper">
+                                <input id="vectors-flow-field-checkbox" type="checkbox"></input>
+                                <label for="vectors-flow-field-checkbox" id="vectors-flow-color" class="color-box"></label>
+                            </div>
                         </td>
                         <td>
                             <label for="vectors-flow-field-checkbox" title="Vectors Flow"> Vectors Flow</label>
@@ -148,7 +141,10 @@
                     </tr>
                     <tr>
                         <td>
-                            <input id="total-force-field-checkbox" type="checkbox"></input>
+                            <div class="displayParams__displayWrapper">
+                                <input id="total-force-field-checkbox" type="checkbox"></input>
+                                <label for="total-force-field-checkbox" id="total-force-color" class="color-box"></label>
+                            </div>
                         </td>
                         <td>
                             <label for="total-force-field-checkbox" title="Total Force/Speed"> ( F(tot) or V)</label>
@@ -156,7 +152,10 @@
                     </tr>
                     <tr>
                         <td>
-                            <input id="attractive-force-field-checkbox" type="checkbox"></input>
+                            <div class="displayParams__displayWrapper">
+                                <input id="attractive-force-field-checkbox" type="checkbox"></input>
+                                <label for="attractive-force-field-checkbox" id="attractive-force-color" class="color-box"></label>
+                            </div>
                         </td>
                         <td>
                             <label for="attractive-force-field-checkbox" title="Attractive Force"> ( F(att) ) </label>
@@ -164,7 +163,10 @@
                     </tr>
                     <tr>
                         <td>
-                            <input id="repulsive-force-field-checkbox" type="checkbox"></input>
+                            <div class="displayParams__displayWrapper">
+                                <input id="repulsive-force-field-checkbox" type="checkbox"></input>
+                                <label for="repulsive-force-field-checkbox" id="repulsive-force-color" class="color-box"></label>                                
+                            </div>
                         </td>
                         <td>
                             <label for="repulsive-force-field-checkbox" title="Repulsive Force"> ( F(rep) ) </label>
@@ -172,10 +174,26 @@
                     </tr>
                     <tr>
                         <td>
-                            <input id="repulsive-force-new-field-checkbox" type="checkbox"></input>
+                            <div class="displayParams__displayWrapper">
+                                <input id="repulsive-force-new-field-checkbox" type="checkbox"></input>
+                                <label for="repulsive-force-new-field-checkbox" id="repulsive-force-new-color" class="color-box"></label>                                
+                            </div>
+
                         </td>
                         <td>
                             <label for="repulsive-force-new-field-checkbox" title="Repulsive New Force"> ( F(rep_new) ) </label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="displayParams__displayWrapper">
+                                <input id="obstacles-radius-field-checkbox" type="checkbox"></input>
+                                <label for="obstacles-radius-field-checkbox" id="obstacles-field-radius-color" class="color-box"></label>
+                            </div>
+
+                        </td>
+                        <td>
+                            <label for="obstacles-radius-field-checkbox" title="Obstacles Field"> Obstacles Field (R) </label>
                         </td>
                     </tr>
                 </table>

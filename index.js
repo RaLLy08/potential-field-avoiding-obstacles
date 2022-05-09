@@ -55,7 +55,6 @@ const frame = () => {
     vehicleDisplay.attractiveForce = attractiveForceVector.mag();
     vehicleDisplay.repulsiveForce = repulsiveForceVector.mag();
     vehicleDisplay.repulsiveNewForce = repulsiveNewForceVector.mag();
-
     
     // angle between Total force and Attractive force (tetha)
     // console.log(Utils.toDegree(attractiveForceVector.angle(totalForceVector)), 'Attractive');
@@ -70,7 +69,7 @@ const frame = () => {
 
     if (canvasDisplay.repulsiveNewForce) {
         const { x: rnFx, y: rnFy } = repulsiveNewForceVector.scaleBy(100).sum(vehicle);
-        canvas.drawVector(vehicle.x, vehicle.y, rnFx, rnFy, 2, 1.5, COLOR.REPULSIVE_NEW_FORCE);
+        canvas.drawVector(vehicle.x, vehicle.y, rnFx, rnFy, 2, 1.5, COLOR.REPULSIVE_FORCE_NEW);
     }
 
     if (canvasDisplay.attractiveForce) {

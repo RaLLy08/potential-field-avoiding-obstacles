@@ -8,6 +8,9 @@ const vehicleDisplay = (function() {
         static ATTRACTIVE_FORCE_COLOR_ID = 'attractive-force-color';
         static REPULSIVE_FORCE_COLOR_ID = 'repulsive-force-color';
         static REPULSIVE_FORCE_NEW_COLOR_ID = 'repulsive-force-new-color';
+        static VECTORS_FLOW_COLOR_ID = 'vectors-flow-color';
+        static OBSTACLES_FIELD_RADIUS_COLOR_ID = 'obstacles-field-radius-color';
+
         #totalForceInput;
         #attractiveForceInput;
         #repulsiveForceInput;
@@ -53,6 +56,8 @@ const vehicleDisplay = (function() {
             document.getElementById(VehicleDisplay.ATTRACTIVE_FORCE_COLOR_ID).style.backgroundColor = COLOR.ATTRACTIVE_FORCE;
             document.getElementById(VehicleDisplay.REPULSIVE_FORCE_COLOR_ID).style.backgroundColor = COLOR.REPULSIVE_FORCE;
             document.getElementById(VehicleDisplay.REPULSIVE_FORCE_NEW_COLOR_ID).style.backgroundColor = COLOR.REPULSIVE_FORCE_NEW;
+            document.getElementById(VehicleDisplay.VECTORS_FLOW_COLOR_ID).style.backgroundColor = COLOR.VECTORS_FLOW;
+            document.getElementById(VehicleDisplay.OBSTACLES_FIELD_RADIUS_COLOR_ID).style.backgroundColor = COLOR.OBSTACLES_FIELD_RADIUS;
         }
     }
 
@@ -66,17 +71,20 @@ const canvasDisplay = (function() {
         static ATTRACTIVE_FORCE_CHECKBOX_ID = 'attractive-force-field-checkbox'
         static REPULSIVE_FORCE_CHECKBOX_ID = 'repulsive-force-field-checkbox'
         static REPULSIVE_FORCE_NEW_CHECKBOX_ID = 'repulsive-force-new-field-checkbox'
+        static OBSTACLES_FIELD_RADIUS_CHECKBOX_ID = 'obstacles-radius-field-checkbox'
         totalForce = false;
         vectorsFlow = false;
         attractiveForce = false;
         repulsiveForce = false;
         repulsiveNewForce = false;
+        obstaclesFieldRadius = false;
         constructor() {
             this.#onCheckboxChange(document.getElementById(CanvasDisplay.TOTAL_FORCE_CHECKBOX_ID), (value) => this.totalForce = value);
             this.#onCheckboxChange(document.getElementById(CanvasDisplay.VECTORS_FLOW_CHECKBOX_ID), (value) => this.vectorsFlow = value);
             this.#onCheckboxChange(document.getElementById(CanvasDisplay.ATTRACTIVE_FORCE_CHECKBOX_ID), (value) => this.attractiveForce = value);
             this.#onCheckboxChange(document.getElementById(CanvasDisplay.REPULSIVE_FORCE_CHECKBOX_ID), (value) => this.repulsiveForce = value);
             this.#onCheckboxChange(document.getElementById(CanvasDisplay.REPULSIVE_FORCE_NEW_CHECKBOX_ID), (value) => this.repulsiveNewForce = value);
+            this.#onCheckboxChange(document.getElementById(CanvasDisplay.OBSTACLES_FIELD_RADIUS_CHECKBOX_ID), (value) => this.obstaclesFieldRadius = value);
         }
 
         #onCheckboxChange = (el, listener) => {

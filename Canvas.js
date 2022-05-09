@@ -50,13 +50,13 @@ class Canvas {
         this.#ctx.clearRect(0, 0, Canvas.WIDTH, Canvas.HEIGHT);
     }
 
-    drawVector(fromX, fromY, toX, toY, pointWidth = 1, lineWidth = 0.5, color = COLOR.VECTOR) {
+    drawVector(fromX, fromY, toX, toY, pointWidth = 1, lineWidth = 0.5, color = COLOR.VECTORS_FLOW) {
         this.#drawLine(fromX, fromY, toX, toY, lineWidth, color); 
         this.#drawPoint(toX, toY, pointWidth, 'red')
     }
 
     drawObstacle({x, y, fieldRadius, obstacleRadius}) {
-        this.#drawCircle(x, y, fieldRadius, COLOR.OBSTACLE_FIELD_RADIUS, 0.3);
+        canvasDisplay.obstaclesFieldRadius && this.#drawCircle(x, y, fieldRadius, COLOR.OBSTACLES_FIELD_RADIUS, 1);
         this.#drawPoint(x, y, obstacleRadius, COLOR.OBSTACLE);
     }
 
