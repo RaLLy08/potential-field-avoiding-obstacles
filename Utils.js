@@ -7,4 +7,7 @@ class Utils {
 
         return (rads / Math.PI) * 180;
     }
+    static toRadians(degree) {
+        return (degree*Math.PI) / 180
+    }
 }

@@ -77,7 +77,7 @@ function displayForces(vehicle, attractiveForceVector, repulsiveForceVector, rep
     // angle between Total force and Attractive force (theta)
     vehicleDisplay.theta = Utils.toDegree(attractiveForceVector.angle(totalForceVector));
     // angle between Total force and Repulsive force (sigma)
-    vehicleDisplay.sigma = Utils.toDegree(repulsiveForceVector.angle(totalForceVector));
+    vehicleDisplay.sigma = Utils.toDegree(Math.PI - repulsiveForceVector.angle(totalForceVector));
 
 
     if (canvasDisplay.repulsiveNewForce) {

@@ -57,23 +57,25 @@ class Obstacle extends Vector {
         }
         
         // indirect proportion of angle between Total Force and Attractive Force
-        const k = Math.abs(Math.cos(t.angle(a)));
-        const maxBankAngle = 120;
+        // const k = Math.abs(Math.cos(t.angle(a)));
 
-        if (Utils.toDegree(r.angle(a)) > maxBankAngle) {
+        const kMax = 2;
+        const sigma = Math.PI - r.angle(t);
+        const tau = 1;
 
-            // direction of New Repulsion force from full angle between RF and TF
-            const clockDirectionSign = Math.sign(Math.atan2(r.x * t.y - r.y* t.x, r.x*t.x + r.y*t.y));
+        const k = kMax / (1 + Math.exp(sigma / tau));
 
-            const rXrYTan = Math.abs(r.x / r.y);
+        // direction of New Repulsion force from full angle between RF and TF
+        const clockDirectionSign = Math.sign(Math.atan2(r.x * t.y - r.y* t.x, r.x*t.x + r.y*t.y));
 
-            // normilize vector by Repilsive force magniture, reduce by angle between TF. and AF.
-            const vx = k * r.mag() * (Math.sin(Math.atan(rXrYTan) - (Math.PI/2)*Math.sign(Math.atan(r.x / r.y))*clockDirectionSign  )) * Math.sign(r.x);
-            const vy = k * r.mag() * (Math.cos(Math.atan(rXrYTan) - (Math.PI/2)*Math.sign(Math.atan(r.x / r.y))*clockDirectionSign  )) * Math.sign(r.y);
+        const rXrYTan = Math.abs(r.x / r.y);
+
+        // normilize vector by Repilsive force magniture, reduce by angle between TF. and AF.
+        const vx = k * r.mag() * (Math.sin(Math.atan(rXrYTan) - (Math.PI/2)*Math.sign(Math.atan(r.x / r.y))*clockDirectionSign  )) * Math.sign(r.x);
+        const vy = k * r.mag() * (Math.cos(Math.atan(rXrYTan) - (Math.PI/2)*Math.sign(Math.atan(r.x / r.y))*clockDirectionSign  )) * Math.sign(r.y);
           
-            newRepulsionVector.x = vx;
-            newRepulsionVector.y = vy;
-        } 
+        newRepulsionVector.x = vx;
+        newRepulsionVector.y = vy;
  
         return newRepulsionVector;
     }
@@ -128,3 +130,9 @@ class Vehicle extends Vector {
         return Math.atan2(this.vy, this.vx);
     }
 }
+
+// const kMax = 2;
+// const sigma = Utils.toDegree(Math.PI - r.angle(t));
+
+// const k = kMax/(1 + Math.exp(sigma / 23));
+// console.log(k, 'ang', Utils.toDegree( Math.PI - r.angle(t)));
