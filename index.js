@@ -61,7 +61,14 @@ const frame = () => {
         vehicle.move(totalForceVector.x, totalForceVector.y);
     };
 
+    displayForces(vehicle, attractiveForceVector, repulsiveForceVector, repulsiveNewForceVector, totalForceVector);
+ 
+    window.requestAnimationFrame(frame)
+}
 
+frame();
+
+function displayForces(vehicle, attractiveForceVector, repulsiveForceVector, repulsiveNewForceVector, totalForceVector) {
     vehicleDisplay.totalForce = totalForceVector.mag();
     vehicleDisplay.attractiveForce = attractiveForceVector.mag();
     vehicleDisplay.repulsiveForce = repulsiveForceVector.mag();
@@ -93,16 +100,8 @@ const frame = () => {
         const { x: tFx, y: tFy } = totalForceVector.scaleBy(100).sum(vehicle);
         canvas.drawVector(vehicle.x, vehicle.y, tFx, tFy, 2, 1.5, COLOR.TOTAL_FORCE);
     }
-
-    // **TODO**
-    // change for of obstacles to common sum
-    // reset vehicle
-    // add remove forces
-    // edit obstacles  
-    window.requestAnimationFrame(frame)
 }
 
-frame();
 
 canvasActions.onResetVehicle = () => {
     vehicle.x = 100;
