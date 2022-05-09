@@ -1,6 +1,6 @@
 const obstacles = [];
 const VIEW_OPTIONS = { 
-    // VECTOR_FLOW: true,
+    VECTOR_FLOW: true,
     // fieldRadius: true,
     ATTRACTIVE_VECTOR: true,
     REPULSIVE_VECTOR: true,
@@ -24,7 +24,7 @@ const vehicle = new Vehicle(100, 499, 20)
 const frame = () => {
     canvas.clear()
 
-    VIEW_OPTIONS.VECTOR_FLOW && canvas.drawTargetVectorsFlow(target);
+    VIEW_OPTIONS.VECTOR_FLOW && canvas.drawTargetVectorsFlow(target, obstacles);
 
     canvas.drawTarget(target);
     canvas.drawVehicle(vehicle);
@@ -35,7 +35,7 @@ const frame = () => {
     let repulsiveForceVector = new Vector(0, 0);
     //
     for (const obstacle of obstacles) {     
-        const obstacleRepulsedVector = obstacle.getFieldRepulsion(vehicle, attractiveForceVector);
+        const obstacleRepulsedVector = obstacle.getFieldRepulsion(vehicle);
         repulsiveForceVector = repulsiveForceVector.sum(obstacleRepulsedVector);
 
         canvas.drawObstacle(obstacle);
@@ -43,7 +43,7 @@ const frame = () => {
     let totalForceVector = repulsiveForceVector.sum(attractiveForceVector);
 
     let repulsiveNewForceVector = new Vector(0, 0);
-      // sum of each of obstacles Repulsion New Force
+    // sum of each of obstacles Repulsion New Force
     for (const obstacle of obstacles) {     
         const obstacleNewRepulsedVector = obstacle.getFieldNewRepulsion(vehicle, repulsiveForceVector, attractiveForceVector, totalForceVector);
         

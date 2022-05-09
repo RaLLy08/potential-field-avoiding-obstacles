@@ -84,16 +84,16 @@ class Obstacle extends Vector {
         // const k = (this.maxRepulsiveForce / this.distributionWidth);
         // let forceAtPoint = this.maxRepulsiveForce -  k * (distance);
 
-        const forceAtPoint = this.#repulsiveForce(distance)
-
         // otherwise
         if (distance > this.fieldRadius) {
             return new Vector(0, 0);
         }
-        // normalize by force
-        const repulsedVector = difference.normalize().scaleBy(forceAtPoint);
 
-        return repulsedVector;
+        const forceAtPoint = this.#repulsiveForce(distance)
+
+
+        // normalize by force
+        return difference.normalize().scaleBy(forceAtPoint);
         /** the same as:
         const oXOyTan = Math.abs((oX / oY) || 1);
         const vx = forceAtPoint * Math.sin(Math.atan(oXOyTan)) * Math.sign(oX);

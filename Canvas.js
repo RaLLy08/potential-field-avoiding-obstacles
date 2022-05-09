@@ -78,35 +78,47 @@ class Canvas {
      * 
      * @param {Target} target 
      */
-    drawTargetVectorsFlow(target) {
+    drawTargetVectorsFlow(target, obstacles) {
         const xPoints = 50;
         const yPoints = 50;
-        const spaceX = (Canvas.HEIGHT / xPoints);
-        const spaceY = (Canvas.WIDTH / yPoints);
+        const spaceX =Canvas.WIDTH / xPoints;
+        const spaceY = Canvas.HEIGHT / yPoints;
         const arrowScale = 6;
 
         for (let i = 0; i <= xPoints; i++) { 
             for (let j = 0; j <= yPoints; j++) { 
-                const fromX = i*spaceX;
-                const fromY = j*spaceY;
-                let toX = fromX;
-                let toY = fromY;
          
-                const vectorAsVehicle = new Vector(i*spaceX, j*spaceY);
+                let vectorAsVehicle = new Vector(i*spaceX, j*spaceY);
 
-                const { x: vxA, y: vyA } = target.getFieldAttraction(vectorAsVehicle);
-           
-                toX += vxA * arrowScale;
-                toY += vyA * arrowScale;
+                let totalForceVector = new Vector(0, 0)
+
+                const attractiveForceVector = target.getFieldAttraction(vectorAsVehicle).scaleBy(arrowScale);
    
-                for (const obstacle of obstacles) {
-                    const { x: vxR, y: vyR } = obstacle.getFieldRepulsion(vectorAsVehicle);
+                totalForceVector = attractiveForceVector.sum(totalForceVector);
 
-                    toX += (vxR* arrowScale);
-                    toY += (vxR* arrowScale);
+                let repulsiveForceVector = new Vector(0, 0);
+
+                for (const obstacle of obstacles) {
+                    const obstacleRepulsedVector = obstacle.getFieldRepulsion(vectorAsVehicle).scaleBy(arrowScale);
+
+                    repulsiveForceVector = repulsiveForceVector.sum(obstacleRepulsedVector);
                 }
 
-                this.drawVector(fromX, fromY, toX, toY);
+                totalForceVector = totalForceVector.sum(repulsiveForceVector);
+
+                let repulsiveNewForceVector = new Vector(0, 0);
+
+                for (const obstacle of obstacles) {     
+                    const obstacleNewRepulsedVector = obstacle
+                        .getFieldNewRepulsion(vectorAsVehicle, repulsiveForceVector, attractiveForceVector, totalForceVector)
+                        .scaleBy(arrowScale);
+        
+                    repulsiveNewForceVector = repulsiveNewForceVector.sum(obstacleNewRepulsedVector);
+                }
+
+                totalForceVector = totalForceVector.sum(repulsiveNewForceVector);
+
+                this.drawVector(vectorAsVehicle.x, vectorAsVehicle.y, vectorAsVehicle.x + totalForceVector.x, vectorAsVehicle.y + totalForceVector.y);
             }
         }
     }
