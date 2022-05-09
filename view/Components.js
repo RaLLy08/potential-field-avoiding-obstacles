@@ -10,19 +10,22 @@ const vehicleDisplay = (function() {
         static REPULSIVE_FORCE_NEW_COLOR_ID = 'repulsive-force-new-color';
         static VECTORS_FLOW_COLOR_ID = 'vectors-flow-color';
         static OBSTACLES_FIELD_RADIUS_COLOR_ID = 'obstacles-field-radius-color';
+        static THETA = 'theta';
+        static SIGMA = 'sigma';
 
         #totalForceInput;
         #attractiveForceInput;
         #repulsiveForceInput;
         #repulsiveNewForceInput;
+        #sigmaInput;
+        #thetaInput;
         constructor() {
             this.#totalForceInput = document.getElementById(VehicleDisplay.TOTAL_FORCE_ID);
-
             this.#attractiveForceInput = document.getElementById(VehicleDisplay.ATTRACTIVE_FORCE_ID);
-
             this.#repulsiveForceInput = document.getElementById(VehicleDisplay.REPULSIVE_FORCE_ID);
-
             this.#repulsiveNewForceInput = document.getElementById(VehicleDisplay.REPULSIVE_FORCE_NEW_ID);
+            this.#sigmaInput = document.getElementById(VehicleDisplay.SIGMA);
+            this.#thetaInput = document.getElementById(VehicleDisplay.THETA);
 
             this.#setColors();
         }
@@ -49,6 +52,18 @@ const vehicleDisplay = (function() {
          */
         set repulsiveNewForce(value) {
             this.#repulsiveNewForceInput.value = value.toPrecision(3);
+        }
+        /**
+         * @param {number} value
+         */
+        set theta(value) {
+            this.#thetaInput.value = value.toPrecision(3);
+        }
+        /**
+         * @param {number} value
+         */
+        set sigma(value) {
+            this.#sigmaInput.value = value.toPrecision(3);
         }
 
         #setColors() {
@@ -93,4 +108,33 @@ const canvasDisplay = (function() {
     }
 
     return new CanvasDisplay()
+})()
+
+const canvasActions = (function() {
+    class CanvasActions {
+        static RESET_VEHICLE_BUTTON_ID = 'reset-vehicle';
+        static PAUSE_RESUME_BUTTON_ID = 'pause-resume';
+        onResetVehicle = () => {};
+        onResume = () => {}
+        onPause = () => {}
+
+        constructor() {
+            this.#onButtonClick(document.getElementById(CanvasActions.RESET_VEHICLE_BUTTON_ID), () => this.onResetVehicle());
+            this.#onButtonClick(document.getElementById(CanvasActions.PAUSE_RESUME_BUTTON_ID), (target) => { 
+                if (target.innerText === 'Pause') {
+                    this.onPause();
+                    target.innerText = 'Resume';
+                    return
+                }
+                target.innerText = 'Pause';
+                this.onResume();
+            })
+        }
+
+        #onButtonClick = (el, listener) => {
+            el.onclick = (e) => void listener(e.target);
+        }
+    }
+
+    return new CanvasActions()
 })()

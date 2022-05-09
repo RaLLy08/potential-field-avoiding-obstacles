@@ -4,11 +4,12 @@ const obstacles = [];
 const canvas = new Canvas();
 
 obstacles.push(
-    // new Obstacle(450, 400, 300, 12, 1/20000, 160),
-    new Obstacle(250, 500, 100, 1.2, 0.00015, 18),
-    new Obstacle(400, 600, 40, 2, 0.00125),
-    new Obstacle(490, 500, 40, 2, 0.00125)
-
+    new Obstacle(350, 400, 190, 7, 1/9000, 90),
+    new Obstacle(600, 280, 100, 1.2, 0.00015, 18),
+    new Obstacle(690, 400, 100, 1.2, 0.00015, 18),
+    new Obstacle(300, 600, 40, 2, 0.00125),
+    new Obstacle(700, 600, 40, 2, 0.00125),
+    new Obstacle(600, 530, 40, 2, 0.00125),
 
     // new Obstacle(370, 200, 40, 2, 0.00125),
     // new Obstacle(400, 280, 40, 2, 0.00125),
@@ -17,8 +18,10 @@ obstacles.push(
     // new Obstacle(370, 520, 40, 2, 0.00125),
 );
 
-const target = new Target(800, Canvas.HEIGHT/2, 2.5, 0.00015);
+const target = new Target(1000, Canvas.HEIGHT/2, 2.5, 0.00015);
 const vehicle = new Vehicle(100, Canvas.HEIGHT/2, 20)
+
+let pause = false;
 
 const frame = () => {
     canvas.clear()
@@ -51,20 +54,23 @@ const frame = () => {
 
     totalForceVector = totalForceVector.sum(repulsiveNewForceVector)
 
+    // normilize to attractive speed
+    const toAttractiveSpeedVector = totalForceVector.normalize().scaleBy(attractiveForceVector.mag());
+
+    if (!pause) {
+        vehicle.move(totalForceVector.x, totalForceVector.y);
+    };
+
+
     vehicleDisplay.totalForce = totalForceVector.mag();
     vehicleDisplay.attractiveForce = attractiveForceVector.mag();
     vehicleDisplay.repulsiveForce = repulsiveForceVector.mag();
     vehicleDisplay.repulsiveNewForce = repulsiveNewForceVector.mag();
-    
-    // angle between Total force and Attractive force (tetha)
-    // console.log(Utils.toDegree(attractiveForceVector.angle(totalForceVector)), 'Attractive');
+
+    // angle between Total force and Attractive force (theta)
+    vehicleDisplay.theta = Utils.toDegree(attractiveForceVector.angle(totalForceVector));
     // angle between Total force and Repulsive force (sigma)
-    // console.log(Utils.toDegree(repulsiveForceVector.angle(totalForceVector)), 'Repulsive');
-
-    // normilize to attractive speed
-    // const toAttractiveSpeedVector = totalForceVector.normalize().scaleBy(attractiveForceVector.mag());
-
-    vehicle.move(totalForceVector.x, totalForceVector.y);
+    vehicleDisplay.sigma = Utils.toDegree(repulsiveForceVector.angle(totalForceVector));
 
 
     if (canvasDisplay.repulsiveNewForce) {
@@ -89,11 +95,8 @@ const frame = () => {
     }
 
     // **TODO**
-    // change canvas to vectors drawing
     // change for of obstacles to common sum
-    // deepht field vectors
     // reset vehicle
-    // scale to consts
     // add remove forces
     // edit obstacles  
     window.requestAnimationFrame(frame)
@@ -101,8 +104,25 @@ const frame = () => {
 
 frame();
 
+canvasActions.onResetVehicle = () => {
+    vehicle.x = 100;
+    vehicle.y = Canvas.HEIGHT/2;
+}
+
+canvasActions.onResume = () => {
+    pause = false;
+    frame();
+}
+canvasActions.onPause = () => { 
+    pause = true;
+}
+
 // skip it, only for testing
 let pressed = false;
+
+canvas.element.onmousedown = (e) => {
+    pressed = true;
+}
 
 canvas.element.onmousemove = (e) => {
     if (!pressed) return;
@@ -110,25 +130,6 @@ canvas.element.onmousemove = (e) => {
     target.y = e.offsetY;
 }
 
-canvas.element.onmousedown = (e) => {
-    pressed = true;
-    const mouseAsVehicle = new Vehicle(e.offsetX, e.offsetY, 1, 0, 0);
-
-    for (const obstacle of obstacles) {
-        const { x: vxR, y: vyR } = obstacle.getFieldRepulsion(mouseAsVehicle);
-        
-        if (!Math.hypot(vxR, vyR)) return
-
-        console.log( Math.hypot(vxR, vyR).toPrecision(4), Math.hypot(obstacle.x - mouseAsVehicle.x, obstacle.y - mouseAsVehicle.y));
-    }
-}
-
 canvas.element.onmouseup = (e) => {
     pressed = false;
-}
-
-window.onkeydown = (e) => {
-    if (e.code === 'KeyS') {
-        alert()
-    }
 }

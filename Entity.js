@@ -91,8 +91,6 @@ class Obstacle extends Vector {
         }
 
         const forceAtPoint = this.#repulsiveForce(distance)
-
-
         // normalize by force
         return difference.normalize().scaleBy(forceAtPoint);
         /** the same as:

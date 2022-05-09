@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PF Avoiding obstacles</title>
-    <script src="./view/DisplayParams.js" defer></script>
+    <script src="./view/Components.js" defer></script>
     <script src="./index.js" defer ></script>
     <script src="./consts.js"></script>
     <script src="./Vector.js"></script>
@@ -50,6 +50,10 @@
         label {
             cursor: pointer;
         }
+        span[title] {
+            cursor: default;
+            margin-left: 0.2em;
+        }
         label[title] {
             margin-left: 0.2em;
         }
@@ -64,7 +68,7 @@
         input[type="checkbox"] {
             cursor: pointer;
         }
-        canvas {
+        .canvasWrapper {
             transform: translate(-50%, -50%); 
             position: absolute; 
             top: 50%; 
@@ -73,6 +77,18 @@
         }
         canvas {
             border: dashed 1px;
+        }
+        .resetVehicle {
+            cursor: pointer;
+            position: absolute; 
+            bottom: -40px;
+            right: 0;
+        }
+        .pauseResume {
+            cursor: pointer;
+            position: absolute; 
+            bottom: -40px;
+            right: 110px;
         }
 
     </style>
@@ -90,7 +106,7 @@
                             <input id="total-force" class="display-input" readonly>            
                         </td>
                         <td>
-                            <label title="Total Force/Speed"> ( F(tot) or V)</label>
+                            <span title="Total Force/Speed"> F(tot) or V</span>
                         </td>
                     </tr>
                     <tr class="displayParams__row">
@@ -100,7 +116,7 @@
                             <input id="attractive-force" class="display-input" readonly>
                         </td>
                         <td>
-                            <label title="Attractive Force"> ( F(att) ) </label>
+                            <span title="Attractive Force"> F(att) </span>
                         </td>
                     </tr>
                     <tr class="displayParams__row">
@@ -110,7 +126,7 @@
                             <input id="repulsive-force" class="display-input" readonly>
                         </td>
                         <td>
-                            <label title="Repulsive Force"> ( F(rep) ) </label>
+                            <span title="Repulsive Force"> F(rep) </span>
                         </td>
                     </tr>
                     <tr class="displayParams__row">
@@ -120,7 +136,27 @@
                             <input id="repulsive-force-new" class="display-input" readonly>
                         </td>
                         <td>
-                            <label title="Repulsive New Force"> ( F(rep_new) ) </label>
+                            <span title="Repulsive New Force"> F(rep_new) </span>
+                        </td>
+                    </tr>
+                    <tr class="displayParams__row">
+                        <td>
+                        </td>
+                        <td>
+                            <input id="theta" class="display-input" readonly>
+                        </td>
+                        <td>
+                            <span title="Angle between Total and Repulsive Force">F(att) and F(tot) angle (&Theta;) </span>
+                        </td>
+                    </tr>
+                    <tr class="displayParams__row">
+                        <td>
+                        </td>
+                        <td>
+                            <input id="sigma" class="display-input" readonly>
+                        </td>
+                        <td>
+                            <span title="Angle between Total and Attractive Force"> F(rep) and F(tot) angle (&sigma;) </span>
                         </td>
                     </tr>
                 </table>
@@ -147,7 +183,7 @@
                             </div>
                         </td>
                         <td>
-                            <label for="total-force-field-checkbox" title="Total Force/Speed"> ( F(tot) or V)</label>
+                            <label for="total-force-field-checkbox" title="Total Force/Speed"> F(tot) or V </label>
                         </td>
                     </tr>
                     <tr>
@@ -158,7 +194,7 @@
                             </div>
                         </td>
                         <td>
-                            <label for="attractive-force-field-checkbox" title="Attractive Force"> ( F(att) ) </label>
+                            <label for="attractive-force-field-checkbox" title="Attractive Force"> F(att) </label>
                         </td>
                     </tr>
                     <tr>
@@ -169,7 +205,7 @@
                             </div>
                         </td>
                         <td>
-                            <label for="repulsive-force-field-checkbox" title="Repulsive Force"> ( F(rep) ) </label>
+                            <label for="repulsive-force-field-checkbox" title="Repulsive Force"> F(rep) </label>
                         </td>
                     </tr>
                     <tr>
@@ -181,7 +217,7 @@
 
                         </td>
                         <td>
-                            <label for="repulsive-force-new-field-checkbox" title="Repulsive New Force"> ( F(rep_new) ) </label>
+                            <label for="repulsive-force-new-field-checkbox" title="Repulsive New Force"> F(rep_new) </label>
                         </td>
                     </tr>
                     <tr>
@@ -199,7 +235,11 @@
                 </table>
             </details>
         </div>
-        <canvas id="canvas" ></canvas>
+        <div class="canvasWrapper">
+            <canvas id="canvas" ></canvas>
+            <button id="reset-vehicle" class="resetVehicle">Reset vehicle</button>
+            <button id="pause-resume" class="pauseResume">Pause</button>
+        </div>
     </div>
 </body>
 </html>
