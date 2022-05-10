@@ -33,7 +33,6 @@ let pause = false;
 
 const frame = () => {
     canvas.clear()
-
     canvasDisplay.vectorsFlow && canvas.drawTargetVectorsFlow(target, obstacles);
 
     canvas.drawTarget(target);
@@ -61,7 +60,7 @@ const frame = () => {
     let repulsiveNewForceVector = new Vector(0, 0);
     // sum of each of obstacles Repulsion New Force
     for (const obstacle of obstacles) {     
-        const obstacleNewRepulsedVector = obstacle.getFieldNewRepulsion(vehicle, repulsiveForceVector, attractiveForceVector, totalForceVector);
+        const obstacleNewRepulsedVector = obstacle.getFieldNewRepulsion(vehicle, repulsiveForceVector, attractiveForceVector, totalForceVector, obstacles);
         
         repulsiveNewForceVector = repulsiveNewForceVector.sum(obstacleNewRepulsedVector);
     }
@@ -75,14 +74,14 @@ const frame = () => {
         vehicle.move(totalForceVector.x, totalForceVector.y);
     };
 
-    displayForces(vehicle, attractiveForceVector, repulsiveForceVector, repulsiveNewForceVector, totalForceVector);
+    displayToCanvas(vehicle, attractiveForceVector, repulsiveForceVector, repulsiveNewForceVector, totalForceVector);
  
     window.requestAnimationFrame(frame)
 }
 
 frame();
 
-function displayForces(vehicle, attractiveForceVector, repulsiveForceVector, repulsiveNewForceVector, totalForceVector) {
+function displayToCanvas(vehicle, attractiveForceVector, repulsiveForceVector, repulsiveNewForceVector, totalForceVector) {
     vehicleDisplay.totalForce = totalForceVector.mag();
     vehicleDisplay.attractiveForce = attractiveForceVector.mag();
     vehicleDisplay.repulsiveForce = repulsiveForceVector.mag();
@@ -93,6 +92,8 @@ function displayForces(vehicle, attractiveForceVector, repulsiveForceVector, rep
     // angle between Total force and Repulsive force (sigma)
     vehicleDisplay.sigma = Utils.toDegree(Math.PI - repulsiveForceVector.angle(totalForceVector));
 
+    vehicleDisplay.x = vehicle.x;
+    vehicleDisplay.y = vehicle.y;
 
     if (canvasDisplay.repulsiveNewForce) {
         const { x: rnFx, y: rnFy } = repulsiveNewForceVector.scaleBy(100).sum(vehicle);
@@ -134,6 +135,7 @@ let pressed = false;
 
 canvas.element.onmousedown = (e) => {
     pressed = true;
+    // obstacles.push(new Obstacle(e.offsetX, e.offsetY, 100, 2, 0.00015, 18))
 }
 
 canvas.element.onmousemove = (e) => {

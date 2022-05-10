@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PF Avoiding obstacles</title>
     <script src="./view/Components.js" defer></script>
+    <script src="./view/helpers.js"></script>
     <script src="./index.js" defer ></script>
     <script src="./consts.js"></script>
     <script src="./Vector.js"></script>
@@ -25,15 +26,15 @@
             height: 1em;
         }
         .display-input {
-            max-width: 60px
+            max-width: 40px
         }
         .displayParams {
-            font-size: 0.9em;
+            font-size: 0.9rem;
             position: relative;
             z-index: 999;
             display: inline-block;
-            margin-top: 0.2em;
-            margin-left: 0.5em;
+            margin-top: 0.2rem;
+            margin-left: 0.5rem;
         }
         .displayParams__displayWrapper {
             display: flex;
@@ -52,10 +53,10 @@
         }
         span[title] {
             cursor: default;
-            margin-left: 0.2em;
+            margin-left: 0.2rem;
         }
         label[title] {
-            margin-left: 0.2em;
+            margin-left: 0.2rem;
         }
         .displayParams table {
             margin-top: 0.4em;
@@ -90,7 +91,9 @@
             bottom: -40px;
             right: 110px;
         }
-
+        details details {
+            margin-left: 0.8em;
+        }
     </style>
 </head>
 <body>
@@ -98,68 +101,86 @@
         <div class="displayParams">
             <details open>
                 <summary>Vehicle</summary>
-                <table>
-                    <tr class="displayParams__row">
-                        <td>
-                        </td>
-                        <td>
-                            <input id="total-force" class="display-input" readonly>            
-                        </td>
-                        <td>
-                            <span title="Total Force/Speed"> F(tot) or V</span>
-                        </td>
-                    </tr>
-                    <tr class="displayParams__row">
-                        <td>
-                        </td>
-                        <td>
-                            <input id="attractive-force" class="display-input" readonly>
-                        </td>
-                        <td>
-                            <span title="Attractive Force"> F(att) </span>
-                        </td>
-                    </tr>
-                    <tr class="displayParams__row">
-                        <td>
-                        </td>
-                        <td>
-                            <input id="repulsive-force" class="display-input" readonly>
-                        </td>
-                        <td>
-                            <span title="Repulsive Force"> F(rep) </span>
-                        </td>
-                    </tr>
-                    <tr class="displayParams__row">
-                        <td>
-                        </td>
-                        <td>
-                            <input id="repulsive-force-new" class="display-input" readonly>
-                        </td>
-                        <td>
-                            <span title="Repulsive New Force"> F(rep_new) </span>
-                        </td>
-                    </tr>
-                    <tr class="displayParams__row">
-                        <td>
-                        </td>
-                        <td>
-                            <input id="theta" class="display-input" readonly>
-                        </td>
-                        <td>
-                            <span title="Angle between Total and Repulsive Force">F(att) and F(tot) angle (&Theta;) </span>
-                        </td>
-                    </tr>
-                    <tr class="displayParams__row">
-                        <td>
-                        </td>
-                        <td>
-                            <input id="sigma" class="display-input" readonly>
-                        </td>
-                        <td>
-                            <span title="Angle between Total and Attractive Force"> F(rep) and F(tot) angle (&sigma;) </span>
-                        </td>
-                    </tr>
-                </table>
+                <details open>
+                    <summary>Position</summary>
+                    <table>
+                        <tr class="displayParams__row">
+                            <td>
+                                <span title="X">X</span>
+                                <input id="x" class="display-input" readonly>            
+                            </td>
+                            <td>
+                                <span title="Y">Y</span>
+                                <input id="y" class="display-input" readonly>
+                            </td>
+                        </tr>
+                    </table>
+                </details>
+                <details open>
+                    <summary>Forces</summary>
+                    <table>
+                        <tr class="displayParams__row">
+                            <td>
+                            </td>
+                            <td>
+                                <input id="total-force" class="display-input" readonly>            
+                            </td>
+                            <td>
+                                <span title="Total Force/Speed"> F(tot) or V</span>
+                            </td>
+                        </tr>
+                        <tr class="displayParams__row">
+                            <td>
+                            </td>
+                            <td>
+                                <input id="attractive-force" class="display-input" readonly>
+                            </td>
+                            <td>
+                                <span title="Attractive Force"> F(att) </span>
+                            </td>
+                        </tr>
+                        <tr class="displayParams__row">
+                            <td>
+                            </td>
+                            <td>
+                                <input id="repulsive-force" class="display-input" readonly>
+                            </td>
+                            <td>
+                                <span title="Repulsive Force"> F(rep) </span>
+                            </td>
+                        </tr>
+                        <tr class="displayParams__row">
+                            <td>
+                            </td>
+                            <td>
+                                <input id="repulsive-force-new" class="display-input" readonly>
+                            </td>
+                            <td>
+                                <span title="Repulsive New Force"> F(rep_new) </span>
+                            </td>
+                        </tr>
+                        <tr class="displayParams__row">
+                            <td>
+                            </td>
+                            <td>
+                                <input id="theta" class="display-input" readonly>
+                            </td>
+                            <td>
+                                <span title="Angle between Total and Repulsive Force">F(att) and F(tot) angle (&Theta;) </span>
+                            </td>
+                        </tr>
+                        <tr class="displayParams__row">
+                            <td>
+                            </td>
+                            <td>
+                                <input id="sigma" class="display-input" readonly>
+                            </td>
+                            <td>
+                                <span title="Angle between Total and Attractive Force"> F(rep) and F(tot) angle (&sigma;) </span>
+                            </td>
+                        </tr>
+                    </table>
+                </details>
             </details>
             <details open > 
                 <summary>Canvas</summary>
@@ -234,6 +255,12 @@
                     </tr>
                 </table>
             </details>
+            <!-- <details>
+                <summary>Obstacles</summary>
+            </details>
+            <details>
+                <summary>Target</summary>
+            </details> -->
         </div>
         <div class="canvasWrapper">
             <canvas id="canvas" ></canvas>
