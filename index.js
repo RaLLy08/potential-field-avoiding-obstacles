@@ -60,7 +60,8 @@ const frame = () => {
     let repulsiveNewForceVector = new Vector(0, 0);
     // sum of each of obstacles Repulsion New Force
     for (const obstacle of obstacles) {     
-        const obstacleNewRepulsedVector = obstacle.getFieldNewRepulsion(vehicle, repulsiveForceVector, attractiveForceVector, totalForceVector, obstacles);
+        const obstacleNewRepulsedVector = obstacle
+            .getFieldNewRepulsion(vehicle, repulsiveForceVector, attractiveForceVector, totalForceVector);
         
         repulsiveNewForceVector = repulsiveNewForceVector.sum(obstacleNewRepulsedVector);
     }
@@ -91,6 +92,8 @@ function displayToCanvas(vehicle, attractiveForceVector, repulsiveForceVector, r
     vehicleDisplay.theta = Utils.toDegree(attractiveForceVector.angle(totalForceVector));
     // angle between Total force and Repulsive force (sigma)
     vehicleDisplay.sigma = Utils.toDegree(Math.PI - repulsiveForceVector.angle(totalForceVector));
+    // angle between Attractive force and Repulsive force (gamma)
+    vehicleDisplay.gamma = Utils.toDegree(attractiveForceVector.fullAngle(repulsiveForceVector));
 
     vehicleDisplay.x = vehicle.x;
     vehicleDisplay.y = vehicle.y;

@@ -58,20 +58,19 @@ class Obstacle extends Vector {
             return newRepulsionVector;
         }
         
+        if (!vehicle.clockDirectionSign) {
+            // direction of New Repulsion force from full angle between RF and TF
+            vehicle.clockDirectionSign = Math.sign(r.fullAngle(t))
+        }
         // indirect proportion of angle between Total Force and Attractive Force
         // const k = Math.abs(Math.cos(t.angle(a)));
-
+        
         const kMax = 2;
         const sigma = Math.PI - r.angle(t);
         const tau = 1;
 
         const k = kMax / (1 + Math.exp(sigma / tau));
 
-
-        if (!vehicle.clockDirectionSign) {
-            // direction of New Repulsion force from full angle between RF and TF
-            vehicle.clockDirectionSign = Math.sign(Math.atan2(r.x * t.y - r.y* t.x, r.x*t.x + r.y*t.y))
-        }
         // const clockDirectionSign = Math.sign(Math.atan2(r.x * t.y - r.y* t.x, r.x*t.x + r.y*t.y));
 
         const rXrYTan = Math.abs(r.x / r.y);
@@ -136,9 +135,3 @@ class Vehicle extends Vector {
         return Math.atan2(this.vy, this.vx);
     }
 }
-
-// const kMax = 2;
-// const sigma = Utils.toDegree(Math.PI - r.angle(t));
-
-// const k = kMax/(1 + Math.exp(sigma / 23));
-// console.log(k, 'ang', Utils.toDegree( Math.PI - r.angle(t)));

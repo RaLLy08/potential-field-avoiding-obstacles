@@ -18,9 +18,10 @@ class Vector {
         const dotOther = this.dot(other);
         const magMult = this.mag() * other.mag();
 
-        // if (magMult === 0) return 1;
-
         return Math.acos(dotOther / magMult);
+    }
+    fullAngle(other) {
+        return Math.atan2(this.x * other.y - this.y* other.x, this.x*other.x + this.y*other.y)
     }
     sum(other) {
         return new Vector(other.x + this.x, other.y + this.y, this.params);

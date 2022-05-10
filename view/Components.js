@@ -10,10 +10,11 @@ const vehicleDisplay = (function() {
         static REPULSIVE_FORCE_NEW_COLOR_ID = 'repulsive-force-new-color';
         static VECTORS_FLOW_COLOR_ID = 'vectors-flow-color';
         static OBSTACLES_FIELD_RADIUS_COLOR_ID = 'obstacles-field-radius-color';
-        static THETA = 'theta';
-        static SIGMA = 'sigma';
-        static X = 'x';
-        static Y = 'y';
+        static THETA_ID = 'theta';
+        static SIGMA_ID = 'sigma';
+        static GAMMA_ID = 'gamma';
+        static X_ID = 'x';
+        static Y_ID = 'y';
 
         #totalForceInput;
         #attractiveForceInput;
@@ -21,17 +22,19 @@ const vehicleDisplay = (function() {
         #repulsiveNewForceInput;
         #sigmaInput;
         #thetaInput;
+        #gammaInput;
         #xInput;
-        #yInput
+        #yInput;
         constructor() {
             this.#totalForceInput = document.getElementById(VehicleDisplay.TOTAL_FORCE_ID);
             this.#attractiveForceInput = document.getElementById(VehicleDisplay.ATTRACTIVE_FORCE_ID);
             this.#repulsiveForceInput = document.getElementById(VehicleDisplay.REPULSIVE_FORCE_ID);
             this.#repulsiveNewForceInput = document.getElementById(VehicleDisplay.REPULSIVE_FORCE_NEW_ID);
-            this.#sigmaInput = document.getElementById(VehicleDisplay.SIGMA);
-            this.#thetaInput = document.getElementById(VehicleDisplay.THETA);
-            this.#xInput = document.getElementById(VehicleDisplay.X);
-            this.#yInput = document.getElementById(VehicleDisplay.Y);
+            this.#sigmaInput = document.getElementById(VehicleDisplay.SIGMA_ID);
+            this.#thetaInput = document.getElementById(VehicleDisplay.THETA_ID);
+            this.#gammaInput = document.getElementById(VehicleDisplay.GAMMA_ID);
+            this.#xInput = document.getElementById(VehicleDisplay.X_ID);
+            this.#yInput = document.getElementById(VehicleDisplay.Y_ID);
 
             this.#setColors();
         }
@@ -60,16 +63,25 @@ const vehicleDisplay = (function() {
             this.#repulsiveNewForceInput.value = value.toPrecision(3);
         }
         /**
+         * F(att) and F(tot) angle
          * @param {number} value
          */
         set theta(value) {
-            this.#thetaInput.value = value.toPrecision(3);
+            this.#thetaInput.value = value.toPrecision(3) + '°';
         }
         /**
+         * F(rep) and F(tot) angle
          * @param {number} value
          */
         set sigma(value) {
-            this.#sigmaInput.value = value.toPrecision(3);
+            this.#sigmaInput.value = value.toPrecision(3)  + '°';
+        }
+        /**
+         * F(att) and F(rep) angle
+         * @param {number} value
+         */
+        set gamma(value) {
+            this.#gammaInput.value = value.toPrecision(3)  + '°';
         }
         /**
          * @param {number} value
