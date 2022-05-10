@@ -10,4 +10,10 @@ class Utils {
     static toRadians(degree) {
         return (degree*Math.PI) / 180
     }
+    static normalizeAngle(angle) {
+        if (angle < 0) {
+            angle = 2 * Math.PI + angle;
+        }
+        return angle;
+    }
 }

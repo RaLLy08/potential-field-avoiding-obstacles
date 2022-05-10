@@ -28,9 +28,8 @@ const frame = () => {
     let totalForceVector = repulsiveForceVector.sum(attractiveForceVector);
     const sigma = Math.PI - repulsiveForceVector.angle(totalForceVector);
 
-    const clockDirectionSign = Math.sign(repulsiveForceVector.fullAngle(attractiveForceVector))
+    const clockDirectionSign = Math.sign(repulsiveForceVector.fullAngle(totalForceVector))
     const repulsiveNewForceVector = obstacles.getRepulsiveForceNew(vehicle, repulsiveForceVector, sigma, clockDirectionSign);
-
     totalForceVector = totalForceVector.sum(repulsiveNewForceVector);
 
     // normilize to attractive speed
@@ -61,9 +60,9 @@ function renderToCanvas(obstacles, attractiveForceVector, repulsiveForceVector, 
     // angle between Total force and Attractive force (theta)
     vehicleDisplay.theta = Utils.toDegree(attractiveForceVector.angle(totalForceVector));
     // angle between Total force and Repulsive force (sigma)
-    vehicleDisplay.sigma = Utils.toDegree(Math.PI - repulsiveForceVector.angle(totalForceVector));
+    vehicleDisplay.sigma = Utils.toDegree(Utils.normalizeAngle(repulsiveForceVector.fullAngle(totalForceVector)));
     // angle between Attractive force and Repulsive force (gamma)
-    vehicleDisplay.gamma = Utils.toDegree(attractiveForceVector.fullAngle(repulsiveForceVector));
+    vehicleDisplay.gamma = Utils.toDegree(Utils.normalizeAngle(attractiveForceVector.fullAngle(repulsiveForceVector)));
 
     vehicleDisplay.x = vehicle.x;
     vehicleDisplay.y = vehicle.y;
