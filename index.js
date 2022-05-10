@@ -1,29 +1,16 @@
-const obstacles = [];
-
-
 const canvas = new Canvas();
 
-obstacles.push(
-    new Obstacle(350, 400, 190, 7, 1/9000, 90),
-    new Obstacle(600, 280, 100, 1.2, 0.00015, 18),
-    new Obstacle(690, 400, 100, 1.2, 0.00015, 18),
-    new Obstacle(300, 600, 40, 2, 0.00125),
-    new Obstacle(700, 600, 40, 2, 0.00125),
-    new Obstacle(600, 530, 40, 2, 0.00125),
 
-    // new Obstacle(400, 200, 100, 2, 0.00015, 18),
-    // new Obstacle(400, 240, 100, 2, 0.00015, 18),
-    // new Obstacle(400, 280, 100, 2, 0.00015, 18),
-    // new Obstacle(400, 300, 100, 2, 0.00015, 18),
-    // new Obstacle(400, 320, 100, 2, 0.00015, 18),
-    // new Obstacle(400, 340, 100, 2, 0.00015, 18),
-    // new Obstacle(400, 360, 100, 2, 0.00015, 18),
-    // new Obstacle(400, 380, 100, 2, 0.00015, 18),
-    // new Obstacle(400, 400, 100, 2, 0.00015, 18),
-    // new Obstacle(400, 440, 100, 2, 0.00015, 18),
-    // new Obstacle(400, 500, 100, 2, 0.00015, 18),
-    // new Obstacle(400, 530, 100, 2, 0.00015, 18),
-    // new Obstacle(400, 550, 100, 2, 0.00015, 18),
+
+const obstacles = new Obstacles(
+    [
+        new Obstacle(350, 400, 190, 7, 1/9000, 90),
+        new Obstacle(600, 280, 100, 1.4, 0.00015, 18),
+        new Obstacle(690, 400, 100, 1.4, 0.00015, 18),
+        new Obstacle(300, 600, 40, 2, 0.00125),
+        new Obstacle(700, 600, 40, 2, 0.00125),
+        new Obstacle(600, 530, 40, 2, 0.00125),
+    ]
 );
 
 const target = new Target(1000, Canvas.HEIGHT/2, 2.5, 0.00015);
@@ -33,56 +20,39 @@ let pause = false;
 
 const frame = () => {
     canvas.clear()
-    canvasDisplay.vectorsFlow && canvas.drawTargetVectorsFlow(target, obstacles);
-
-    canvas.drawTarget(target);
-    canvas.drawVehicle(vehicle);
 
     const attractiveForceVector = target.getFieldAttraction(vehicle);
+    const repulsiveForceVector = obstacles.getRepulsiveForce(vehicle);
 
-    // sum of each of obstacles Repulsion Force
-    let repulsiveForceVector = new Vector(0, 0);
-    //
-    for (const obstacle of obstacles) {     
-        const obstacleRepulsedVector = obstacle.getFieldRepulsion(vehicle);
-        repulsiveForceVector = repulsiveForceVector.sum(obstacleRepulsedVector);
-
-        canvas.drawObstacle(obstacle);
-    }
-        // escaped from all fields
-    if (repulsiveForceVector.mag() === 0 && vehicle.clockDirectionSign) {
-        vehicle.clockDirectionSign = 0;
-    }
-
-
+    // attractive + repulsive
     let totalForceVector = repulsiveForceVector.sum(attractiveForceVector);
+    const sigma = Math.PI - repulsiveForceVector.angle(totalForceVector);
 
-    let repulsiveNewForceVector = new Vector(0, 0);
-    // sum of each of obstacles Repulsion New Force
-    for (const obstacle of obstacles) {     
-        const obstacleNewRepulsedVector = obstacle
-            .getFieldNewRepulsion(vehicle, repulsiveForceVector, attractiveForceVector, totalForceVector);
-        
-        repulsiveNewForceVector = repulsiveNewForceVector.sum(obstacleNewRepulsedVector);
-    }
+    const clockDirectionSign = Math.sign(repulsiveForceVector.fullAngle(attractiveForceVector))
+    const repulsiveNewForceVector = obstacles.getRepulsiveForceNew(vehicle, repulsiveForceVector, sigma, clockDirectionSign);
 
-    totalForceVector = totalForceVector.sum(repulsiveNewForceVector)
+    totalForceVector = totalForceVector.sum(repulsiveNewForceVector);
 
     // normilize to attractive speed
-    const toAttractiveSpeedVector = totalForceVector.normalize().scaleBy(attractiveForceVector.mag());
+    // const toAttractiveSpeedVector = totalForceVector.normalize().scaleBy(attractiveForceVector.mag());
 
     if (!pause) {
         vehicle.move(totalForceVector.x, totalForceVector.y);
     };
 
-    displayToCanvas(vehicle, attractiveForceVector, repulsiveForceVector, repulsiveNewForceVector, totalForceVector);
+    renderToCanvas(obstacles.getAll(), attractiveForceVector, repulsiveForceVector, repulsiveNewForceVector, totalForceVector);
  
     window.requestAnimationFrame(frame)
 }
 
 frame();
 
-function displayToCanvas(vehicle, attractiveForceVector, repulsiveForceVector, repulsiveNewForceVector, totalForceVector) {
+function renderToCanvas(obstacles, attractiveForceVector, repulsiveForceVector, repulsiveNewForceVector, totalForceVector) {
+    canvasDisplay.vectorsFlow && canvas.drawTargetVectorsFlow(target, obstacles);
+
+    canvas.drawTarget(target);
+    canvas.drawVehicle(vehicle);
+
     vehicleDisplay.totalForce = totalForceVector.mag();
     vehicleDisplay.attractiveForce = attractiveForceVector.mag();
     vehicleDisplay.repulsiveForce = repulsiveForceVector.mag();
@@ -97,6 +67,10 @@ function displayToCanvas(vehicle, attractiveForceVector, repulsiveForceVector, r
 
     vehicleDisplay.x = vehicle.x;
     vehicleDisplay.y = vehicle.y;
+
+    for (const obstacle of obstacles) {     
+        canvas.drawObstacle(obstacle);
+    }
 
     if (canvasDisplay.repulsiveNewForce) {
         const { x: rnFx, y: rnFy } = repulsiveNewForceVector.scaleBy(100).sum(vehicle);

@@ -78,7 +78,7 @@ class Canvas {
      * 
      * @param {Target} target 
      */
-    drawTargetVectorsFlow(target, obstacles) {
+    drawTargetVectorsFlow() {
         const xPoints = 50;
         const yPoints = 50;
         const spaceX =Canvas.WIDTH / xPoints;
@@ -89,37 +89,15 @@ class Canvas {
             for (let j = 0; j <= yPoints; j++) { 
          
                 let vectorAsVehicle = new Vector(i*spaceX, j*spaceY);
-
-                let totalForceVector = new Vector(0, 0)
-
-                const attractiveForceVector = target.getFieldAttraction(vectorAsVehicle).scaleBy(arrowScale);
-   
-                totalForceVector = attractiveForceVector.sum(totalForceVector);
-
-                let repulsiveForceVector = new Vector(0, 0);
-
-                for (const obstacle of obstacles) {
-                    const obstacleRepulsedVector = obstacle.getFieldRepulsion(vectorAsVehicle).scaleBy(arrowScale);
-
-                    repulsiveForceVector = repulsiveForceVector.sum(obstacleRepulsedVector);
-                }
-
-                // escaped from all fields
-                if (repulsiveForceVector.mag() === 0 && vectorAsVehicle.clockDirectionSign) {
-                    vectorAsVehicle.clockDirectionSign = 0;
-                }
                 
-                totalForceVector = totalForceVector.sum(repulsiveForceVector);
+                const attractiveForceVector = target.getFieldAttraction(vectorAsVehicle).scaleBy(arrowScale);
+                const repulsiveForceVector = obstacles.getRepulsiveForce(vectorAsVehicle).scaleBy(arrowScale);
 
-                let repulsiveNewForceVector = new Vector(0, 0);
+                let totalForceVector = repulsiveForceVector.sum(attractiveForceVector);
+                const sigma = Math.PI - repulsiveForceVector.angle(totalForceVector);
 
-                for (const obstacle of obstacles) {     
-                    const obstacleNewRepulsedVector = obstacle
-                        .getFieldNewRepulsion(vectorAsVehicle, repulsiveForceVector, attractiveForceVector, totalForceVector)
-                        .scaleBy(arrowScale);
-        
-                    repulsiveNewForceVector = repulsiveNewForceVector.sum(obstacleNewRepulsedVector);
-                }
+                const clockDirectionSign = Math.sign(repulsiveForceVector.fullAngle(attractiveForceVector))
+                const repulsiveNewForceVector = obstacles.getRepulsiveForceNew(vectorAsVehicle, repulsiveForceVector, sigma, clockDirectionSign).scaleBy(arrowScale);
 
                 totalForceVector = totalForceVector.sum(repulsiveNewForceVector);
 
