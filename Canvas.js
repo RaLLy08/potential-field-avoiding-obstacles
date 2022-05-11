@@ -55,9 +55,9 @@ class Canvas {
         this.#drawPoint(toX, toY, pointWidth, 'red')
     }
 
-    drawObstacle({x, y, fieldRadius, obstacleRadius}) {
+    drawObstacle({x, y, fieldRadius, r}) {
         canvasDisplay.obstaclesFieldRadius && this.#drawCircle(x, y, fieldRadius, COLOR.OBSTACLES_FIELD_RADIUS, 1);
-        this.#drawPoint(x, y, obstacleRadius, COLOR.OBSTACLE);
+        this.#drawPoint(x, y, r, COLOR.OBSTACLE);
     }
 
     drawTarget({x, y}) {

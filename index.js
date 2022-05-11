@@ -30,52 +30,28 @@ const obstacles = new Obstacles(
 );
 
 const target = new Target(1000, Canvas.HEIGHT/2, 2.5, 0.00015);
-const vehicle = new Vehicle(100, Canvas.HEIGHT/2, 80)
+const vehicle = new Vehicle(100, Canvas.HEIGHT/2, 150)
 
 let pause = false;
 
 const frame = () => {
     canvas.clear()
 
-    const attractiveForceVector = target.getFieldAttraction(vehicle);
-    let totalRepulsiveForceVector = new Vector(0, 0);
-    let totalRepulsiveForceNewVector = new Vector(0, 0);
-    let totalForceVector = new Vector(0, 0);
-
-    const allRepulsiveForcesVectors = obstacles.getRepulsiveForces(vehicle, attractiveForceVector);
-
-    // maybe removed by auto sum
-    for (const repulsiveForcesVectors of allRepulsiveForcesVectors) {
-        const [obstacleRepulsedForceVector, obstacleRepulsedForceNewVector] = repulsiveForcesVectors;
-
-        canvas.drawVector(vehicle.x, vehicle.y,vehicle.x+ obstacleRepulsedForceVector.x*100, vehicle.y +obstacleRepulsedForceVector.y*100, 2, 0.5, COLOR.REPULSIVE_FORCE);
-        canvas.drawVector(vehicle.x, vehicle.y,vehicle.x+ obstacleRepulsedForceNewVector.x*100, vehicle.y +obstacleRepulsedForceNewVector.y*100, 2, 0.5, COLOR.REPULSIVE_FORCE_NEW);
-        
-        totalRepulsiveForceVector = totalRepulsiveForceVector.sum(obstacleRepulsedForceVector);
-        totalRepulsiveForceNewVector = totalRepulsiveForceNewVector.sum(obstacleRepulsedForceNewVector);
-    }
-
-
-    totalForceVector = totalForceVector.sum(attractiveForceVector).sum(totalRepulsiveForceVector).sum(totalRepulsiveForceNewVector);
-
-    // const repulsiveNewForceVector = obstacles.getRepulsiveForceNew(vehicle, repulsiveForceVector, totalForceVector, attractiveForceVector);
-    // totalForceVector = totalForceVector.sum(repulsiveNewForceVector);
-
-    // normilize to attractive speed
-    const toAttractiveSpeedVector = totalForceVector.normalize().scaleBy(attractiveForceVector.mag());
-
     if (!pause) {
-        vehicle.move(totalForceVector.x, totalForceVector.y);
+        vehicle.setAtractiveForce(target);
+        vehicle.setObstacles(obstacles.getObstaclesInVehicleRadius(vehicle))
+
+        vehicle.move();
     };
 
-    renderToCanvas(obstacles.getAll(), attractiveForceVector, totalRepulsiveForceVector, totalRepulsiveForceNewVector, totalForceVector);
+    renderVehicleToCanvas(obstacles.getAll(), vehicle.attractiveForce, vehicle.totalRepulsiveForce, vehicle.totalRepulsiveForceNew, vehicle.totalForce);
  
     window.requestAnimationFrame(frame)
 }
 
 frame();
 
-function renderToCanvas(obstacles, attractiveForceVector, repulsiveForceVector, repulsiveNewForceVector, totalForceVector) {
+function renderVehicleToCanvas(obstacles, attractiveForceVector, repulsiveForceVector, repulsiveNewForceVector, totalForceVector) {
     canvasDisplay.vectorsFlow && canvas.drawTargetVectorsFlow(target, obstacles);
 
     canvas.drawTarget(target);
@@ -102,7 +78,7 @@ function renderToCanvas(obstacles, attractiveForceVector, repulsiveForceVector, 
 
     if (canvasDisplay.repulsiveNewForce) {
         const { x: rnFx, y: rnFy } = repulsiveNewForceVector.scaleBy(100).sum(vehicle);
-        canvas.drawVector(vehicle.x, vehicle.y, rnFx, rnFy, 2, 1.5, COLOR.REPULSIVE_FORCE_NEW);
+        canvas.drawVector(vehicle.x, vehicle.y, rnFx, rnFy, 2, 1.5, COLOR._TOTAL_REPULSIVE_FORCE_NEW);
     }
 
     if (canvasDisplay.attractiveForce) {
@@ -113,12 +89,22 @@ function renderToCanvas(obstacles, attractiveForceVector, repulsiveForceVector, 
     if (canvasDisplay.repulsiveForce) {
         // display repulsive force direction
         const { x: rFx, y: rFy } = repulsiveForceVector.scaleBy(100).sum(vehicle);
-        canvas.drawVector(vehicle.x, vehicle.y, rFx, rFy, 2, 1.5, COLOR.REPULSIVE_FORCE);
+        canvas.drawVector(vehicle.x, vehicle.y, rFx, rFy, 2, 1.5, COLOR.TOTAL_REPULSIVE_FORCE);
     }
     // display total force direction
     if (canvasDisplay.totalForce) {
         const { x: tFx, y: tFy } = totalForceVector.scaleBy(100).sum(vehicle);
         canvas.drawVector(vehicle.x, vehicle.y, tFx, tFy, 2, 1.5, COLOR.TOTAL_FORCE);
+    }
+
+    for (const obstacleRepulsiveForce of vehicle.repulsiveForces) {
+        const [obstacleRepulsedForceVector, obstacleRepulsedForceNewVector] = obstacleRepulsiveForce;
+
+        const { x: rFx, y: rFy } = obstacleRepulsedForceVector.scaleBy(100).sum(vehicle);
+        const { x: rFnx, y: rFny } = obstacleRepulsedForceNewVector.scaleBy(100).sum(vehicle);
+
+        canvas.drawVector(vehicle.x, vehicle.y, rFx, rFy, 2, 0.5, COLOR.REPULSIVE_FORCE);
+        canvas.drawVector(vehicle.x, vehicle.y, rFnx, rFny, 2, 0.5, COLOR.REPULSIVE_FORCE_NEW);
     }
 }
 

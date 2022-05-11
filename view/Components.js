@@ -99,8 +99,8 @@ const vehicleDisplay = (function() {
         #setColors() {
             document.getElementById(VehicleDisplay.TOTAL_FORCE_COLOR_ID).style.backgroundColor = COLOR.TOTAL_FORCE;
             document.getElementById(VehicleDisplay.ATTRACTIVE_FORCE_COLOR_ID).style.backgroundColor = COLOR.ATTRACTIVE_FORCE;
-            document.getElementById(VehicleDisplay.REPULSIVE_FORCE_COLOR_ID).style.backgroundColor = COLOR.REPULSIVE_FORCE;
-            document.getElementById(VehicleDisplay.REPULSIVE_FORCE_NEW_COLOR_ID).style.backgroundColor = COLOR.REPULSIVE_FORCE_NEW;
+            document.getElementById(VehicleDisplay.REPULSIVE_FORCE_COLOR_ID).style.backgroundColor = COLOR.TOTAL_REPULSIVE_FORCE;
+            document.getElementById(VehicleDisplay.REPULSIVE_FORCE_NEW_COLOR_ID).style.backgroundColor = COLOR.TOTAL_REPULSIVE_FORCE_NEW;
             document.getElementById(VehicleDisplay.VECTORS_FLOW_COLOR_ID).style.backgroundColor = COLOR.VECTORS_FLOW;
             document.getElementById(VehicleDisplay.OBSTACLES_FIELD_RADIUS_COLOR_ID).style.backgroundColor = COLOR.OBSTACLES_FIELD_RADIUS;
         }
