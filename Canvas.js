@@ -116,43 +116,29 @@ const CanvasRenderer = (() => {
         const yPoints = 50;
         const spaceX = Canvas.WIDTH / xPoints;
         const spaceY = Canvas.HEIGHT / yPoints;
-        const arrowScale = 6;
+        const arrowScale = 2;
   
         for (let i = 0; i <= xPoints; i++) {
           for (let j = 0; j <= yPoints; j++) {
-            let vectorAsVehicle = new Vector(i * spaceX, j * spaceY);
-            vectorAsVehicle.r = 12;
-            const attractiveForceVector = target
-              .getFieldAttraction(vectorAsVehicle)
-              .scaleBy(arrowScale);
-            const repulsiveForceVector = obstacles
-              .getRepulsiveForce(vectorAsVehicle)
-              .scaleBy(arrowScale);
+            const vectorAsVehicle = new Vehicle(i * spaceX, j * spaceY, 100); // 100 maximum obst radius
   
-            let totalForceVector = repulsiveForceVector.sum(
-              attractiveForceVector
-            );
-            const sigma = Math.PI - repulsiveForceVector.angle(totalForceVector);
-  
-            const clockDirectionSign = Math.sign(
-              repulsiveForceVector.fullAngle(attractiveForceVector)
-            );
-            const repulsiveNewForceVector = obstacles
-              .getRepulsiveForceNew(
-                vectorAsVehicle,
-                repulsiveForceVector,
-                sigma,
-                clockDirectionSign
-              )
-              .scaleBy(arrowScale);
-  
-            totalForceVector = totalForceVector.sum(repulsiveNewForceVector);
-  
+            vectorAsVehicle.setAtractiveForce(target);
+            vectorAsVehicle.attractiveForce = vectorAsVehicle.attractiveForce.scaleBy(arrowScale);
+            vectorAsVehicle.setObstacles(obstacles.getObstaclesInVehicleRadius(vectorAsVehicle))
+    
+            vectorAsVehicle.setRepulsiveForces();
+            vectorAsVehicle.setTotalRepulsiveForces();
+
+            vectorAsVehicle.totalRepulsiveForce = vectorAsVehicle.totalRepulsiveForce.scaleBy(arrowScale);
+            vectorAsVehicle.totalRepulsiveForceNew = vectorAsVehicle.totalRepulsiveForceNew.scaleBy(arrowScale);
+            vectorAsVehicle.setTotalForce();
+
             this.drawVector(
-              vectorAsVehicle.x,
-              vectorAsVehicle.y,
-              vectorAsVehicle.x + totalForceVector.x,
-              vectorAsVehicle.y + totalForceVector.y
+              vectorAsVehicle,
+              vectorAsVehicle.sum(vectorAsVehicle.totalForce.scaleBy(arrowScale)),
+              1, 
+              1, 
+              COLOR.VECTORS_FLOW
             );
           }
         }
@@ -188,6 +174,8 @@ const CanvasRenderer = (() => {
 
             this.renderObstacles();
             this.renderVehicle();
+
+            canvasDisplay.vectorsFlow && this.drawTargetVectorsFlow();
         }
 
         renderObstacles() {
