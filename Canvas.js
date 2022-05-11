@@ -79,9 +79,7 @@ const CanvasRenderer = (() => {
         this.#ctx.restore();
       }
   
-      drawObstacle({ x, y, fieldRadius, r, color }) {
-        canvasDisplay.obstaclesFieldRadius && this.drawCircle(x, y, fieldRadius, COLOR.OBSTACLES_FIELD_RADIUS, 1);
-
+      drawObstacle({ x, y, r, color }) {
         this.#drawPoint(x, y, r, color);
       }
   
@@ -179,24 +177,24 @@ const CanvasRenderer = (() => {
         }
 
         renderObstacles() {
-            const obstacles = this.obstacles.getAll(); 
+          const obstacles = this.obstacles.getAll(); 
         
-              for (const obstacle of obstacles) {
-                const isObstacleInArea = this.vehicle.obstacles.includes(obstacle);
+          for (const obstacle of obstacles) {
+            const isObstacleInArea = this.vehicle.obstacles.includes(obstacle);
 
 
-                if (!canvasDisplay.vehicleFieldRadius || !isObstacleInArea) { 
-                  obstacle.color = COLOR.OBSTACLE;
-                  continue;
-                }
-
-                obstacle.color = COLOR.VEHICLE_FIELD_RADIUS;
-              }
-        
-        
-            for (const obstacle of obstacles) {     
-                this.drawObstacle(obstacle);
+            if (!canvasDisplay.vehicleFieldRadius || !isObstacleInArea) { 
+              obstacle.color = COLOR.OBSTACLE;
+              continue;
             }
+
+            obstacle.color = COLOR.VEHICLE_FIELD_RADIUS;
+          }
+              
+          for (const obstacle of obstacles) {     
+              canvasDisplay.obstaclesFieldRadius && this.drawCircle(obstacle.x, obstacle.y, obstacle.fieldRadius, COLOR.OBSTACLES_FIELD_RADIUS, 1);
+              canvasDisplay.obstacles && this.drawObstacle(obstacle);
+          }
         }
 
         renderVehicle() {

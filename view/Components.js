@@ -104,6 +104,7 @@ const canvasDisplay = (function() {
         static REPULSIVE_FORCE_CHECKBOX_ID = 'repulsive-force-field-checkbox';
         static REPULSIVE_FORCE_NEW_CHECKBOX_ID = 'repulsive-force-new-field-checkbox'
         static OBSTACLES_FIELD_RADIUS_CHECKBOX_ID = 'obstacles-radius-field-checkbox';
+        static OBSTACLES_CHECKBOX_ID = 'obstacles-checkbox';
         static VEHICLE_CHECKBOX_ID = 'vehicle-checkbox';
         static VEHICLE_FIELD_RADIUS_CHECKBOX_ID = 'vehicle-field-radius-checkbox';
         static REPULSIVE_FORCE_COLOR_ID = 'repulsive-force-field-color';
@@ -116,6 +117,7 @@ const canvasDisplay = (function() {
         static REPULSIVE_FORCE_NEW_TOTAL_COLOR_ID = 'repulsive-force-new-total-color';
         static VECTORS_FLOW_COLOR_ID = 'vectors-flow-color';
         static OBSTACLES_FIELD_RADIUS_COLOR_ID = 'obstacles-field-radius-color';
+        static OBSTACLES_COLOR_ID = 'obstacles-color';
         
         static OBSTACLES_MAP_SELECT_ID = 'obstacles-map-select';
         static OBSTACLES_MAP_SELECT_OPTIONS = ['default', 'wall'];
@@ -130,7 +132,8 @@ const canvasDisplay = (function() {
         obstaclesFieldRadius = 0;
         vehicle = 1;
         vehicleFieldRadius = 0;
-        
+        obstacles = 1;
+
         obstaclesMap = 0;
         constructor() {
             this.#setColors();
@@ -147,6 +150,7 @@ const canvasDisplay = (function() {
             document.getElementById(CanvasDisplay.REPULSIVE_FORCE_NEW_COLOR_ID).style.backgroundColor = COLOR.REPULSIVE_FORCE_NEW;
             document.getElementById(CanvasDisplay.REPULSIVE_FORCE_TOTAL_COLOR_ID).style.backgroundColor = COLOR.REPULSIVE_FORCE;
             document.getElementById(CanvasDisplay.REPULSIVE_FORCE_NEW_TOTAL_COLOR_ID).style.backgroundColor = COLOR.REPULSIVE_FORCE_NEW;
+            document.getElementById(CanvasDisplay.OBSTACLES_COLOR_ID).style.backgroundColor = COLOR.OBSTACLE;
         }
     }
     const withLs = withLsSubscribe(new CanvasDisplay());
@@ -163,7 +167,8 @@ const canvasDisplay = (function() {
         vehicle: document.getElementById(CanvasDisplay.VEHICLE_CHECKBOX_ID),
         vehicleFieldRadius: document.getElementById(CanvasDisplay.VEHICLE_FIELD_RADIUS_CHECKBOX_ID),
         repulsiveForce: document.getElementById(CanvasDisplay.REPULSIVE_FORCE_CHECKBOX_ID),
-        repulsiveForceNew: document.getElementById(CanvasDisplay.REPULSIVE_FORCE_NEW_CHECKBOX_ID)
+        repulsiveForceNew: document.getElementById(CanvasDisplay.REPULSIVE_FORCE_NEW_CHECKBOX_ID),
+        obstacles: document.getElementById(CanvasDisplay.OBSTACLES_CHECKBOX_ID),
     }
 
     const valueToElementSelect = {
