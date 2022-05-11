@@ -116,6 +116,9 @@ const canvasDisplay = (function() {
         static REPULSIVE_FORCE_NEW_TOTAL_COLOR_ID = 'repulsive-force-new-total-color';
         static VECTORS_FLOW_COLOR_ID = 'vectors-flow-color';
         static OBSTACLES_FIELD_RADIUS_COLOR_ID = 'obstacles-field-radius-color';
+        
+        static OBSTACLES_MAP_SELECT_ID = 'obstacles-map-select';
+        static OBSTACLES_MAP_SELECT_OPTIONS = ['default', 'wall'];
         // true/false
         totalForce = 0;
         vectorsFlow = 0;
@@ -127,6 +130,8 @@ const canvasDisplay = (function() {
         obstaclesFieldRadius = 0;
         vehicle = 1;
         vehicleFieldRadius = 0;
+        
+        obstaclesMap = 0;
         constructor() {
             this.#setColors();
         }
@@ -146,7 +151,9 @@ const canvasDisplay = (function() {
     }
     const withLs = withLsSubscribe(new CanvasDisplay());
 
-    const valueToElement = {
+    withLs.onSelectChange = () => {}
+
+    const valueToElementCheckbox = {
         totalForce: document.getElementById(CanvasDisplay.TOTAL_FORCE_CHECKBOX_ID),
         vectorsFlow: document.getElementById(CanvasDisplay.VECTORS_FLOW_CHECKBOX_ID),
         attractiveForce: document.getElementById(CanvasDisplay.ATTRACTIVE_FORCE_CHECKBOX_ID),
@@ -159,9 +166,24 @@ const canvasDisplay = (function() {
         repulsiveForceNew: document.getElementById(CanvasDisplay.REPULSIVE_FORCE_NEW_CHECKBOX_ID)
     }
 
-    for (const value of Object.keys(valueToElement)) {
-        initCheckbox(valueToElement[value], withLs[value]);
-        onCheckboxChange(valueToElement[value], (state) => withLs[value] = state);
+    const valueToElementSelect = {
+        obstaclesMap: document.getElementById(CanvasDisplay.OBSTACLES_MAP_SELECT_ID)
+    }
+
+    for (const value of Object.keys(valueToElementCheckbox)) {
+        initCheckbox(valueToElementCheckbox[value], withLs[value]);
+        onCheckboxChange(valueToElementCheckbox[value], (state) => withLs[value] = state);
+    }
+
+    for (const value of Object.keys(valueToElementSelect)) {
+        initSelect(valueToElementSelect[value], CanvasDisplay.OBSTACLES_MAP_SELECT_OPTIONS[withLs[value]]);
+        onSelectChange(valueToElementSelect[value], (state) => {
+            const index = CanvasDisplay.OBSTACLES_MAP_SELECT_OPTIONS.indexOf(state);
+
+            withLs[value] = index;
+
+            withLs.onSelectChange(index, CanvasDisplay.OBSTACLES_MAP_SELECT_OPTIONS);
+        });
     }
 
     return withLs;

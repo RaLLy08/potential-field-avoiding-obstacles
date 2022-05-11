@@ -170,7 +170,18 @@ const CanvasRenderer = (() => {
             this.vehicle = vehicle;
             this.target = target;
             this.obstacles = obstacles;
+
+            canvasDisplay.onSelectChange = this.onMapChange;
         }
+        onMapChange = (val) => {
+          if (val === 0) {
+            this.obstacles.set(Obstacles.DEFAULT)
+          }
+          if (val === 1) {
+            this.obstacles.set(Obstacles.WALL)
+          }
+        }
+
 
         frame() {
             this.clear();

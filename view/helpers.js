@@ -10,7 +10,7 @@ function withLsSubscribe(object) {
 
         if (item == null) continue;
 
-        object[key] = +item;
+        object[key] = isNaN(item) ? item : +item;
     }
 
     const withListener = {
@@ -30,4 +30,12 @@ function onCheckboxChange(el, listener) {
 
 function initCheckbox(el, value) {
     el.checked = value;
+}
+
+function onSelectChange(el, listener) { 
+    el.onchange = (e) => void listener(e.target.value);
+}
+
+function initSelect(el, value) {
+    el.value = value;
 }
