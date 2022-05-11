@@ -39,6 +39,7 @@ class Obstacle extends Vector {
         this.r = obstacleRadius || 4;
         this.maxRepulsiveForce = maxRepulsiveForce || 0;
         this.distributionWidth = distributionWidth;
+        this.color = COLOR.OBSTACLE;
         // this show us direction when the vehicle is inside the fields
     }
     repulsiveForce(distance) {
