@@ -50,13 +50,13 @@ class Canvas {
         this.#ctx.clearRect(0, 0, Canvas.WIDTH, Canvas.HEIGHT);
     }
 
-    drawVector(fromX, fromY, toX, toY, arrowSize = 2, lineWidth = 0.5, color) {
-        const angle = Math.atan2((toY - fromY) , (toX - fromX));
-        const hyp = Math.hypot(toX - fromX, toY - fromY);
+    drawVector(from, to, arrowSize = 2, lineWidth = 0.5, color) {
+        const angle = Math.atan2((to.y - from.y) , (to.x - from.x));
+        const hyp = Math.hypot(to.x - from.x, to.y - from.y);
         if (!hyp) return 
 
         this.#ctx.save();
-        this.#ctx.translate(fromX, fromY);
+        this.#ctx.translate(from.x, from.y);
         this.#ctx.rotate(angle);
       
         // line
