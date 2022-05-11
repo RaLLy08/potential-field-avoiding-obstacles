@@ -6,7 +6,11 @@
 function withLsSubscribe(object) {
     // init
     for (const key of Object.keys(object)) {
-        object[key] = +localStorage.getItem(key);
+        const item = localStorage.getItem(key);
+
+        if (item == null) continue;
+
+        object[key] = +item;
     }
 
     const withListener = {

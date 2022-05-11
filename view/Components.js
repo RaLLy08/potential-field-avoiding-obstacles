@@ -125,7 +125,7 @@ const canvasDisplay = (function() {
         repulsiveForce = 0;
         repulsiveForceNew = 0;
         obstaclesFieldRadius = 0;
-        vehicle = 0;
+        vehicle = 1;
         vehicleFieldRadius = 0;
         constructor() {
             this.#setColors();
