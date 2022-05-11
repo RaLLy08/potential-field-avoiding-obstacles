@@ -1,13 +1,11 @@
 const COLOR = {
     ATTRACTIVE_FORCE: 'blue',
-    TOTAL_REPULSIVE_FORCE: 'red',
+    REPULSIVE_FORCE: 'red',
     TOTAL_FORCE: 'black',
     OBSTACLES_FIELD_RADIUS: '#1ec31e',
     VEHICLE_FIELD_RADIUS: '#86abf9',
-    TOTAL_REPULSIVE_FORCE_NEW: 'pink',
+    REPULSIVE_FORCE_NEW: 'pink',
     OBSTACLE: 'black',
     VECTORS_FLOW: '#0096FF',
     VEHICLE: '#1bb21b',
-    REPULSIVE_FORCE: 'blue',
-    REPULSIVE_FORCE_NEW: 'gray',
 }

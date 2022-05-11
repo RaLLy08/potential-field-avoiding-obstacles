@@ -24,7 +24,7 @@ const CanvasRenderer = (() => {
         this.#ctx.closePath();
       }
   
-      #drawCircle(x, y, r, color, width = 1) {
+      drawCircle(x, y, r, color, width = 1) {
         this.#ctx.beginPath();
   
         this.#ctx.arc(x, y, r, 0, 2 * Math.PI);
@@ -80,8 +80,7 @@ const CanvasRenderer = (() => {
       }
   
       drawObstacle({ x, y, fieldRadius, r, color }) {
-        canvasDisplay.obstaclesFieldRadius &&
-        this.#drawCircle(x, y, fieldRadius, COLOR.OBSTACLES_FIELD_RADIUS, 1);
+        canvasDisplay.obstaclesFieldRadius && this.drawCircle(x, y, fieldRadius, COLOR.OBSTACLES_FIELD_RADIUS, 1);
 
         this.#drawPoint(x, y, r, color);
       }
@@ -92,9 +91,9 @@ const CanvasRenderer = (() => {
   
       drawVehicle(vehicle) {
         const { x, y, r, vx, vy } = vehicle;
-        const width = 1;
-        const height = 1;
-        this.#drawCircle(x, y, r, COLOR.VEHICLE_FIELD_RADIUS, 1);
+        const width = 30;
+        const height = 40;
+
         const speedVector = new Vector(vx, vy).normalize().scaleBy(height);
         this.#drawLine(
           x,
@@ -104,6 +103,7 @@ const CanvasRenderer = (() => {
           width,
           COLOR.VEHICLE
         );
+        
   
         // this.#drawPoint(x, y, r, '#1bb21b');
       }
@@ -181,16 +181,19 @@ const CanvasRenderer = (() => {
 
         renderObstacles() {
             const obstacles = this.obstacles.getAll(); 
+        
+              for (const obstacle of obstacles) {
+                const isObstacleInArea = this.vehicle.obstacles.includes(obstacle);
 
-            if (true) {
-                for (const obstacle of obstacles) {
-                    if (this.vehicle.obstacles.findIndex((el) => obstacle === el) !== -1) {
-                        obstacle.color = COLOR.VEHICLE_FIELD_RADIUS;
-                    } else {
-                        obstacle.color = COLOR.OBSTACLE;
-                    }
+
+                if (!canvasDisplay.vehicleFieldRadius || !isObstacleInArea) { 
+                  obstacle.color = COLOR.OBSTACLE;
+                  continue;
                 }
-            }
+
+                obstacle.color = COLOR.VEHICLE_FIELD_RADIUS;
+              }
+        
         
             for (const obstacle of obstacles) {     
                 this.drawObstacle(obstacle);
@@ -201,29 +204,37 @@ const CanvasRenderer = (() => {
             const { attractiveForce, totalRepulsiveForce, totalRepulsiveForceNew, totalForce } = this.vehicle;
 
             this.drawTarget(target);
-            this.drawVehicle(vehicle);
+
+            if (canvasDisplay.vehicle) {
+              this.drawVehicle(vehicle);
+            }
+
+            if (canvasDisplay.vehicleFieldRadius) {
+              this.drawCircle(vehicle.x, vehicle.y, vehicle.r, COLOR.VEHICLE_FIELD_RADIUS, 1);
+            }
+
 
             vehicleDisplay.totalForce = totalForce.mag();
             vehicleDisplay.attractiveForce = attractiveForce.mag();
-            vehicleDisplay.repulsiveForce = totalRepulsiveForce.mag();
-            vehicleDisplay.repulsiveNewForce = totalRepulsiveForceNew.mag();
+            vehicleDisplay.repulsiveForceTotal = totalRepulsiveForce.mag();
+            vehicleDisplay.repulsiveForceNewTotal = totalRepulsiveForceNew.mag();
 
             // angle between Total force and Attractive force (theta)
             vehicleDisplay.theta = Utils.toDegree(attractiveForce.angle(totalForce));
             // angle between Total force and Repulsive force (sigma)
             vehicleDisplay.sigma = Utils.toDegree(Utils.normalizeAngle(totalRepulsiveForce.fullAngle(totalForce)));
             // angle between Attractive force and Repulsive force (gamma)
-            vehicleDisplay.gamma = Utils.toDegree(Utils.normalizeAngle(attractiveForce.fullAngle(totalRepulsiveForce)));
+            vehicleDisplay.gamma = Utils.toDegree(Utils.normalizeAngle(totalRepulsiveForce.fullAngle(attractiveForce)));
 
             vehicleDisplay.x = vehicle.x;
             vehicleDisplay.y = vehicle.y;
 
 
-            if (canvasDisplay.repulsiveNewForce) {
+            if (canvasDisplay.repulsiveForceNewTotal) {
                 this.drawVector(
                     vehicle, 
                     totalRepulsiveForceNew.scaleBy(100).sum(vehicle), 
-                    2, 1.5, COLOR._TOTAL_REPULSIVE_FORCE_NEW
+                    4, 2, COLOR.REPULSIVE_FORCE_NEW
                 );
             }
             if (canvasDisplay.attractiveForce) {
@@ -231,15 +242,15 @@ const CanvasRenderer = (() => {
                 this.drawVector(
                     vehicle, 
                     attractiveForce.scaleBy(100).sum(vehicle), 
-                    2, 1.5, COLOR.ATTRACTIVE_FORCE
+                    4, 2, COLOR.ATTRACTIVE_FORCE
                 );
             }
-            if (canvasDisplay.repulsiveForce) {
+            if (canvasDisplay.repulsiveForceTotal) {
                 // display repulsive force direction
                 this.drawVector(
                     vehicle, 
                     totalRepulsiveForce.scaleBy(100).sum(vehicle),
-                    2, 1.5, COLOR.TOTAL_REPULSIVE_FORCE
+                    4, 2, COLOR.REPULSIVE_FORCE
                 );
             }
             // display total force direction
@@ -247,24 +258,28 @@ const CanvasRenderer = (() => {
                 this.drawVector(
                     vehicle, 
                     totalForce.scaleBy(100).sum(vehicle), 
-                    2, 1.5, COLOR.TOTAL_FORCE
+                    4, 2, COLOR.TOTAL_FORCE
                 );
             }
 
             for (const obstacleRepulsiveForce of vehicle.repulsiveForces) {
                 const [obstacleRepulsedForceVector, obstacleRepulsedForceNewVector] = obstacleRepulsiveForce;
 
-                this.drawVector(
+                if (canvasDisplay.repulsiveForce) {
+                  this.drawVector(
                     vehicle, 
                     obstacleRepulsedForceVector.scaleBy(100).sum(vehicle), 
-                    2, 0.5, COLOR.REPULSIVE_FORCE
-                );
-
-                this.drawVector(
+                    2, 1, COLOR.REPULSIVE_FORCE
+                  );
+                }
+              
+                if (canvasDisplay.repulsiveForceNew) { 
+                  this.drawVector(
                     vehicle, 
                     obstacleRepulsedForceNewVector.scaleBy(100).sum(vehicle), 
-                    2, 0.5, COLOR.REPULSIVE_FORCE_NEW
-                );
+                    2, 1, COLOR.REPULSIVE_FORCE_NEW
+                  );
+                }
             }
         }
     }
