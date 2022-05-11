@@ -48,6 +48,8 @@ const frame = () => {
  
     window.requestAnimationFrame(frame)
 }
+// **TODO:
+// when radius on color near objects
 
 frame();
 

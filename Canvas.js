@@ -50,9 +50,32 @@ class Canvas {
         this.#ctx.clearRect(0, 0, Canvas.WIDTH, Canvas.HEIGHT);
     }
 
-    drawVector(fromX, fromY, toX, toY, pointWidth = 1, lineWidth = 0.5, color = COLOR.VECTORS_FLOW) {
-        this.#drawLine(fromX, fromY, toX, toY, lineWidth, color); 
-        this.#drawPoint(toX, toY, pointWidth, 'red')
+    drawVector(fromX, fromY, toX, toY, arrowSize = 2, lineWidth = 0.5, color) {
+        const angle = Math.atan2((toY - fromY) , (toX - fromX));
+        const hyp = Math.hypot(toX - fromX, toY - fromY);
+        if (!hyp) return 
+
+        this.#ctx.save();
+        this.#ctx.translate(fromX, fromY);
+        this.#ctx.rotate(angle);
+      
+        // line
+        this.#ctx.strokeStyle = color;
+        this.#ctx.lineWidth = lineWidth;
+        this.#ctx.beginPath();	
+        this.#ctx.moveTo(0, 0);
+        this.#ctx.lineTo(hyp - arrowSize, 0);
+        this.#ctx.stroke();
+
+        // triangle
+        this.#ctx.fillStyle = 'red';
+        this.#ctx.beginPath();
+        this.#ctx.lineTo(hyp - arrowSize - arrowSize*1.3, arrowSize);
+        this.#ctx.lineTo(hyp, 0);
+        this.#ctx.lineTo(hyp - arrowSize - arrowSize*1.3, -arrowSize);
+        this.#ctx.fill();
+      
+        this.#ctx.restore();
     }
 
     drawObstacle({x, y, fieldRadius, r}) {

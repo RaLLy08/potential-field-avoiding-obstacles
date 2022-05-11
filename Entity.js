@@ -99,17 +99,21 @@ class Vehicle extends Vector {
 
     static getRepulsiveForceNew(r, t, newRepulsionDirection) {
         const newRepulsionVector = new Vector(0, 0)
-
         const sigma = Math.PI - r.angle(t);
-
         const kSigma = Vehicle.kSigma(sigma);
 
         // indirect proportion of angle between Total Force and Attractive Force
         // const k = Math.abs(Math.cos(t.angle(a)));
         const rXrYTan = Math.abs(r.x / r.y);
+    
         // normilize vector by Repilsive force magniture, reduce by angle between TF. and AF.  // robot turning direction towards the goal
-        const vx = kSigma * r.mag() * (Math.sin(Math.atan(rXrYTan) - (Math.PI/2)*Math.sign(Math.atan(r.x / r.y)) * newRepulsionDirection  )) * Math.sign(r.x);
-        const vy = kSigma * r.mag() * (Math.cos(Math.atan(rXrYTan) - (Math.PI/2)*Math.sign(Math.atan(r.x / r.y)) * newRepulsionDirection  )) * Math.sign(r.y);
+        const clockShift = (Math.PI/2)*Math.sign(Math.atan(r.x / r.y));
+
+        const vxDirection = Math.sin(Math.atan(rXrYTan) - clockShift * newRepulsionDirection ) * Math.sign(r.x);
+        const vyDirection = Math.cos(Math.atan(rXrYTan) - clockShift * newRepulsionDirection ) * Math.sign(r.y);
+
+        const vx = kSigma * r.mag() * vxDirection;
+        const vy = kSigma * r.mag() * vyDirection;
        
         newRepulsionVector.x = vx;
         newRepulsionVector.y = vy;
