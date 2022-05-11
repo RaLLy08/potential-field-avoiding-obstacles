@@ -176,11 +176,8 @@ const canvasDisplay = (function() {
     }
 
     for (const value of Object.keys(valueToElementSelect)) {
-        initSelect(valueToElementSelect[value], CanvasDisplay.OBSTACLES_MAP_SELECT_OPTIONS[withLs[value]]);
         onSelectChange(valueToElementSelect[value], (state) => {
             const index = CanvasDisplay.OBSTACLES_MAP_SELECT_OPTIONS.indexOf(state);
-
-            withLs[value] = index;
 
             withLs.onSelectChange(index, CanvasDisplay.OBSTACLES_MAP_SELECT_OPTIONS);
         });

@@ -35,7 +35,3 @@ function initCheckbox(el, value) {
 function onSelectChange(el, listener) { 
     el.onchange = (e) => void listener(e.target.value);
 }
-
-function initSelect(el, value) {
-    el.value = value;
-}
