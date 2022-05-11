@@ -66,9 +66,9 @@ class Canvas {
 
     drawVehicle(vehicle) {
         const { x, y, r, vx, vy } = vehicle;
-        const width = 30;
-        const height = 40;
-
+        const width = 1;
+        const height = 1;
+        this.#drawCircle(x, y, r, COLOR.OBSTACLES_FIELD_RADIUS, 1);
         const speedVector = new Vector(vx, vy).normalize().scaleBy(height)
         this.#drawLine(x, y, x + speedVector.x, y + speedVector.y, width, COLOR.VEHICLE)
         
@@ -89,7 +89,7 @@ class Canvas {
             for (let j = 0; j <= yPoints; j++) { 
          
                 let vectorAsVehicle = new Vector(i*spaceX, j*spaceY);
-                
+                vectorAsVehicle.r = 12
                 const attractiveForceVector = target.getFieldAttraction(vectorAsVehicle).scaleBy(arrowScale);
                 const repulsiveForceVector = obstacles.getRepulsiveForce(vectorAsVehicle).scaleBy(arrowScale);
 

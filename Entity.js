@@ -47,40 +47,13 @@ class Obstacle extends Vector {
         )
     }
 
-    getFieldNewRepulsion(vehicle, r, kSigma, clockDirectionSign) {
-        const difference = vehicle.sub(this);
-
-        const distance = difference.mag(); 
-        const newRepulsionVector = new Vector(0, 0)
-
-        if (distance > this.fieldRadius) {
-            return newRepulsionVector;
-        }
-        
-        // indirect proportion of angle between Total Force and Attractive Force
-        // const k = Math.abs(Math.cos(t.angle(a)));
-        const rXrYTan = Math.abs(r.x / r.y);
-        // normilize vector by Repilsive force magniture, reduce by angle between TF. and AF.  // robot turning direction towards the goal
-        const vx = kSigma * r.mag() * (Math.sin(Math.atan(rXrYTan) - (Math.PI/2)*Math.sign(Math.atan(r.x / r.y)) * clockDirectionSign  )) * Math.sign(r.x);
-        const vy = kSigma * r.mag() * (Math.cos(Math.atan(rXrYTan) - (Math.PI/2)*Math.sign(Math.atan(r.x / r.y)) * clockDirectionSign  )) * Math.sign(r.y);
-          
-        newRepulsionVector.x = vx;
-        newRepulsionVector.y = vy;
- 
-        return newRepulsionVector;
-    }
-
     getFieldRepulsion(vehicle) {
         const difference = vehicle.sub(this);
 
         const distance = difference.mag(); 
         // const k = (this.maxRepulsiveForce / this.distributionWidth);
         // let forceAtPoint = this.maxRepulsiveForce -  k * (distance);
-
-        // otherwise
-        if (distance > this.fieldRadius) {
-            return new Vector(0, 0);
-        }
+        
 
         const forceAtPoint = this.repulsiveForce(distance)
         // normalize by force
@@ -125,41 +98,90 @@ class Obstacles {
     constructor(obstacles) { 
         this.obstacles = obstacles || []
     }
-
+    // replace to vehicle// replace to vehicle// replace to vehicle
     // sum of each of obstacles Repulsion Force
-    getRepulsiveForce(vehicle) {
-        let repulsiveForceVector = new Vector(0, 0);
+    getRepulsiveForces(vehicle, attractiveForceVector) {
+        const repulsiveForcesVectors = [];
+        
+        for (const obstacle of this.obstacles) {   
+            const difference = vehicle.sub(obstacle);
 
-        for (const obstacle of this.obstacles) {     
-            const obstacleRepulsedVector = obstacle.getFieldRepulsion(vehicle);
+            const distance = difference.mag(); 
+            // otherwise
+            if (distance > vehicle.r + obstacle.fieldRadius) continue; 
+            
+            const repulsiveForceVector = obstacle.getFieldRepulsion(vehicle);
 
-            repulsiveForceVector = repulsiveForceVector.sum(obstacleRepulsedVector);
+            const totalForceVector = attractiveForceVector.sum(repulsiveForceVector);
+
+            const newRepulsionDirection = Math.sign(repulsiveForceVector.fullAngle(totalForceVector))
+
+            const repulsiveForceNewVector = this.getRepulsiveForceNew(repulsiveForceVector, totalForceVector, newRepulsionDirection);
+        
+            repulsiveForcesVectors.push([
+                repulsiveForceVector,
+                repulsiveForceNewVector
+            ])
         }
 
-        return repulsiveForceVector;
+        return repulsiveForcesVectors;
     }
+
 
     kSigma(sigma) {
         const kMax = 2;
-        const tau = 1;
+        const tau = 0.5;
 
         return kMax / (1 + Math.exp(sigma / tau));
     }
 
+    getRepulsiveForceNew(r, t, newRepulsionDirection) {
+        const newRepulsionVector = new Vector(0, 0)
+
+        const sigma = Math.PI - r.angle(t);
+        const kMax = 2;
+        const tau = 1;
+
+        const kSigma = kMax / (1 + Math.exp(sigma / tau));
+
+        // indirect proportion of angle between Total Force and Attractive Force
+        // const k = Math.abs(Math.cos(t.angle(a)));
+        const rXrYTan = Math.abs(r.x / r.y);
+        // normilize vector by Repilsive force magniture, reduce by angle between TF. and AF.  // robot turning direction towards the goal
+        const vx = kSigma * r.mag() * (Math.sin(Math.atan(rXrYTan) - (Math.PI/2)*Math.sign(Math.atan(r.x / r.y)) * newRepulsionDirection  )) * Math.sign(r.x);
+        const vy = kSigma * r.mag() * (Math.cos(Math.atan(rXrYTan) - (Math.PI/2)*Math.sign(Math.atan(r.x / r.y)) * newRepulsionDirection  )) * Math.sign(r.y);
+       
+        newRepulsionVector.x = vx;
+        newRepulsionVector.y = vy;
+ 
+        return newRepulsionVector;
+    }
+
+
     // sum of each of obstacles Repulsion New Force
-    getRepulsiveForceNew(vehicle, repulsiveForceVector, sigma, clockDirectionSign) {
-        let repulsiveNewForceVector = new Vector(0, 0);
+    // getRepulsiveForceNew(vehicle, repulsiveForceVector, totalForceVector, attractiveForceVector) {
+    //     let repulsiveNewForceVector = new Vector(0, 0);
+    //     // vehicle.newRepulsionDirection = Math.sign(repulsiveForceVector.fullAngle(totalForceVector))
+    //     if (!vehicle.newRepulsionDirection) {
+    //         vehicle.newRepulsionDirection = Math.sign(repulsiveForceVector.fullAngle(totalForceVector))
+    //     }
+    
+    //     if (repulsiveForceVector.mag() === 0 && vehicle.newRepulsionDirection) {
+    //         vehicle.newRepulsionDirection = 0;
+    //     }
+    //     // const kSigma = this.kSigma(sigma);
 
-        const kSigma = this.kSigma(sigma);
-
-        for (const obstacle of this.obstacles) {     
-            const obstacleNewRepulsedVector = obstacle
-                .getFieldNewRepulsion(vehicle, repulsiveForceVector, kSigma, clockDirectionSign);
+    //     for (const obstacle of this.obstacles) {     
+    //         const obstacleNewRepulsedVector = obstacle
+    //             .getFieldNewRepulsion(vehicle, repulsiveForceVector, totalForceVector, attractiveForceVector, vehicle.newRepulsionDirection);
             
-            repulsiveNewForceVector = repulsiveNewForceVector.sum(obstacleNewRepulsedVector);
-        }
+    //         repulsiveNewForceVector = repulsiveNewForceVector.sum(obstacleNewRepulsedVector);
+    //     }
 
-        return repulsiveNewForceVector
+    //     return repulsiveNewForceVector
+    // }
+    add(obstacle) {
+        this.obstacles.push(obstacle);
     }
 
     getAll() {
