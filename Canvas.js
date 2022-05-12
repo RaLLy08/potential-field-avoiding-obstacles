@@ -2,7 +2,7 @@ import { canvasDisplay, vehicleDisplay } from './view/Components.js';
 import { COLOR } from "./consts.js";
 import Vector from './Vector.js';
 import Utils from './Utils.js';
-import { Vehicle } from './Entity.js';
+import { Vehicle, Obstacles } from './Entity.js';
 
 class Canvas {
   static WIDTH = 1128;
