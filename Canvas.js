@@ -109,7 +109,7 @@ const CanvasRenderer = (() => {
        *
        * @param {Target} target
        */
-      drawTargetVectorsFlow() {
+      drawTargetVectorsFlow(r) {
         const xPoints = 50;
         const yPoints = 50;
         const spaceX = Canvas.WIDTH / xPoints;
@@ -118,7 +118,7 @@ const CanvasRenderer = (() => {
   
         for (let i = 0; i <= xPoints; i++) {
           for (let j = 0; j <= yPoints; j++) {
-            const vectorAsVehicle = new Vehicle(i * spaceX, j * spaceY, 100); // 100 maximum obst radius
+            const vectorAsVehicle = new Vehicle(i * spaceX, j * spaceY, r);
   
             vectorAsVehicle.setAtractiveForce(target);
             vectorAsVehicle.attractiveForce = vectorAsVehicle.attractiveForce.scaleBy(arrowScale);
@@ -173,7 +173,7 @@ const CanvasRenderer = (() => {
             this.renderObstacles();
             this.renderVehicle();
 
-            canvasDisplay.vectorsFlow && this.drawTargetVectorsFlow();
+            canvasDisplay.vectorsFlow && this.drawTargetVectorsFlow(vehicle.r);
         }
 
         renderObstacles() {
