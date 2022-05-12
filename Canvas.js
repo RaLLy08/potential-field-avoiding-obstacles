@@ -134,7 +134,7 @@ const CanvasRenderer = (() => {
             this.drawVector(
               vectorAsVehicle,
               vectorAsVehicle.sum(vectorAsVehicle.totalForce.scaleBy(arrowScale)),
-              1, 
+              1.3, 
               1, 
               COLOR.VECTORS_FLOW
             );
