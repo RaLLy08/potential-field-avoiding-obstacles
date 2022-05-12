@@ -1,7 +1,7 @@
 /**
  * helper functions
  */
-class Utils {
+export default class Utils {
     static toDegree(rads) {
         if (Number.isNaN(rads)) return 0;
 

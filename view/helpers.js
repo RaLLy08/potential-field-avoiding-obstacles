@@ -3,7 +3,7 @@
  * @param {object} object
  */
 
-function withLsSubscribe(object) {
+export function withLsSubscribe(object) {
     // init
     for (const key of Object.keys(object)) {
         const item = localStorage.getItem(key);
@@ -24,14 +24,14 @@ function withLsSubscribe(object) {
     return new Proxy(object, withListener);
 }
 
-function onCheckboxChange(el, listener) {
+export function onCheckboxChange(el, listener) {
     el.onchange = (e) => void listener(+e.target.checked);
 }
 
-function initCheckbox(el, value) {
+export function initCheckbox(el, value) {
     el.checked = value;
 }
 
-function onSelectChange(el, listener) { 
+export function onSelectChange(el, listener) { 
     el.onchange = (e) => void listener(e.target.value);
 }

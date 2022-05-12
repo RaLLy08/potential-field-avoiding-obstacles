@@ -1,4 +1,4 @@
-const COLOR = {
+export const COLOR = {
     ATTRACTIVE_FORCE: 'blue',
     REPULSIVE_FORCE: 'red',
     TOTAL_FORCE: 'black',

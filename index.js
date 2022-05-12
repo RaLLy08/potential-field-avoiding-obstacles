@@ -1,3 +1,7 @@
+import { CanvasRenderer } from './Canvas.js';
+import { Obstacles, Vehicle, Target } from './Entity.js';
+import { canvasActions } from './view/Components.js';
+
 const obstacles = new Obstacles(
     Obstacles.DEFAULT
 );

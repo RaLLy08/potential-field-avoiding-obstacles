@@ -1,7 +1,10 @@
+import Vector from "./Vector.js";
+import { COLOR } from "./consts.js";
+
 /**
  * define target with own attraction field
  */
-class Target extends Vector {
+export class Target extends Vector {
     constructor(x, y, maxAttractionForce, distributionWidth) {
         super(x, y);
         this.distributionWidth = distributionWidth;
@@ -32,7 +35,7 @@ class Target extends Vector {
 /**
  * define obstacle with own repulsion field
  */
-class Obstacle extends Vector {
+export class Obstacle extends Vector {
     constructor(x, y, fieldRadius, maxRepulsiveForce, distributionWidth, obstacleRadius) {
         super(x, y);
         this.fieldRadius = fieldRadius;
@@ -69,7 +72,7 @@ class Obstacle extends Vector {
 /**
  * vehile with applied functions 
  */
-class Vehicle extends Vector {
+export class Vehicle extends Vector {
     constructor(x, y, r, vx, vy) {
         super(x, y);
         this.r = r;
@@ -201,7 +204,7 @@ class Vehicle extends Vector {
     }
 }
 
-class Obstacles {
+export class Obstacles {
     constructor(obstacles) { 
         this.obstacles = obstacles || []
     }
