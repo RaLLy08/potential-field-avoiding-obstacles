@@ -36,7 +36,7 @@ const canvasParamsActions = {
   obstaclesMap: (value) => obstacles.set(Obstacles.MAPS[value])
 }
 
-const paramsPanel = {
+const paramsPanelProps = {
   vehicle,
   canvasParamsStates,
   canvasParamsActions
@@ -85,7 +85,7 @@ class App extends Component {
 
   render() {
     return html`
-        ${ParamsPanel(paramsPanel)}
+        ${ParamsPanel(paramsPanelProps)}
         ${CanvasComponent({
             id: 'canvas',
             onPauseResume,
