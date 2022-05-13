@@ -23,15 +23,3 @@ export function withLsSubscribe(object) {
 
     return new Proxy(object, withListener);
 }
-
-export function onCheckboxChange(el, listener) {
-    el.onchange = (e) => void listener(+e.target.checked);
-}
-
-export function initCheckbox(el, value) {
-    el.checked = value;
-}
-
-export function onSelectChange(el, listener) { 
-    el.onchange = (e) => void listener(e.target.value);
-}

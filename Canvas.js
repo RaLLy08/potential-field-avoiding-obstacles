@@ -1,16 +1,14 @@
-import { canvasDisplay, vehicleDisplay } from './view/Components.js';
 import { COLOR } from "./consts.js";
 import Vector from './Vector.js';
-import Utils from './Utils.js';
-import { Vehicle, Obstacles } from './Entity.js';
+import { Vehicle } from './Entity.js';
 
 class Canvas {
   static WIDTH = 1128;
   static HEIGHT = 768;
   #ctx;
 
-  constructor() {
-      this.element = document.getElementById("canvas");
+  constructor(element) {
+      this.element = element;
 
       this.element.width = Canvas.WIDTH;
       this.element.height = Canvas.HEIGHT;
@@ -152,35 +150,20 @@ class Canvas {
 }
 
 export class CanvasRenderer extends Canvas {
-  /**
-   * @param {Vehicle} vehicle
-   * @param {Target} target
-   * @param {Obstacles} obstacles
-   */
-  constructor(vehicle, target, obstacles) {
-      super();
+  constructor(canvas, state, vehicle, target, obstacles) {
+      super(canvas);
       this.vehicle = vehicle;
       this.target = target;
       this.obstacles = obstacles;
-
-      canvasDisplay.onSelectChange = this.onMapChange;
+      this.state = state;
   }
-  onMapChange = (val) => {
-      if (val === 0) {
-          this.obstacles.set(Obstacles.DEFAULT);
-      }
-      if (val === 1) {
-          this.obstacles.set(Obstacles.WALL);
-      }
-  };
-
   frame() {
       this.clear();
 
       this.renderObstacles();
       this.renderVehicle();
 
-      canvasDisplay.vectorsFlow && this.drawTargetVectorsFlow(this.vehicle.r);
+      this.state.vectorsFlow && this.drawTargetVectorsFlow(this.vehicle.r);
   }
 
   renderObstacles() {
@@ -189,7 +172,7 @@ export class CanvasRenderer extends Canvas {
       for (const obstacle of obstacles) {
           const isObstacleInArea = this.vehicle.obstacles.includes(obstacle);
 
-          if (!canvasDisplay.vehicleFieldRadius || !isObstacleInArea) {
+          if (!this.state.vehicleFieldRadius || !isObstacleInArea) {
               obstacle.color = COLOR.OBSTACLE;
               continue;
           }
@@ -198,7 +181,7 @@ export class CanvasRenderer extends Canvas {
       }
 
       for (const obstacle of obstacles) {
-          canvasDisplay.obstaclesFieldRadius &&
+          this.state.obstaclesFieldRadius &&
               this.drawCircle(
                   obstacle.x,
                   obstacle.y,
@@ -206,7 +189,7 @@ export class CanvasRenderer extends Canvas {
                   COLOR.OBSTACLES_FIELD_RADIUS,
                   1
               );
-          canvasDisplay.obstacles && this.drawObstacle(obstacle);
+          this.state.obstacles && this.drawObstacle(obstacle);
       }
   }
 
@@ -220,11 +203,11 @@ export class CanvasRenderer extends Canvas {
 
       this.drawTarget(this.target);
 
-      if (canvasDisplay.vehicle) {
+      if (this.state.vehicle) {
           this.drawVehicle(this.vehicle);
       }
 
-      if (canvasDisplay.vehicleFieldRadius) {
+      if (this.state.vehicleFieldRadius) {
           this.drawCircle(
               this.vehicle.x,
               this.vehicle.y,
@@ -234,28 +217,7 @@ export class CanvasRenderer extends Canvas {
           );
       }
 
-      vehicleDisplay.totalForce = totalForce.mag();
-      vehicleDisplay.attractiveForce = attractiveForce.mag();
-      vehicleDisplay.repulsiveForceTotal = totalRepulsiveForce.mag();
-      vehicleDisplay.repulsiveForceNewTotal = totalRepulsiveForceNew.mag();
-
-      // angle between Total force and Attractive force (theta)
-      vehicleDisplay.theta = Utils.toDegree(
-          attractiveForce.angle(totalForce)
-      );
-      // angle between Total force and Repulsive force (sigma)
-      vehicleDisplay.sigma = Utils.toDegree(
-          Utils.normalizeAngle(totalRepulsiveForce.fullAngle(totalForce))
-      );
-      // angle between Attractive force and Repulsive force (gamma)
-      vehicleDisplay.gamma = Utils.toDegree(
-          Utils.normalizeAngle(totalRepulsiveForce.fullAngle(attractiveForce))
-      );
-
-      vehicleDisplay.x = this.vehicle.x;
-      vehicleDisplay.y = this.vehicle.y;
-
-      if (canvasDisplay.repulsiveForceNewTotal) {
+      if (this.state.repulsiveForceNewTotal) {
           this.drawVector(
               this.vehicle,
               totalRepulsiveForceNew.scaleBy(100).sum(this.vehicle),
@@ -264,7 +226,7 @@ export class CanvasRenderer extends Canvas {
               COLOR.REPULSIVE_FORCE_NEW
           );
       }
-      if (canvasDisplay.attractiveForce) {
+      if (this.state.attractiveForce) {
           // display attractive force direction
           this.drawVector(
               this.vehicle,
@@ -274,7 +236,7 @@ export class CanvasRenderer extends Canvas {
               COLOR.ATTRACTIVE_FORCE
           );
       }
-      if (canvasDisplay.repulsiveForceTotal) {
+      if (this.state.repulsiveForceTotal) {
           // display repulsive force direction
           this.drawVector(
               this.vehicle,
@@ -285,7 +247,7 @@ export class CanvasRenderer extends Canvas {
           );
       }
       // display total force direction
-      if (canvasDisplay.totalForce) {
+      if (this.state.totalForce) {
           this.drawVector(
               this.vehicle,
               totalForce.scaleBy(100).sum(this.vehicle),
@@ -301,7 +263,7 @@ export class CanvasRenderer extends Canvas {
               obstacleRepulsedForceNewVector,
           ] = obstacleRepulsiveForce;
 
-          if (canvasDisplay.repulsiveForce) {
+          if (this.state.repulsiveForce) {
               this.drawVector(
                   this.vehicle,
                   obstacleRepulsedForceVector.scaleBy(100).sum(this.vehicle),
@@ -311,7 +273,7 @@ export class CanvasRenderer extends Canvas {
               );
           }
 
-          if (canvasDisplay.repulsiveForceNew) {
+          if (this.state.repulsiveForceNew) {
               this.drawVector(
                   this.vehicle,
                   obstacleRepulsedForceNewVector.scaleBy(100).sum(this.vehicle),
