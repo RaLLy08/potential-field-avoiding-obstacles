@@ -119,7 +119,7 @@ export function CanvasComponent({
     onResetVehicle=()=>{},
     isPaused,
 }) {
-    const pauseResume = isPaused ? 'Pause' : 'Resume';
+    const pauseResume = isPaused ? 'Resume' : 'Pause';
 
     const style = {
         canvasWrapper: {
