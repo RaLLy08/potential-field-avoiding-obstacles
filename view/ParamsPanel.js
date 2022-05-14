@@ -139,7 +139,7 @@ const ParamsPanel = ({ vehicle, canvasParamsStates, canvasParamsActions }) => {
                                 summary: "Graphics",
                                 children: [
                                     Title({text: 'K(sigma)'}),
-                                    html`<${CanvasGraphic} width="360" height="150" xTitle=σ yTitle="radian" fx=${vehicle.constructor.kSigma} id="sigma"/>`
+                                    html`<${CanvasGraphic} opts=${{quantityX: 6, maxX: 8}} width="320" height="150" xTitle=σ yTitle="radian" fx=${vehicle.constructor.kSigma} id="sigma"/>`
                                 ]
                             })
                         ],

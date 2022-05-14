@@ -292,10 +292,12 @@ export class CanvasGraphicRenderer extends Canvas {
     super(canvas, canvas.width, canvas.height);
     this.fx = fx;
 
+    this.quantityX = opts.quantityX || 10;
+    this.quantityY = opts.quantityY || 10;
     this.maxY = opts.maxY || this.getYMax() || 10;
     this.maxX = opts.maxX || 10;
-    this.stepX = opts.stepX || this.maxX / 10;
-    this.stepY = opts.stepY || this.maxY / 10;
+    this.stepX = opts.stepX || this.maxX / this.quantityX;
+    this.stepY = opts.stepY || this.maxY / this.quantityY;
 
     this.xScale = 1;
     this.yScale = 1;
