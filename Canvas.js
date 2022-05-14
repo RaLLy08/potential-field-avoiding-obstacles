@@ -249,31 +249,26 @@ export class CanvasRenderer extends Canvas {
     const yPoints = 50;
     const spaceX = CanvasRenderer.WIDTH / xPoints;
     const spaceY = CanvasRenderer.HEIGHT / yPoints;
-    const arrowScale = 2;
+    const arrowScale = 5;
 
     for (let i = 0; i <= xPoints; i++) {
       for (let j = 0; j <= yPoints; j++) {
         const vectorAsVehicle = new Vehicle(i * spaceX, j * spaceY, r);
-
         vectorAsVehicle.setAtractiveForce(this.target);
-        vectorAsVehicle.attractiveForce =
-          vectorAsVehicle.attractiveForce.scaleBy(arrowScale);
+
         vectorAsVehicle.setObstacles(
           this.obstacles.getObstaclesInVehicleRadius(vectorAsVehicle)
         );
 
         vectorAsVehicle.setRepulsiveForces();
         vectorAsVehicle.setTotalRepulsiveForces();
-
-        vectorAsVehicle.totalRepulsiveForce =
-          vectorAsVehicle.totalRepulsiveForce.scaleBy(arrowScale);
-        vectorAsVehicle.totalRepulsiveForceNew =
-          vectorAsVehicle.totalRepulsiveForceNew.scaleBy(arrowScale);
         vectorAsVehicle.setTotalForce();
+
+        const totalForce = vectorAsVehicle.totalForce.scaleBy(arrowScale);
 
         this.drawVector(
           vectorAsVehicle,
-          vectorAsVehicle.sum(vectorAsVehicle.totalForce.scaleBy(arrowScale)),
+          vectorAsVehicle.sum(totalForce),
           1.3,
           1,
           COLOR.VECTORS_FLOW

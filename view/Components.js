@@ -1,7 +1,7 @@
 import { CanvasGraphicRenderer } from "../Canvas.js";
 import html, { Component } from "../preact/index.js"
 
-export function CheckboxWithColor({
+export function Checkbox({
     id,
     text,
     title,
@@ -35,8 +35,8 @@ export function CheckboxWithColor({
         <div style=${style.wrapper}>
             <input checked=${checked} onchange=${handleChange} id=${id} type="checkbox"></input>
             <label style=${style.label} for=${id} title=${title}>
-                <div style=${style.colorBox}>
-                </div>
+                ${color && html`<div style=${style.colorBox}>
+                </div>`}
                 ${text}
             </label>
         </div>

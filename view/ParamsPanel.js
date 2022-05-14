@@ -3,7 +3,7 @@ import html from "../preact/index.js";
 import Utils from "../Utils.js";
 import {
     CanvasGraphic,
-    CheckboxWithColor,
+    Checkbox,
     Details,
     InputDisplay,
     Select,
@@ -11,7 +11,7 @@ import {
     Title,
 } from "./Components.js";
 
-const ParamsPanel = ({ vehicle, canvasParamsStates, canvasParamsActions }) => {
+const ParamsPanel = ({ vehicle, canvasParamStates, canvasParamsActions, canvasParamsPlotlyActions }) => {
     const style = {
         paramsWrapper: {
             fontSize: "0.9rem",
@@ -145,123 +145,6 @@ const ParamsPanel = ({ vehicle, canvasParamsStates, canvasParamsActions }) => {
                         ],
                     }),
                     Details({
-                        summary: "Canvas",
-                        children: Table({
-                            tableBody: [
-                                [
-                                    CheckboxWithColor({
-                                        title: "Vectors Flow",
-                                        text: "Vectors Flow",
-                                        id: "vectorsFlow",
-                                        color: COLOR.VECTORS_FLOW,
-                                        checked: canvasParamsStates.vectorsFlow,
-                                        onChange: (checked) => canvasParamsStates.vectorsFlow = checked,
-                                    }),
-                                ],
-                                [
-                                    CheckboxWithColor({
-                                        title: "Vehicle",
-                                        text: "Vehicle",
-                                        id: "vehicle",
-                                        color: COLOR.VEHICLE,
-                                        checked: canvasParamsStates.vehicle,
-                                        onChange: (checked) => canvasParamsStates.vehicle = checked,
-                                    }),
-                                ],
-                                [
-                                    CheckboxWithColor({
-                                        title: "Vehicle Field Radius",
-                                        text: "Vehicle Field Radius",
-                                        id: "vehicleFieldRadius",
-                                        color: COLOR.VEHICLE_FIELD_RADIUS,
-                                        checked: canvasParamsStates.vehicleFieldRadius,
-                                        onChange: (checked) => canvasParamsStates.vehicleFieldRadius = checked,
-                                    }),
-                                ],
-                                [
-                                    CheckboxWithColor({
-                                        title: "F(tot) or V",
-                                        text: "F(tot) or V",
-                                        id: "totalForce",
-                                        color: COLOR.TOTAL_FORCE,
-                                        checked: canvasParamsStates.totalForce,
-                                        onChange: (checked) => canvasParamsStates.totalForce = checked,
-                                    }),
-                                ],
-                                [
-                                    CheckboxWithColor({
-                                        title: "F(att)",
-                                        text: "F(att)",
-                                        id: "attractiveForce",
-                                        color: COLOR.ATTRACTIVE_FORCE,
-                                        checked: canvasParamsStates.attractiveForce,
-                                        onChange: (checked) => canvasParamsStates.attractiveForce = checked,
-                                    }),
-                                ],
-                                [
-                                    CheckboxWithColor({
-                                        title: "F(rep) total",
-                                        text: "F(rep) total",
-                                        id: "repulsiveForceTotal",
-                                        color: COLOR.REPULSIVE_FORCE,
-                                        checked: canvasParamsStates.repulsiveForceTotal,
-                                        onChange: (checked) => canvasParamsStates.repulsiveForceTotal = checked,
-                                    }),
-                                ],
-                                [
-                                    CheckboxWithColor({
-                                        title: "F(rep_new) total",
-                                        text: "F(rep_new) total",
-                                        id: "repulsiveForceNewTotal",
-                                        color: COLOR.REPULSIVE_FORCE_NEW,
-                                        checked: canvasParamsStates.repulsiveForceNewTotal,
-                                        onChange: (checked) => canvasParamsStates.repulsiveForceNewTotal = checked,
-                                    }),
-                                ],
-                                [
-                                    CheckboxWithColor({
-                                        title: "F(rep) each obstacle",
-                                        text: "F(rep) each obstacle",
-                                        id: "repulsiveForceEach",
-                                        color: COLOR.REPULSIVE_FORCE,
-                                        checked: canvasParamsStates.repulsiveForce,
-                                        onChange: (checked) => canvasParamsStates.repulsiveForce = checked,
-                                    }),
-                                ],
-                                [
-                                    CheckboxWithColor({
-                                        title: "F(rep_new) each obstacle",
-                                        text: "F(rep_new) each obstacle",
-                                        id: "repulsiveForceNewEach",
-                                        color: COLOR.REPULSIVE_FORCE_NEW,
-                                        checked: canvasParamsStates.repulsiveForceNew,
-                                        onChange: (checked) => canvasParamsStates.repulsiveForceNew = checked,
-                                    }),
-                                ],
-                                [
-                                    CheckboxWithColor({
-                                        title: "Obstacles Field (R)",
-                                        text: "Obstacles Field (R)",
-                                        id: "obstaclesField",
-                                        color: COLOR.OBSTACLES_FIELD_RADIUS,
-                                        checked: canvasParamsStates.obstaclesFieldRadius,
-                                        onChange: (checked) => canvasParamsStates.obstaclesFieldRadius = checked,
-                                    }),
-                                ],
-                                [
-                                    CheckboxWithColor({
-                                        title: "Obstacles",
-                                        text: "Obstacles",
-                                        id: "obstacles",
-                                        color: COLOR.OBSTACLE,
-                                        checked: canvasParamsStates.obstacles,
-                                        onChange: (checked) => canvasParamsStates.obstacles = checked,
-                                    }),
-                                ],
-                            ],
-                        }),
-                    }),
-                    Details({
                         summary: "Obstacles",
                         children: Table({
                             tableBody: [
@@ -271,16 +154,164 @@ const ParamsPanel = ({ vehicle, canvasParamsStates, canvasParamsActions }) => {
                                             'Default',
                                             'Walls'
                                         ],
-                                        defaultValue: canvasParamsStates.obstaclesMap,
+                                        defaultValue: canvasParamStates.obstaclesMap,
                                         onChange: (value) => {
-                                            canvasParamsStates.obstaclesMap = value;
+                                            canvasParamStates.obstaclesMap = value;
                                             canvasParamsActions.obstaclesMap(value);
                                         },
                                     })
                                 ]
                             ]
                         })
-                    })
+                    }),
+                    Details({
+                        summary: "Canvas",
+                        children: Table({
+                            tableBody: [
+                                [
+                                    Checkbox({
+                                        title: "Vectors Flow",
+                                        text: "Vectors Flow",
+                                        id: "vectorsFlow",
+                                        color: COLOR.VECTORS_FLOW,
+                                        checked: canvasParamStates.vectorsFlow,
+                                        onChange: (checked) => canvasParamStates.vectorsFlow = checked,
+                                    }),
+                                ],
+                                [
+                                    Checkbox({
+                                        title: "Vehicle",
+                                        text: "Vehicle",
+                                        id: "vehicle",
+                                        color: COLOR.VEHICLE,
+                                        checked: canvasParamStates.vehicle,
+                                        onChange: (checked) => canvasParamStates.vehicle = checked,
+                                    }),
+                                ],
+                                [
+                                    Checkbox({
+                                        title: "Vehicle Field Radius",
+                                        text: "Vehicle Field Radius",
+                                        id: "vehicleFieldRadius",
+                                        color: COLOR.VEHICLE_FIELD_RADIUS,
+                                        checked: canvasParamStates.vehicleFieldRadius,
+                                        onChange: (checked) => canvasParamStates.vehicleFieldRadius = checked,
+                                    }),
+                                ],
+                                [
+                                    Checkbox({
+                                        title: "F(tot) or V",
+                                        text: "F(tot) or V",
+                                        id: "totalForce",
+                                        color: COLOR.TOTAL_FORCE,
+                                        checked: canvasParamStates.totalForce,
+                                        onChange: (checked) => canvasParamStates.totalForce = checked,
+                                    }),
+                                ],
+                                [
+                                    Checkbox({
+                                        title: "F(att)",
+                                        text: "F(att)",
+                                        id: "attractiveForce",
+                                        color: COLOR.ATTRACTIVE_FORCE,
+                                        checked: canvasParamStates.attractiveForce,
+                                        onChange: (checked) => canvasParamStates.attractiveForce = checked,
+                                    }),
+                                ],
+                                [
+                                    Checkbox({
+                                        title: "F(rep) total",
+                                        text: "F(rep) total",
+                                        id: "repulsiveForceTotal",
+                                        color: COLOR.REPULSIVE_FORCE,
+                                        checked: canvasParamStates.repulsiveForceTotal,
+                                        onChange: (checked) => canvasParamStates.repulsiveForceTotal = checked,
+                                    }),
+                                ],
+                                [
+                                    Checkbox({
+                                        title: "F(rep_new) total",
+                                        text: "F(rep_new) total",
+                                        id: "repulsiveForceNewTotal",
+                                        color: COLOR.REPULSIVE_FORCE_NEW,
+                                        checked: canvasParamStates.repulsiveForceNewTotal,
+                                        onChange: (checked) => canvasParamStates.repulsiveForceNewTotal = checked,
+                                    }),
+                                ],
+                                [
+                                    Checkbox({
+                                        title: "F(rep) each obstacle",
+                                        text: "F(rep) each obstacle",
+                                        id: "repulsiveForceEach",
+                                        color: COLOR.REPULSIVE_FORCE,
+                                        checked: canvasParamStates.repulsiveForce,
+                                        onChange: (checked) => canvasParamStates.repulsiveForce = checked,
+                                    }),
+                                ],
+                                [
+                                    Checkbox({
+                                        title: "F(rep_new) each obstacle",
+                                        text: "F(rep_new) each obstacle",
+                                        id: "repulsiveForceNewEach",
+                                        color: COLOR.REPULSIVE_FORCE_NEW,
+                                        checked: canvasParamStates.repulsiveForceNew,
+                                        onChange: (checked) => canvasParamStates.repulsiveForceNew = checked,
+                                    }),
+                                ],
+                                [
+                                    Checkbox({
+                                        title: "Obstacles Field (R)",
+                                        text: "Obstacles Field (R)",
+                                        id: "obstaclesField",
+                                        color: COLOR.OBSTACLES_FIELD_RADIUS,
+                                        checked: canvasParamStates.obstaclesFieldRadius,
+                                        onChange: (checked) => canvasParamStates.obstaclesFieldRadius = checked,
+                                    }),
+                                ],
+                                [
+                                    Checkbox({
+                                        title: "Obstacles",
+                                        text: "Obstacles",
+                                        id: "obstacles",
+                                        color: COLOR.OBSTACLE,
+                                        checked: canvasParamStates.obstacles,
+                                        onChange: (checked) => canvasParamStates.obstacles = checked,
+                                    }),
+                                ],
+                            ],
+                        }),
+                    }),
+                    Details({
+                        summary: "3D Graphics (Plotly.js)",
+                        children: Table({
+                            tableBody: [
+                                [
+                                    Checkbox({
+                                        title: "Attractive Force",
+                                        text: "Attractive Force",
+                                        id: "Attractive-plotly",
+                                        onChange: canvasParamsPlotlyActions.attractiveForce,
+                                    }),
+                                ],
+                                [
+                                    Checkbox({
+                                        title: "Repulsive Force",
+                                        text: "Repulsive Force",
+                                        id: "Repulsive-plotly",
+                                        onChange: canvasParamsPlotlyActions.repulsiveForce,
+                                    }),
+                                ],
+                                [
+                                    Checkbox({
+                                        title: "Repulsive New Force",
+                                        text: "Repulsive New Force",
+                                        id: "RepulsiveNew-plotly",
+                                        onChange: canvasParamsPlotlyActions.repulsiveForceNew,
+                                    }),
+                                ]
+                            ],
+                        }),
+                    }),
                 ],
             })}
         </div>

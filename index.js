@@ -4,9 +4,10 @@ import html, { Component, render } from './preact/index.js';
 import ParamsPanel from './view/ParamsPanel.js';
 import { withLsSubscribe } from './view/helpers.js';
 import { CanvasComponent } from './view/Components.js';
+import PlotlyRenderer from './Plotly.js';
 
 // mutatable params 
-const canvasParamsStates = withLsSubscribe({
+const canvasParamStates = withLsSubscribe({
   vectorFlow: 0,
   totalForce:0,
   vectorsFlow:0,
@@ -24,7 +25,7 @@ const canvasParamsStates = withLsSubscribe({
 
 
 const obstacles = new Obstacles(
-    Obstacles.MAPS[canvasParamsStates.obstaclesMap]
+    Obstacles.MAPS[canvasParamStates.obstaclesMap]
 );
 const target = new Target(1000, CanvasRenderer.HEIGHT/2, 2.5, 0.00015);
 const vehicle = new Vehicle(100, CanvasRenderer.HEIGHT/2, 150)
@@ -33,10 +34,17 @@ const canvasParamsActions = {
   obstaclesMap: (value) => obstacles.set(Obstacles.MAPS[value])
 }
 
+const canvasParamsPlotlyActions = {
+  attractiveForce: () => {},
+  repulsiveForce: () => {},
+  repulsiveForceNew: () => {},
+}
+
 const paramsPanelProps = {
   vehicle,
-  canvasParamsStates,
-  canvasParamsActions
+  canvasParamStates,
+  canvasParamsActions,
+  canvasParamsPlotlyActions
 }
 
 
@@ -46,8 +54,8 @@ class App extends Component {
   }
   componentDidMount() {
     const canvas = document.getElementById('canvas');
-    this.canvasRenderer = new CanvasRenderer(canvas, canvasParamsStates, vehicle, target, obstacles);
-    
+    this.canvasRenderer = new CanvasRenderer(canvas, canvasParamStates, vehicle, target, obstacles);
+    new PlotlyRenderer('plotly', canvasParamsPlotlyActions, vehicle, target, obstacles);
 
     canvas.onmousedown = (e) => {
       pressed = true;
@@ -93,7 +101,7 @@ class App extends Component {
 }
 
 
-render(html`<${App} />`, document.body);
+render(html`<${App} />`, document.getElementById('root'));
 
 
 var pause = false;
