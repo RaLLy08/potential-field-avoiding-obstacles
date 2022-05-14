@@ -1,9 +1,9 @@
 import { CanvasRenderer } from './Canvas.js';
 import { Obstacles, Vehicle, Target } from './Entity.js';
 import html, { Component, render } from './preact/index.js';
-import { CanvasComponent } from './view/Components.js';
 import ParamsPanel from './view/ParamsPanel.js';
 import { withLsSubscribe } from './view/helpers.js';
+import { CanvasComponent } from './view/Components.js';
 
 // mutatable params 
 const canvasParamsStates = withLsSubscribe({
@@ -23,14 +23,11 @@ const canvasParamsStates = withLsSubscribe({
 });
 
 
-
 const obstacles = new Obstacles(
     Obstacles.MAPS[canvasParamsStates.obstaclesMap]
 );
 const target = new Target(1000, CanvasRenderer.HEIGHT/2, 2.5, 0.00015);
 const vehicle = new Vehicle(100, CanvasRenderer.HEIGHT/2, 150)
-
-
 
 const canvasParamsActions = {
   obstaclesMap: (value) => obstacles.set(Obstacles.MAPS[value])
@@ -42,28 +39,27 @@ const paramsPanelProps = {
   canvasParamsActions
 }
 
+
 class App extends Component {
   constructor(props) {
     super(props);
   }
   componentDidMount() {
     const canvas = document.getElementById('canvas');
-    
     this.canvasRenderer = new CanvasRenderer(canvas, canvasParamsStates, vehicle, target, obstacles);
     
 
-    this.canvasRenderer.element.onmousedown = (e) => {
+    canvas.onmousedown = (e) => {
       pressed = true;
-      // obstacles.add(new Obstacle(e.offsetX, e.offsetY, 100, 2, 0.00015, 18))
     }
   
-    this.canvasRenderer.element.onmousemove = (e) => {
+    canvas.onmousemove = (e) => {
         if (!pressed) return;
         target.x = e.offsetX;
         target.y = e.offsetY;
     }
     
-    this.canvasRenderer.element.onmouseup = (e) => {
+    canvas.onmouseup = (e) => {
         pressed = false;
     }
 
@@ -73,6 +69,7 @@ class App extends Component {
   frame = () => {
     this.canvasRenderer.frame();
     this.forceUpdate();
+
     if (!pause) {
         vehicle.setAtractiveForce(target);
         vehicle.setObstacles(obstacles.getObstaclesInVehicleRadius(vehicle))
@@ -81,7 +78,6 @@ class App extends Component {
 
     window.requestAnimationFrame(this.frame)
   }
-
 
   render() {
     return html`

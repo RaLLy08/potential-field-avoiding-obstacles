@@ -94,10 +94,7 @@ export class Vehicle extends Vector {
         this.obstacles = [];
     }
 
-    static kSigma(sigma) {
-        const kMax = 2;
-        const tau = 1;
-
+    static kSigma(sigma, kMax=2, tau=1) {
         return kMax / (1 + Math.exp(sigma / tau));
     }
 

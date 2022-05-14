@@ -2,6 +2,7 @@ import { COLOR } from "../consts.js";
 import html from "../preact/index.js";
 import Utils from "../Utils.js";
 import {
+    CanvasGraphic,
     CheckboxWithColor,
     Details,
     InputDisplay,
@@ -132,6 +133,14 @@ const ParamsPanel = ({ vehicle, canvasParamsStates, canvasParamsActions }) => {
                                         }),
                                     ],
                                 ],
+                            }),
+                            Details({
+                                open: false,
+                                summary: "Graphics",
+                                children: [
+                                    Title({text: 'K(sigma)'}),
+                                    html`<${CanvasGraphic} width="360" height="150" xTitle=σ yTitle="radian" fx=${vehicle.constructor.kSigma} id="sigma"/>`
+                                ]
                             })
                         ],
                     }),

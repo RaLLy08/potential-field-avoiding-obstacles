@@ -3,17 +3,15 @@ import Vector from "./Vector.js";
 import { Vehicle } from "./Entity.js";
 
 class Canvas {
-  static WIDTH = 1128;
-  static HEIGHT = 768;
   #ctx;
 
-  constructor(element) {
-    this.element = element;
+  constructor(canvas, width, height) {
+    this.canvas = canvas;
 
-    this.element.width = Canvas.WIDTH;
-    this.element.height = Canvas.HEIGHT;
+    this.canvas.width = width;
+    this.canvas.height = height;
 
-    this.#ctx = this.element.getContext("2d");
+    this.#ctx = this.canvas.getContext("2d");
   }
 
   drawPoint(x, y, r, color) {
@@ -24,6 +22,14 @@ class Canvas {
     this.#ctx.closePath();
   }
 
+  text(x, y, text, opts = {}) {
+    this.#ctx.beginPath();
+    this.#ctx.font = `${opts.size || 12}px monospace`;
+    this.#ctx.textAlign = opts.textAlign;
+    this.#ctx.fillStyle = opts.color;
+    this.#ctx.fillText(text, x, y);
+    this.#ctx.closePath();
+  } 
   drawCircle(x, y, r, color, width = 1) {
     this.#ctx.beginPath();
 
@@ -48,7 +54,7 @@ class Canvas {
   }
 
   clear() {
-    this.#ctx.clearRect(0, 0, Canvas.WIDTH, Canvas.HEIGHT);
+    this.#ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
   drawVector(from, to, arrowSize = 2, lineWidth = 0.5, color) {
@@ -81,8 +87,10 @@ class Canvas {
 }
 
 export class CanvasRenderer extends Canvas {
+  static WIDTH = 1128;
+  static HEIGHT = 768;
   constructor(canvas, state, vehicle, target, obstacles) {
-    super(canvas);
+    super(canvas, CanvasRenderer.WIDTH, CanvasRenderer.HEIGHT);
     this.vehicle = vehicle;
     this.target = target;
     this.obstacles = obstacles;
@@ -239,8 +247,8 @@ export class CanvasRenderer extends Canvas {
   drawTargetVectorsFlow(r) {
     const xPoints = 50;
     const yPoints = 50;
-    const spaceX = Canvas.WIDTH / xPoints;
-    const spaceY = Canvas.HEIGHT / yPoints;
+    const spaceX = CanvasRenderer.WIDTH / xPoints;
+    const spaceY = CanvasRenderer.HEIGHT / yPoints;
     const arrowScale = 2;
 
     for (let i = 0; i <= xPoints; i++) {
@@ -272,5 +280,151 @@ export class CanvasRenderer extends Canvas {
         );
       }
     }
+  }
+}
+
+export class CanvasGraphicRenderer extends Canvas {
+  /**
+   * @param {function} fx 
+   * @param {{maxY, maxX, stepX, stepY}} opts 
+   */
+  constructor(canvas, fx, opts={}) {
+    super(canvas, canvas.width, canvas.height);
+    this.fx = fx;
+
+    this.maxY = opts.maxY || this.getYMax() || 10;
+    this.maxX = opts.maxX || 10;
+    this.stepX = opts.stepX || this.maxX / 10;
+    this.stepY = opts.stepY || this.maxY / 10;
+
+    this.xScale = 1;
+    this.yScale = 1;
+
+    this.init();
+  }
+
+  init() {
+    this.drawAxis();
+    this.construct();
+  }
+
+  update() {
+    this.stepX = this.maxX / 10;
+    this.stepY = this.maxY / 10;
+    this.clear();
+    this.init();
+  }
+
+  getYMax() {
+    return this.fx(0)
+  }
+
+  // getXMaxForLimit(fx, limit) {
+  //   const xPixelToValue = (currXpx) => this.maxX / (this.canvas.width / (currXpx));
+  //   let xForY;
+  //   let xValueForY;
+    
+  //   for (let i = 0; i < this.canvas.width; i++) {
+  //     xValueForY = xPixelToValue(i)
+  //     xForY = fx(
+  //       xValueForY
+  //     )
+  //     if (xForY < limit) break;
+  //   }
+
+  //   return xValueForY;
+  // }
+
+  drawAxis = () => {
+    const startYforX = this.canvas.height - 2;
+    const startXforY = 0;
+    const valueOnY = (this.canvas.height) / (this.canvas.height/ this.maxY);
+    const valueOnX = (this.canvas.width) / (this.canvas.width/ this.maxX);
+    const shiftY = 8;
+    const oxLineWidth = 0.3;
+    const oyLineWidth = 0.3;
+    const oxLineColor = 'black';
+    const oyLineColor = 'black';
+    // y axis
+    for (let y = 0; y <= valueOnY/this.stepY; y++) {
+      const step = (this.canvas.height/valueOnY)*y*this.stepY - shiftY;
+      const position = this.canvas.height - step;
+      // const maxValuesOnSideY = valueOnY/2;
+      // let num = 0;
+      // if (position < this.canvas.height / 2) {
+      //   num = i - maxValuesOnSideY;
+      // }
+      // if (position > this.canvas.height / 2) {
+      //   num = maxValuesOnSideY - i;
+      // }
+      this.drawLine(0, position, this.canvas.width, position, oyLineWidth, oyLineColor);
+      // this.text(centerX, position, num);
+      this.text(startXforY, position, (y*this.stepY).toFixed(1), { textAlign: "start", size: 12 });
+    }
+    // x axis
+    for (let x = 0; x <= valueOnX/this.stepX; x++) {
+      const step = (this.canvas.width/valueOnX)*x*this.stepX ;
+      const position = step;
+
+      this.drawLine(position, 0, position, this.canvas.height, oxLineWidth, oxLineColor);
+      this.text(position, startYforX, (x*this.stepX).toFixed(1), {textAlign: "end", size: 12});
+    }
+  }
+
+  construct = () => {
+    const lineWidth = 2;
+    const lineColor = 'red';
+    const xPixelToValue = (currXpx) => this.maxX /(this.canvas.width / (currXpx));
+    const yValueToPixel = (val) => this.canvas.height - (this.canvas.height * val) / this.maxY
+
+    let prev;
+
+    for (let i = this.canvas.width; i >= 0; i--) {
+      const currX = i;
+      const currY =  yValueToPixel(
+        this.fx(
+          xPixelToValue(i)
+        )
+      );
+
+      if (!prev) { 
+        prev = {
+          x: currX,
+          y: currY
+        }
+      }
+
+      this.drawLine(
+        prev.x,
+        prev.y,
+        currX, 
+        currY, 
+        lineWidth, 
+        lineColor
+      );
+
+      prev.x = currX;
+      prev.y = currY;
+    }
+  }
+  
+  scaleX = (isAdd) => {
+    if (!isAdd) { 
+      this.maxX += this.stepX;
+    } else {
+      this.maxX -= this.stepX;
+    }
+
+    this.update();
+  }
+
+  scaleY = (isAdd) => {
+    if (!isAdd) { 
+      this.maxY += this.stepY;
+    } else {
+      this.maxY -= this.stepY;
+    }
+
+    this.update();
   }
 }
