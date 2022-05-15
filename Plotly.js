@@ -142,11 +142,11 @@ export default class PlotlyRenderer {
     }
 
     if (this.totalize) {
-      Plotly.newPlot('plotly', [this.totalForcePlotly], this.layout);
+      Plotly.newPlot(this.id, [this.totalForcePlotly], this.layout);
       return;
     }
 
-    Plotly.newPlot('plotly', [this.attractiveForcePlotly, this.repulsiveForcePlotly, this.repulsiveForceNewPlotly], this.layout);
+    Plotly.newPlot(this.id, [this.attractiveForcePlotly, this.repulsiveForcePlotly, this.repulsiveForceNewPlotly], this.layout);
   }
 }
 
