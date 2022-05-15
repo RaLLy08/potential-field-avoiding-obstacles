@@ -282,7 +282,7 @@ const ParamsPanel = ({ vehicle, canvasParamStates, canvasParamsActions, canvasPa
                         }),
                     }),
                     Details({
-                        summary: "3D Graphics (Plotly.js)",
+                        summary: "Force surfaces (Plotly.js)",
                         children: Table({
                             tableBody: [
                                 [
@@ -307,6 +307,14 @@ const ParamsPanel = ({ vehicle, canvasParamStates, canvasParamsActions, canvasPa
                                         text: "Repulsive New Force",
                                         id: "RepulsiveNew-plotly",
                                         onChange: canvasParamsPlotlyActions.repulsiveForceNew,
+                                    }),
+                                ],
+                                [
+                                    Checkbox({
+                                        title: "Totalize selected",
+                                        text: "Totalize selected",
+                                        id: "Totalize selected",
+                                        onChange: canvasParamsPlotlyActions.totalizeSelected,
                                     }),
                                 ]
                             ],

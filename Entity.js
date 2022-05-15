@@ -164,29 +164,35 @@ export class Vehicle extends Vector {
             const [obstacleRepulsedForceVector, obstacleRepulsedForceNewVector] = obstacleRepulsiveForce;
             
             this.totalRepulsiveForce = this.totalRepulsiveForce.sum(obstacleRepulsedForceVector);
+            if (!obstacleRepulsedForceNewVector) continue;
             this.totalRepulsiveForceNew = this.totalRepulsiveForceNew.sum(obstacleRepulsedForceNewVector);
         }
     }
     /**
      * sets (repulsiveForces) from (obstaclesInRadius)
      */
-    setRepulsiveForces() {
+    setRepulsiveForces(exludeRepNew) {
         this.repulsiveForces.length = 0;
 
         for (const obstacle of this.obstacles) {
+            const result = [];
+
             const repulsiveForceVector = obstacle.getFieldRepulsion(this);
 
-            const totalForceVector = this.attractiveForce.sum(
-                repulsiveForceVector
-            );
-    
-            const newRepulsionDirection = Math.sign(repulsiveForceVector.fullAngle(totalForceVector));
-            const repulsiveForceNewVector = Vehicle.getRepulsiveForceNew(repulsiveForceVector, totalForceVector, newRepulsionDirection);
+            result.push(repulsiveForceVector);
 
-            this.repulsiveForces.push([
-                repulsiveForceVector,
-                repulsiveForceNewVector
-            ]);
+
+            if (!exludeRepNew) {
+                const totalForceVector = this.attractiveForce.sum(
+                    repulsiveForceVector
+                );
+                const newRepulsionDirection = Math.sign(repulsiveForceVector.fullAngle(totalForceVector));
+                const repulsiveForceNewVector = Vehicle.getRepulsiveForceNew(repulsiveForceVector, totalForceVector, newRepulsionDirection);
+    
+                result.push(repulsiveForceNewVector);
+            }
+
+            this.repulsiveForces.push(result);
         }
     }
 

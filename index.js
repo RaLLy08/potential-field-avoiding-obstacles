@@ -30,15 +30,21 @@ const obstacles = new Obstacles(
 const target = new Target(1000, CanvasRenderer.HEIGHT/2, 2.5, 0.00015);
 const vehicle = new Vehicle(100, CanvasRenderer.HEIGHT/2, 150)
 
-const canvasParamsActions = {
-  obstaclesMap: (value) => obstacles.set(Obstacles.MAPS[value])
-}
-
 const canvasParamsPlotlyActions = {
   attractiveForce: () => {},
   repulsiveForce: () => {},
   repulsiveForceNew: () => {},
+  totalizeSelected: () => {},
+  updateSurfaces: () => {},
 }
+
+const canvasParamsActions = {
+  obstaclesMap: (value) => {
+    obstacles.set(Obstacles.MAPS[value]);
+    canvasParamsPlotlyActions.updateSurfaces();
+  }
+}
+
 
 const paramsPanelProps = {
   vehicle,
