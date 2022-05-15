@@ -18,7 +18,11 @@ export default class Vector {
         const dotOther = this.dot(other);
         const magMult = this.mag() * other.mag();
 
-        return Math.acos(dotOther / magMult);
+        const result = Math.acos(dotOther / magMult)
+        
+        if (Number.isNaN(result)) return 0;
+
+        return result;
     }
     fullAngle(other) {
         return Math.atan2(this.x * other.y - this.y* other.x, this.x*other.x + this.y*other.y)
@@ -33,7 +37,11 @@ export default class Vector {
         return new Vector(this.x * koef, this.y * koef, this.params);
     }
     normalize() {
-        return this.scaleBy(1 / this.mag())
+        const mag = this.mag();
+
+        if (mag === 0) return this;
+
+        return this.scaleBy(1 / mag);
     }
     negate() {
         return this.scaleBy(-1);
