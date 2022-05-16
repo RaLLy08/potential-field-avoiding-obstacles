@@ -35,19 +35,19 @@ const ParamsPanel = ({ vehicle, canvasParamStates, canvasParamsActions, canvasPa
     // angle between Total force and Attractive force (theta)
     const theta = Utils.toDegree(
         vehicle.attractiveForce.angle(vehicle.totalForce)
-    ).toPrecision(3);
+    ).toFixed();
     // angle between Total force and Repulsive force (sigma)
     const sigma = Utils.toDegree(
         Utils.normalizeAngle(
             vehicle.totalRepulsiveForce.fullAngle(vehicle.totalForce)
         )
-    ).toPrecision(3);
+    ).toFixed();
     // angle between Attractive force and Repulsive force (gamma)
     const gamma = Utils.toDegree(
         Utils.normalizeAngle(
             vehicle.totalRepulsiveForce.fullAngle(vehicle.attractiveForce)
         )
-    ).toPrecision(3);
+    ).toFixed();
 
 
     return html`
