@@ -231,7 +231,7 @@ export default class PlotlyRenderer {
     };
 
     plotlyDrawForces() {
-        const reduceCoef = 1;
+        const reduceCoef = 2;
 
         const xPoints = CanvasRenderer.WIDTH / reduceCoef;
         const yPoints = CanvasRenderer.HEIGHT / reduceCoef;
