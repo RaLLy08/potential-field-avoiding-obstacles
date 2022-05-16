@@ -208,12 +208,13 @@ export default class PlotlyRenderer {
                 this.repulsiveForceNew,
             ].some((el) => el)
         ) {
+            this.plotlyDrawForces();
             plotly.style.display = "block";
-        } else {
-            plotly.style.display = "none";
-        }
-    
-        this.plotlyDrawForces();
+
+            return;
+        } 
+        
+        plotly.style.display = "none";
     };
 
     plotlyDrawForces() {
