@@ -12,7 +12,7 @@ import {
 } from "./Components.js";
 
 
-const ParamsPanel = ({ vehicle, canvasParamStates, canvasParamsActions, canvasParamsPlotlyActions }) => {
+const ParamsPanel = ({ vehicle, canvasParamStates, canvasParamsActions, canvasParamsPlotlyActions, frameRates }) => {
     const style = {
         paramsWrapper: {
             fontSize: "0.9rem",
@@ -191,6 +191,9 @@ const ParamsPanel = ({ vehicle, canvasParamStates, canvasParamsActions, canvasPa
                         summary: "Canvas",
                         children: Table({
                             tableBody: [
+                                [
+                                    Title({text: `FPS ${frameRates.constructor.toFps(frameRates.getFPMS()).toFixed(3)}`}),
+                                ],
                                 [
                                     Checkbox({
                                         title: "Vectors Flow",

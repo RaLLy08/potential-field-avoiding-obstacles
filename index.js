@@ -5,6 +5,7 @@ import ParamsPanel from './view/ParamsPanel.js';
 import { withLsSubscribe } from './view/helpers.js';
 import { CanvasComponent } from './view/Components.js';
 import PlotlyRenderer from './Plotly.js';
+import FrameRates from './FrameRates.js';
 
 // mutatable params 
 const canvasParamStates = withLsSubscribe({
@@ -47,12 +48,17 @@ const canvasParamsActions = {
   }
 }
 
+const frameRates = new FrameRates();
+
+
 const paramsPanelProps = {
   vehicle,
   canvasParamStates,
   canvasParamsActions,
-  canvasParamsPlotlyActions
+  canvasParamsPlotlyActions,
+  frameRates,
 }
+
 
 class App extends Component {
   constructor(props) {
@@ -63,6 +69,10 @@ class App extends Component {
     this.canvasRenderer = new CanvasRenderer(canvas, canvasParamStates, vehicle, target, obstacles);
     this.plotlyRenderer = new PlotlyRenderer(canvasParamsPlotlyActions, vehicle, target, obstacles);
 
+    frameRates.setCallFn(this.frame);
+    frameRates.start();
+
+    
     canvas.onmousedown = (e) => {
       pressed = true;
     }
@@ -77,13 +87,12 @@ class App extends Component {
         pressed = false;
     }
 
-    this.frame();
+    this.frameRates.start();
   }
 
   frame = () => {
     this.canvasRenderer.frame();
-    !pause && this.plotlyRenderer.frame();
-    this.forceUpdate();
+    this.plotlyRenderer.frame();
 
     if (!pause) {
         vehicle.setAtractiveForce(target);
@@ -92,7 +101,7 @@ class App extends Component {
         vehicle.checkReachedTarget(target);
     };
 
-    window.requestAnimationFrame(this.frame)
+    this.forceUpdate();
   }
 
   render() {
