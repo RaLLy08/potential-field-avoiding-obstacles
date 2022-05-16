@@ -139,7 +139,9 @@ export function CanvasComponent({
             justifyContent: 'space-between',
         },
         resetVehicle: {
+            height: '40px',
             display: 'flex',
+            alignItems: 'center',
         },
         pauseResume: {
             height: '40px',
