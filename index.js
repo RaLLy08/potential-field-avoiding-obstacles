@@ -96,7 +96,7 @@ class App extends Component {
     this.canvasRenderer.frame();
     this.plotlyRenderer.frame();
     const lostSpeed = (1000 / frameRates.getFPMS()) / 60;
-    console.log(canvasParamStates);
+
     if (!pause) {
         vehicle.setAtractiveForce(target);
         vehicle.setObstacles(obstacles.getObstaclesInVehicleRadius(vehicle))

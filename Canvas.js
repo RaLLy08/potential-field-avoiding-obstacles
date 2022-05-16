@@ -210,7 +210,7 @@ export class CanvasRenderer extends Canvas {
         );
       }
 
-      if (this.state.repulsiveForceNew) {
+      if (this.state.repulsiveForceNew && !this.state.offRepulsiveForceNew) {
         this.drawVector(
           this.vehicle,
           obstacleRepulsedForceNewVector.scaleBy(100).sum(this.vehicle),
