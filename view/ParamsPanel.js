@@ -175,7 +175,8 @@ const ParamsPanel = ({ vehicle, canvasParamStates, canvasParamsActions, canvasPa
                                     Select({
                                         options: [
                                             'Default',
-                                            'Walls'
+                                            'Walls',
+                                            'Single Obstacle'
                                         ],
                                         defaultValue: canvasParamStates.obstaclesMap,
                                         onChange: (value) => {
