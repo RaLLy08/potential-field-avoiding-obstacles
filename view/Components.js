@@ -124,34 +124,35 @@ export function CanvasComponent({
 
     const style = {
         canvasWrapper: {
-            transform: 'translate(-50%, -50%)', 
-            position: 'absolute', 
-            top: '50%', 
-            left: '50%', 
             display: 'flex',
+            flexDirection: 'column'
         },
         canvas: { 
             border: 'dashed 1px',
         },
+        actions: {
+            alignItems: 'center',
+            alignSelf: 'end',
+            width: '180px',
+            margin: '16px', 
+            display: 'flex',
+            justifyContent: 'space-between',
+        },
         resetVehicle: {
-            cursor: 'pointer',
-            position: 'absolute',
-            bottom: '-40px',
-            right: 0,
+            display: 'flex',
         },
         pauseResume: {
-            cursor: 'pointer',
-            position: 'absolute',
-            bottom: '-40px',
-            right: '110px',
+            height: '40px',
         }
     }
 
     return html`
         <div class="canvasWrapper" style=${style.canvasWrapper}>
             <canvas id=${id} style=${style.canvas}></canvas>
-            <button onclick=${onResetVehicle} style=${style.resetVehicle}>Reset vehicle</button>
-            <button onclick=${onPauseResume} style=${style.pauseResume}>${pauseResume}</button>
+            <div style=${style.actions}>
+                <button onclick=${onResetVehicle} style=${style.resetVehicle}>Reset vehicle</button>
+                <button onclick=${onPauseResume} style=${style.pauseResume}>${pauseResume}</button>
+            </div>
         </div>
     `
 }

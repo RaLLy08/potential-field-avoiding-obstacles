@@ -35,7 +35,9 @@ const canvasParamsPlotlyActions = {
   repulsiveForce: () => {},
   repulsiveForceNew: () => {},
   totalizeSelected: () => {},
+  forceTraces: () => {},
   updateSurfaces: () => {},
+  resetVehicle: () => {},
 }
 
 const canvasParamsActions = {
@@ -61,7 +63,7 @@ class App extends Component {
   componentDidMount() {
     const canvas = document.getElementById('canvas');
     this.canvasRenderer = new CanvasRenderer(canvas, canvasParamStates, vehicle, target, obstacles);
-    new PlotlyRenderer('plotly', canvasParamsPlotlyActions, vehicle, target, obstacles);
+    this.plotlyRenderer = new PlotlyRenderer(canvasParamsPlotlyActions, vehicle, target, obstacles);
 
     canvas.onmousedown = (e) => {
       pressed = true;
@@ -82,6 +84,7 @@ class App extends Component {
 
   frame = () => {
     this.canvasRenderer.frame();
+    !pause && this.plotlyRenderer.frame();
     this.forceUpdate();
 
     if (!pause) {
@@ -96,12 +99,20 @@ class App extends Component {
   render() {
     return html`
         ${ParamsPanel(paramsPanelProps)}
-        ${CanvasComponent({
+        <div style="
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 100%;"
+        >
+          ${CanvasComponent({
             id: 'canvas',
             onPauseResume,
             onResetVehicle,
             isPaused: pause,
-        })}
+          })}
+        </div>
+        <div id='plotly-force-traces' style="display:none;"></div>
     `;
   }
 }
@@ -116,6 +127,7 @@ var pressed = false;
 function onResetVehicle() {
     vehicle.x = 100;
     vehicle.y = CanvasRenderer.HEIGHT/2;
+    canvasParamsPlotlyActions.resetVehicle();
 }
 
 function onPauseResume() {

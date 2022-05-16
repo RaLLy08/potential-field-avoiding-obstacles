@@ -11,11 +11,13 @@ import {
     Title,
 } from "./Components.js";
 
+
 const ParamsPanel = ({ vehicle, canvasParamStates, canvasParamsActions, canvasParamsPlotlyActions }) => {
     const style = {
         paramsWrapper: {
             fontSize: "0.9rem",
-            position: "relative",
+            top: '0.2rem',
+            position: "fixed",
             zIndex: "999",
             display: "inline-block",
             marginTop: "0.2rem",
@@ -46,6 +48,7 @@ const ParamsPanel = ({ vehicle, canvasParamStates, canvasParamsActions, canvasPa
             vehicle.totalRepulsiveForce.fullAngle(vehicle.attractiveForce)
         )
     ).toPrecision(3);
+
 
     return html`
         <div style=${style.paramsWrapper}>
@@ -139,7 +142,7 @@ const ParamsPanel = ({ vehicle, canvasParamStates, canvasParamsActions, canvasPa
                                 summary: "Graphics",
                                 children: [
                                     Title({text: 'K(sigma)'}),
-                                    html`<${CanvasGraphic} opts=${{quantityX: 6, maxX: 8}} width="320" height="150" xTitle=σ yTitle="radian" fx=${vehicle.constructor.kSigma} id="sigma"/>`
+                                    html`<${CanvasGraphic} opts=${{quantityX: 6, maxX: 8}} width="320" height="150" xTitle=σ yTitle="radian" fx=${vehicle.constructor.kSigma} id="sigma"/>`,
                                 ]
                             })
                         ],
@@ -315,6 +318,14 @@ const ParamsPanel = ({ vehicle, canvasParamStates, canvasParamsActions, canvasPa
                                         text: "Totalize selected",
                                         id: "Totalize selected",
                                         onChange: canvasParamsPlotlyActions.totalizeSelected,
+                                    }),
+                                ],
+                                [
+                                    Checkbox({
+                                        title: "Force Traces",
+                                        text: "Force Traces",
+                                        id: "Force Traces",
+                                        onChange: canvasParamsPlotlyActions.forceTraces,
                                     }),
                                 ]
                             ],

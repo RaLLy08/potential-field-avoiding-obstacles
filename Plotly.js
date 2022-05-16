@@ -1,152 +1,294 @@
-import 'https://cdn.plot.ly/plotly-2.12.1.min.js';
-import { CanvasRenderer } from './Canvas.js';
-import { Vehicle } from './Entity.js';
+import "https://cdn.plot.ly/plotly-2.12.1.min.js";
+import { CanvasRenderer } from "./Canvas.js";
+import { COLOR } from "./consts.js";
+import { Vehicle } from "./Entity.js";
 
 export default class PlotlyRenderer {
-  constructor(id, actions, vehicle, target, obstacles) {
-    this.id = id;
-    this.vehicle = vehicle;
-    this.target = target;
-    this.obstacles = obstacles;
+    static SURFACES_ID = "plotly";
+    static FORCE_TRACE_ID = "plotly-force-traces";
 
-    actions.attractiveForce = this.onAttractiveForce;
-    actions.repulsiveForce = this.onRepulsiveForce;
-    actions.repulsiveForceNew = this.onRepulsiveForceNew;
-    actions.totalizeSelected = this.onTotalizeSelected;
-    actions.updateSurfaces = this.update;
+    constructor(actions, vehicle, target, obstacles) {
+        this.vehicle = vehicle;
+        this.target = target;
+        this.obstacles = obstacles;
 
-    this.attractiveForce = 0;
-    this.repulsiveForce = 0;
-    this.repulsiveForceNew = 0;
-    this.totalize = 0;
+        actions.attractiveForce = this.onAttractiveForce;
+        actions.repulsiveForce = this.onRepulsiveForce;
+        actions.repulsiveForceNew = this.onRepulsiveForceNew;
+        actions.totalizeSelected = this.onTotalizeSelected;
+        actions.updateSurfaces = this.update;
+        actions.resetVehicle = this.onResetVehicle;
+        actions.forceTraces = this.onForceTraces;
 
-    this.attractiveForcePlotly = { z: [], type: 'surface', name: 'Attractive', opacity: 0.5, 
-      contours: {
-        z: {
-          show:true,
-          usecolormap: true,
-          highlightcolor:"#42f462",
-          project:{z: true}
-        }}, 
-        scene: "scene1"
+        this.attractiveForce = 0;
+        this.repulsiveForce = 0;
+        this.repulsiveForceNew = 0;
+        this.totalize = 0;
+        this.forceTraces = 0;
+
+        this.attractiveForcePlotly = {
+            z: [],
+            type: "surface",
+            name: "Attractive",
+            opacity: 0.5,
+            contours: {
+                z: {
+                    show: true,
+                    usecolormap: true,
+                    highlightcolor: "#42f462",
+                    project: { z: true },
+                },
+            },
+            scene: "scene1",
+        };
+        this.repulsiveForcePlotly = {
+            z: [],
+            type: "surface",
+            name: "Repulsive",
+            opacity: 0.5,
+            contours: {
+                z: {
+                    show: true,
+                    usecolormap: true,
+                    highlightcolor: "#42f462",
+                    project: { z: true },
+                },
+            },
+        };
+        this.repulsiveForceNewPlotly = {
+            z: [],
+            type: "surface",
+            name: "Repulsive New",
+            opacity: 0.5,
+            contours: {
+                z: {
+                    show: true,
+                    usecolormap: true,
+                    highlightcolor: "#42f462",
+                    project: { z: true },
+                },
+            },
+        };
+        this.totalForcePlotly = {
+            z: [],
+            type: "surface",
+            name: "Total force",
+            contours: {
+                z: {
+                    show: true,
+                    usecolormap: true,
+                    highlightcolor: "#42f462",
+                    project: { z: true },
+                },
+            },
+        };
+
+        this.layout = {
+            title: "Attractive and Repulsive Forces",
+        };
+
+
+        this.totalForceTracePlotly = {
+            y: [0],
+            name: "Total Force",
+            mode: "lines",
+            line: { color: COLOR.TOTAL_FORCE },
+        };
+        this.repulsiveForceTracePlotly = {
+            name: "Repulsive Force",
+            y: [0],
+            mode: "lines",
+            line: { color: COLOR.REPULSIVE_FORCE },
+        };
+        this.obstacleFieldCrossingTracePlotly = {
+            name: "Crossed Obstacle Fields Value",
+            y: [0],
+            mode: "lines",
+            line: { color: COLOR.VEHICLE_FIELD_RADIUS },
+            xaxis: 'x2',
+            yaxis: 'y2',
+        };
+
+        this.forceTraceLayout = {
+            title: "Repulsive and Total Force, Obstacle Crossing Fields",
+            xaxis: {
+              domain: [0, 1],
+              showticklabels: false
+            },
+            yaxis: {domain: [0.6,1]},
+            xaxis2: {
+              anchor: 'y2', 
+              domain: [0, 1]
+            },
+            yaxis2: {
+              anchor: 'x2', 
+              domain: [0, 0.4]
+            },
+        }  
     };
-    this.repulsiveForcePlotly = { z: [], type: 'surface', name: 'Repulsive', opacity: 0.5,contours: {
-      z: {
-        show:true,
-        usecolormap: true,
-        highlightcolor:"#42f462",
-        project:{z: true}
-      }}};
-    this.repulsiveForceNewPlotly = { z: [], type: 'surface', name: 'Repulsive New',opacity: 0.5, contours: {
-      z: {
-        show:true,
-        usecolormap: true,
-        highlightcolor:"#42f462",
-        project:{z: true}
-      }}};
 
-    this.totalForcePlotly = { z: [], type: 'surface', name: 'Total force', contours: {
-      z: {
-        show:true,
-        usecolormap: true,
-        highlightcolor:"#42f462",
-        project:{z: true}
-      }}};
-
-
-
-    this.layout = {
-      title: 'Attractive and Repulsive Forces',
+    frame() {
+        if (this.forceTraces) {
+            this.forceTracesUpdate();
+        }
     }
-  }
+    forceTracesUpdate() {
+      const totalForce = this.vehicle.totalForce.mag().toPrecision(3);
+      const repulsiveForceTotal = this.vehicle.totalRepulsiveForce
+          .mag()
+          .toPrecision(3);
 
-  onTotalizeSelected = (state) => {
-    this.totalize = state;
-    this.update();
-  }
+      this.totalForceTracePlotly.y.push(totalForce);
+      this.repulsiveForceTracePlotly.y.push(repulsiveForceTotal);
+      this.obstacleFieldCrossingTracePlotly.y.push(this.vehicle.obstacles.length);
 
-  onAttractiveForce = (state) => {
-    this.attractiveForce = state;
-    this.update();
-  }
-  onRepulsiveForce = (state) => {
-    this.repulsiveForce = state;
-    this.update();
-  }
-  onRepulsiveForceNew = (state) => {
-    this.repulsiveForceNew = state;
-    this.update();
-  }
-
-  update = () => {
-    const plotly = document.getElementById(this.id);
-
-    this.repulsiveForceNewPlotly.z.length = 0;
-    this.attractiveForcePlotly.z.length = 0;
-    this.repulsiveForcePlotly.z.length = 0;
-    this.totalForcePlotly.z.length = 0;
-
-    if ([this.attractiveForce, this.repulsiveForce, this.repulsiveForceNew].some((el) => el)) {
-      plotly.style.display = 'block';
-    } else {
-      plotly.style.display = 'none';
+        Plotly.newPlot(
+            PlotlyRenderer.FORCE_TRACE_ID,
+            [
+                this.totalForceTracePlotly,
+                this.repulsiveForceTracePlotly,
+                this.obstacleFieldCrossingTracePlotly
+            ],
+            this.forceTraceLayout
+        );
     }
 
-    this.plotlyDrawForces();
-  }
+    onResetVehicle = () => {
+        this.totalForceTracePlotly.y.length = 0;
+        this.repulsiveForceTracePlotly.y.length = 0;
+        this.obstacleFieldCrossingTracePlotly.y.length = 0;
+        this.forceTracesUpdate();
+    };
 
-  plotlyDrawForces() {
-    const reduceCoef = 2;
+    onForceTraces = (state) => {
+        const plotly = document.getElementById(PlotlyRenderer.FORCE_TRACE_ID);
 
-    const xPoints = CanvasRenderer.WIDTH / reduceCoef;
-    const yPoints = CanvasRenderer.HEIGHT / reduceCoef;
-    const spaceX = CanvasRenderer.WIDTH / xPoints;
-    const spaceY = CanvasRenderer.HEIGHT / yPoints;
-   
-    for (let i = 0; i <= xPoints; i++) {
-      if (this.totalize) {
-        this.totalForcePlotly.z.push([]);
-      } else {
-        this.attractiveForce && this.attractiveForcePlotly.z.push([]);
-        this.repulsiveForce && this.repulsiveForcePlotly.z.push([]);
-        this.repulsiveForceNew && this.repulsiveForceNewPlotly.z.push([]);
-      }
 
-      
-      for (let j = 0; j <= yPoints; j++) {
-        const vectorAsVehicle = new Vehicle(i * spaceX, j * spaceY);
-
-        if (this.attractiveForce) {
-          vectorAsVehicle.setAtractiveForce(this.target);
+        if (state) {
+            plotly.style.display = "block";
+            this.forceTracesUpdate();
+        } else {
+            plotly.style.display = "none";
         }
 
-        vectorAsVehicle.setObstacles(
-          this.obstacles.getAll()
-        );
+        plotly.scrollIntoView();
+        this.forceTraces = state;
+    };
 
-        if (this.repulsiveForce) {
-          vectorAsVehicle.setRepulsiveForces(!this.repulsiveForceNew);
-          vectorAsVehicle.setTotalRepulsiveForces();
+    onTotalizeSelected = (state) => {
+        this.totalize = state;
+        this.update();
+    };
+
+    onAttractiveForce = (state) => {
+        this.attractiveForce = state;
+        this.update();
+    };
+    onRepulsiveForce = (state) => {
+        this.repulsiveForce = state;
+        this.update();
+    };
+    onRepulsiveForceNew = (state) => {
+        this.repulsiveForceNew = state;
+        this.update();
+    };
+
+    update = () => {
+        const plotly = document.getElementById(PlotlyRenderer.SURFACES_ID);
+
+        this.repulsiveForceNewPlotly.z.length = 0;
+        this.attractiveForcePlotly.z.length = 0;
+        this.repulsiveForcePlotly.z.length = 0;
+        this.totalForcePlotly.z.length = 0;
+
+        if (
+            [
+                this.attractiveForce,
+                this.repulsiveForce,
+                this.repulsiveForceNew,
+            ].some((el) => el)
+        ) {
+            plotly.style.display = "block";
+        } else {
+            plotly.style.display = "none";
+        }
+    
+        this.plotlyDrawForces();
+    };
+
+    plotlyDrawForces() {
+        const reduceCoef = 2;
+
+        const xPoints = CanvasRenderer.WIDTH / reduceCoef;
+        const yPoints = CanvasRenderer.HEIGHT / reduceCoef;
+        const spaceX = CanvasRenderer.WIDTH / xPoints;
+        const spaceY = CanvasRenderer.HEIGHT / yPoints;
+
+        for (let i = 0; i <= xPoints; i++) {
+            if (this.totalize) {
+                this.totalForcePlotly.z.push([]);
+            } else {
+                this.attractiveForce && this.attractiveForcePlotly.z.push([]);
+                this.repulsiveForce && this.repulsiveForcePlotly.z.push([]);
+                this.repulsiveForceNew &&
+                    this.repulsiveForceNewPlotly.z.push([]);
+            }
+
+            for (let j = 0; j <= yPoints; j++) {
+                const vectorAsVehicle = new Vehicle(i * spaceX, j * spaceY);
+
+                if (this.attractiveForce) {
+                    vectorAsVehicle.setAtractiveForce(this.target);
+                }
+
+                vectorAsVehicle.setObstacles(this.obstacles.getAll());
+
+                if (this.repulsiveForce) {
+                    vectorAsVehicle.setRepulsiveForces(!this.repulsiveForceNew);
+                    vectorAsVehicle.setTotalRepulsiveForces();
+                }
+
+                if (this.totalize) {
+                    vectorAsVehicle.setTotalForce();
+                    this.totalForcePlotly.z[i].push(
+                        vectorAsVehicle.totalForce.mag() / reduceCoef
+                    );
+                    continue;
+                }
+
+                this.attractiveForce &&
+                    this.attractiveForcePlotly.z[i].push(
+                        vectorAsVehicle.attractiveForce.mag() / reduceCoef
+                    );
+                this.repulsiveForce &&
+                    this.repulsiveForcePlotly.z[i].push(
+                        vectorAsVehicle.totalRepulsiveForce.mag() / reduceCoef
+                    );
+                this.repulsiveForceNew &&
+                    this.repulsiveForceNewPlotly.z[i].push(
+                        vectorAsVehicle.totalRepulsiveForceNew.mag() /
+                            reduceCoef
+                    );
+            }
         }
 
         if (this.totalize) {
-          vectorAsVehicle.setTotalForce();
-          this.totalForcePlotly.z[i].push(vectorAsVehicle.totalForce.mag()/ reduceCoef);
-          continue;
+            Plotly.newPlot(
+                PlotlyRenderer.SURFACES_ID,
+                [this.totalForcePlotly],
+                this.layout
+            );
+            return;
         }
 
-        this.attractiveForce && this.attractiveForcePlotly.z[i].push(vectorAsVehicle.attractiveForce.mag()/ reduceCoef);
-        this.repulsiveForce && this.repulsiveForcePlotly.z[i].push(vectorAsVehicle.totalRepulsiveForce.mag()/ reduceCoef);
-        this.repulsiveForceNew && this.repulsiveForceNewPlotly.z[i].push(vectorAsVehicle.totalRepulsiveForceNew.mag()/ reduceCoef);
-      }
+        Plotly.newPlot(
+            PlotlyRenderer.SURFACES_ID,
+            [
+                this.attractiveForcePlotly,
+                this.repulsiveForcePlotly,
+                this.repulsiveForceNewPlotly,
+            ],
+            this.layout
+        );
     }
-
-    if (this.totalize) {
-      Plotly.newPlot(this.id, [this.totalForcePlotly], this.layout);
-      return;
-    }
-
-    Plotly.newPlot(this.id, [this.attractiveForcePlotly, this.repulsiveForcePlotly, this.repulsiveForceNewPlotly], this.layout);
-  }
 }
-
