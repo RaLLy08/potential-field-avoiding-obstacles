@@ -262,15 +262,15 @@ export class Obstacles {
 
     static MAPS = [
         [
-            new Obstacle(350, 400, 190, 7, 1/9000, 90),
-            new Obstacle(500, 290, 80, 1.8, 0.00015, 18),
-            new Obstacle(790, 490, 80, 1.8, 0.00015, 18),
-            new Obstacle(500, 690, 80, 1.8, 0.00015, 18),
-            new Obstacle(790, 190, 80, 1.8, 0.00015, 18),
-            new Obstacle(590, 190, 110, 1.9, 0.00015, 24),
-            new Obstacle(300, 600, 40, 0.8, 0.000125),
-            new Obstacle(700, 600, 40, 0.8, 0.000125),
-            new Obstacle(600, 530, 40, 0.8, 0.000125),
+            new Obstacle(350, 390, 190, 12, 1/9000, 90),
+            new Obstacle(500, 290, 80, 3, 0.00015, 18),
+            new Obstacle(790, 490, 80, 3, 0.00015, 18),
+            new Obstacle(500, 690, 80, 3, 0.00015, 18),
+            new Obstacle(790, 190, 80, 3, 0.00015, 18),
+            new Obstacle(590, 190, 110, 3, 0.00015, 24),
+            new Obstacle(300, 600, 40, 3, 0.000125),
+            new Obstacle(700, 600, 40, 3, 0.000125),
+            new Obstacle(600, 530, 40, 3, 0.000125),
         ],
         [
             new Obstacle(400, 200, 100, 2.5, 0.000125, 18),
