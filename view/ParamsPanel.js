@@ -58,6 +58,32 @@ const ParamsPanel = ({ vehicle, canvasParamStates, canvasParamsActions, canvasPa
                     Details({
                         summary: "Vehicle",
                         children: [
+                            Details({
+                                summary: "Forces",
+                                open: false,
+                                children: [
+                                    [
+                                        Checkbox({
+                                            title: "Off Repulsive Force",
+                                            text: "Off Repulsive Force",
+                                            id: "Off Repulsive Force-plotly",
+                                            onChange: (value) => {
+                                                canvasParamStates.offRepulsiveForce = value;
+                                            },
+                                        }),
+                                    ],
+                                    [
+                                        Checkbox({
+                                            title: "Off Repulsive New Force",
+                                            text: "Off Repulsive New Force",
+                                            id: "Off Repulsive New Force-plotly",
+                                            onChange: (value) => {
+                                                canvasParamStates.offRepulsiveForceNew = value;
+                                            },
+                                        }),
+                                    ],    
+                                ]
+                            }),
                             Table({
                                 tableBody: [
                                     [

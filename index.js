@@ -24,6 +24,10 @@ const canvasParamStates = withLsSubscribe({
   obstaclesMap: 0,
 });
 
+Object.assign(canvasParamStates, {
+  offRepulsiveForce: 0,
+  offRepulsiveForceNew: 0,
+})
 
 const obstacles = new Obstacles(
     Obstacles.MAPS[canvasParamStates.obstaclesMap]
@@ -92,11 +96,11 @@ class App extends Component {
     this.canvasRenderer.frame();
     this.plotlyRenderer.frame();
     const lostSpeed = (1000 / frameRates.getFPMS()) / 60;
-
+    console.log(canvasParamStates);
     if (!pause) {
         vehicle.setAtractiveForce(target);
         vehicle.setObstacles(obstacles.getObstaclesInVehicleRadius(vehicle))
-        vehicle.move(lostSpeed);
+        vehicle.move(lostSpeed, canvasParamStates.offRepulsiveForce, canvasParamStates.offRepulsiveForceNew);
         vehicle.checkReachedTarget(target);
     };
 
