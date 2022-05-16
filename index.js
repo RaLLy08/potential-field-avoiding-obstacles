@@ -86,18 +86,17 @@ class App extends Component {
     canvas.onmouseup = (e) => {
         pressed = false;
     }
-
-    this.frameRates.start();
   }
 
   frame = () => {
     this.canvasRenderer.frame();
     this.plotlyRenderer.frame();
+    const lostSpeed = (1000 / frameRates.getFPMS()) / 60;
 
     if (!pause) {
         vehicle.setAtractiveForce(target);
         vehicle.setObstacles(obstacles.getObstaclesInVehicleRadius(vehicle))
-        vehicle.move();
+        vehicle.move(lostSpeed);
         vehicle.checkReachedTarget(target);
     };
 

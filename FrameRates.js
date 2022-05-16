@@ -49,7 +49,7 @@ export default class FrameRates {
      * get fps
      */
     getFPMS = () => {
-        if (!this.#currentFrame) return Number.MAX_SAFE_INTEGER;
+        if (!this.#currentFrame) return 60;
 
         return this.#currentFrame;
     }

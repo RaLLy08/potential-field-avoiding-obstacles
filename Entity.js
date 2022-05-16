@@ -135,19 +135,16 @@ export class Vehicle extends Vector {
         if (distance < this.r) this.endTime = performance.now();
     }
 
-    move() {
+    move(lfps) {
         this.setRepulsiveForces();
-
         this.setTotalRepulsiveForces();
-
         this.setTotalForce();
-
 
         this.vx = this.totalForce.x;
         this.vy = this.totalForce.y;
     
-        this.x += this.vx;
-        this.y += this.vy;
+        this.x += this.vx / lfps;
+        this.y += this.vy / lfps;
 
         this.setDistance();
     }
