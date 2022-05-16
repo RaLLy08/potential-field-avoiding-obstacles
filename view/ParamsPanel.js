@@ -51,7 +51,7 @@ const ParamsPanel = ({ vehicle, canvasParamStates, canvasParamsActions, canvasPa
 
 
     return html`
-        <div style=${style.paramsWrapper}>
+        <div class="wrapper" style=${style.paramsWrapper}>
             ${Details({
                 summary: "Params",
                 children: [
@@ -384,6 +384,19 @@ const ParamsPanel = ({ vehicle, canvasParamStates, canvasParamsActions, canvasPa
                 ],
             })}
         </div>
+        <style>
+            .wrapper {
+                height: 100vh;
+                overflow: auto;
+            }
+            .wrapper::-webkit-scrollbar {
+                display: none;
+            }
+            .wrapper {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        </style>
     `;
 };
 
