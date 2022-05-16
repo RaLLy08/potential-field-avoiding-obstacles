@@ -74,7 +74,7 @@ const ParamsPanel = ({ vehicle, canvasParamStates, canvasParamsActions, canvasPa
                                     ],
                                     [
                                         InputDisplay({
-                                            value: vehicle.distance.toPrecision(3),
+                                            value: vehicle.distance.toFixed(3),
                                         }),
                                         Title({ title: "Distance traveled", text: "Distance traveled" }),
                                     ],
