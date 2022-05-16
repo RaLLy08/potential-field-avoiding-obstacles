@@ -74,17 +74,16 @@ export class Obstacle extends Vector {
  * vehile with applied functions 
  */
 export class Vehicle extends Vector {
-    constructor(x, y, r, vx, vy) {
+    constructor(x, y, r) {
         super(x, y);
         this.r = r;
-        this.vx = vx || 0;
-        this.vy = vy || 0;
+        this.vx = 0;
+        this.vy = 0;
 
-        // this.kSigma
-        // this.tao
-
+        this.init();
+    }
+    init() {
         this.attractiveForce = new Vector(0, 0);
-
         this.repulsiveForces = [];
 
         this.totalRepulsiveForce = new Vector(0, 0);
@@ -93,6 +92,9 @@ export class Vehicle extends Vector {
         this.totalForce = new Vector(0, 0);
 
         this.obstacles = [];
+        this.distance = 0;
+        this.startTime = performance.now();
+        this.endTime = null;
     }
 
     static kSigma(sigma, kMax=2, tau=1) {
@@ -123,6 +125,16 @@ export class Vehicle extends Vector {
         return newRepulsionVector;
     }
 
+    checkReachedTarget(target) {
+        const difference = this.sub(target);
+
+        if (this.endTime) return;
+
+        const distance = difference.mag(); 
+
+        if (distance < this.r) this.endTime = performance.now();
+    }
+
     move() {
         this.setRepulsiveForces();
 
@@ -136,6 +148,14 @@ export class Vehicle extends Vector {
     
         this.x += this.vx;
         this.y += this.vy;
+
+        this.setDistance();
+    }
+
+    setDistance() {
+        const dv = this.getSpeed();
+
+        this.distance += dv;
     }
 
     setObstacles(obstacles) {

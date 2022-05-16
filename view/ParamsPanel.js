@@ -74,6 +74,22 @@ const ParamsPanel = ({ vehicle, canvasParamStates, canvasParamsActions, canvasPa
                                     ],
                                     [
                                         InputDisplay({
+                                            value: vehicle.distance.toPrecision(3),
+                                        }),
+                                        Title({ title: "Distance traveled", text: "Distance traveled" }),
+                                    ],
+                                    [
+                                        InputDisplay({
+                                            value: vehicle.endTime ? Utils.toSeconds(vehicle.endTime - vehicle.startTime).toPrecision(3) : 'Not reached yet',
+                                        }),
+                                        Title({ title: "Target Destination Time", text: "Target Destination Time" }),
+                                    ],
+                                    [
+                                        [],
+                                        Title({ title: "Forces", text: "Forces:" }),
+                                    ],
+                                    [
+                                        InputDisplay({
                                             value: totalForce,
                                         }),
                                         Title({
@@ -107,6 +123,10 @@ const ParamsPanel = ({ vehicle, canvasParamStates, canvasParamsActions, canvasPa
                                             title: "Repulsive New Force",
                                             text: "F(rep_new) total",
                                         }),
+                                    ],
+                                    [
+                                        [],
+                                        Title({ title: "Angles", text: "Angles:" }),
                                     ],
                                     [
                                         InputDisplay({

@@ -47,14 +47,12 @@ const canvasParamsActions = {
   }
 }
 
-
 const paramsPanelProps = {
   vehicle,
   canvasParamStates,
   canvasParamsActions,
   canvasParamsPlotlyActions
 }
-
 
 class App extends Component {
   constructor(props) {
@@ -91,6 +89,7 @@ class App extends Component {
         vehicle.setAtractiveForce(target);
         vehicle.setObstacles(obstacles.getObstaclesInVehicleRadius(vehicle))
         vehicle.move();
+        vehicle.checkReachedTarget(target);
     };
 
     window.requestAnimationFrame(this.frame)
@@ -112,7 +111,7 @@ class App extends Component {
             isPaused: pause,
           })}
         </div>
-        <div id='plotly-force-traces' style="display:none;"></div>
+        <div id='plotly-force-traces' style="display:none; width: 80%; margin-left: auto; margin-right: auto;"></div>
     `;
   }
 }
@@ -125,6 +124,7 @@ var pause = false;
 var pressed = false;
 
 function onResetVehicle() {
+    vehicle.init();
     vehicle.x = 100;
     vehicle.y = CanvasRenderer.HEIGHT/2;
     canvasParamsPlotlyActions.resetVehicle();

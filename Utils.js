@@ -16,4 +16,7 @@ export default class Utils {
         }
         return angle;
     }
+    static toSeconds(ms) {
+        return ms/1000
+    }
 }

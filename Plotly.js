@@ -87,9 +87,9 @@ export default class PlotlyRenderer {
             title: "Attractive and Repulsive Forces",
         };
 
-
         this.totalForceTracePlotly = {
             y: [0],
+            x: [0],
             name: "Total Force",
             mode: "lines",
             line: { color: COLOR.TOTAL_FORCE },
@@ -97,18 +97,20 @@ export default class PlotlyRenderer {
         this.repulsiveForceTracePlotly = {
             name: "Repulsive Force",
             y: [0],
+            x: [0],
             mode: "lines",
             line: { color: COLOR.REPULSIVE_FORCE },
         };
         this.obstacleFieldCrossingTracePlotly = {
             name: "Crossed Obstacle Fields Value",
             y: [0],
+            x: [0],
             mode: "lines",
             line: { color: COLOR.VEHICLE_FIELD_RADIUS },
             xaxis: 'x2',
             yaxis: 'y2',
         };
-
+  
         this.forceTraceLayout = {
             title: "Repulsive and Total Force, Obstacle Crossing Fields",
             xaxis: {
@@ -117,6 +119,7 @@ export default class PlotlyRenderer {
             },
             yaxis: {domain: [0.6,1]},
             xaxis2: {
+              title: "Distance traveled",
               anchor: 'y2', 
               domain: [0, 1]
             },
@@ -142,6 +145,11 @@ export default class PlotlyRenderer {
       this.repulsiveForceTracePlotly.y.push(repulsiveForceTotal);
       this.obstacleFieldCrossingTracePlotly.y.push(this.vehicle.obstacles.length);
 
+      this.totalForceTracePlotly.x.push(this.vehicle.distance);
+      this.repulsiveForceTracePlotly.x.push(this.vehicle.distance);
+      this.obstacleFieldCrossingTracePlotly.x.push(this.vehicle.distance);
+
+
         Plotly.newPlot(
             PlotlyRenderer.FORCE_TRACE_ID,
             [
@@ -157,6 +165,11 @@ export default class PlotlyRenderer {
         this.totalForceTracePlotly.y.length = 0;
         this.repulsiveForceTracePlotly.y.length = 0;
         this.obstacleFieldCrossingTracePlotly.y.length = 0;
+
+        this.totalForceTracePlotly.x.length = 0;
+        this.repulsiveForceTracePlotly.x.length = 0;
+        this.obstacleFieldCrossingTracePlotly.x.length = 0;
+
         this.forceTracesUpdate();
     };
 
