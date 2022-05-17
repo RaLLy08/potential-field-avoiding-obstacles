@@ -77,6 +77,9 @@ const ParamsPanel = ({ vehicle, obstacles, target, canvasParamStates, canvasPara
                             Table({
                                 tableBody: [
                                     [
+                                        Title({ title: "Outlay", text: "Outlay", bold: true }),
+                                    ],
+                                    [
                                         InputDisplay({
                                             value: vehicle.distance.toFixed(3),
                                         }),
@@ -247,13 +250,12 @@ const ParamsPanel = ({ vehicle, obstacles, target, canvasParamStates, canvasPara
                                                     value: selectedObstacle.maxRepulsiveForce,
                                                 }),
                                                 Title({
-                                                    text: "Max Repulsive Force",
+                                                    text: "Max Repulsion Force",
                                                 }),
                                             ],
                                         ],
                                     ]
                                 }),
-
                                 Table({ 
                                     tableBody: [
                                         [
@@ -312,6 +314,47 @@ const ParamsPanel = ({ vehicle, obstacles, target, canvasParamStates, canvasPara
                         summary: "Target",
                         open: false,
                         children: [
+                            Table({
+                                tableBody: [
+                                    [
+                                        InputDisplay({
+                                            value: target.x,
+                                        }),
+                                        Title({ title: "x", text: "x", fontSize: '18px' }),
+                                        InputDisplay({
+                                            value: target.y,
+                                        }),
+                                        Title({ title: "y", text: "y", fontSize: '18px' }),
+                                    ]
+                                ]
+                            }),
+                            Table({
+                                tableBody: [
+                                    [
+                                        [
+                                            InputDisplay({
+                                                value: target.maxAttractionForce,
+                                            }),
+                                            Title({
+                                                text: "Max Attraction Force",
+                                            }),
+                                        ],
+                                    ],
+                                ]
+                            }),
+                            Table({ 
+                                tableBody: [
+                                    [
+                                        InputDisplay({
+                                            value: target.distributionWidth.toPrecision(4),
+                                            maxWidth: '68px'
+                                        }),
+                                        Title({
+                                            text: "Distribution Width",
+                                        }),
+                                    ]
+                                ]
+                            }),
                             Details({
                                 summary: "Graphics",
                                 children: [
