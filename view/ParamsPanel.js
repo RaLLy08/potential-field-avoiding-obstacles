@@ -12,7 +12,7 @@ import {
 } from "./Components.js";
 
 
-const ParamsPanel = ({ vehicle, obstacles, canvasParamStates, canvasParamsActions, canvasParamsPlotlyActions, frameRates }) => {
+const ParamsPanel = ({ vehicle, obstacles, target, canvasParamStates, canvasParamsActions, canvasParamsPlotlyActions, frameRates }) => {
     const style = {
         paramsWrapper: {
             fontSize: "0.9rem",
@@ -187,7 +187,13 @@ const ParamsPanel = ({ vehicle, obstacles, canvasParamStates, canvasParamsAction
                                 open: false,
                                 summary: "Graphics",
                                 children: [
-                                    html`<${CanvasGraphic} opts=${{quantityX: 6, maxX: 8}} width="320" height="150" xTitle=K(σ) yTitle="radian" fx=${vehicle.constructor.kSigma} id="sigma"/>`,
+                                    Table({
+                                        tableBody: [
+                                            [
+                                                html`<${CanvasGraphic} opts=${{quantityX: 6, maxX: 8}} width="320" height="150" yTitle=K(σ) xTitle="radian" fx=${vehicle.constructor.kSigma} id="sigma"/>`,
+                                            ]
+                                        ]
+                                    })
                                 ]
                             })
                         ],
@@ -267,7 +273,7 @@ const ParamsPanel = ({ vehicle, obstacles, canvasParamStates, canvasParamsAction
                                         Table({
                                             tableBody: [
                                                 [
-                                                    html`<${CanvasGraphic} opts=${{quantityX: 6, maxX: selectedObstacle.fieldRadius, maxY: selectedObstacle.maxRepulsiveForce}} width="320" height="150" xTitle=exp(-b*d^2) yTitle=distance
+                                                    html`<${CanvasGraphic} opts=${{quantityX: 6, maxX: selectedObstacle.fieldRadius, maxY: selectedObstacle.maxRepulsiveForce}} width="320" height="150" yTitle=exp(-b*d^2) xTitle=distance
                                                         fx=${selectedObstacle.repulsiveForce} id=${"exp" + canvasParamStates.selectedObstacleIdx}/>`,
                                                 ]
                                             ]
@@ -300,6 +306,24 @@ const ParamsPanel = ({ vehicle, obstacles, canvasParamStates, canvasParamsAction
                                     ]
                                 })
                             ]
+                        ]
+                    }),
+                    Details({
+                        summary: "Target",
+                        open: false,
+                        children: [
+                            Details({
+                                summary: "Graphics",
+                                children: [
+                                    Table({
+                                        tableBody: [
+                                            [
+                                                html`<${CanvasGraphic} opts=${{quantityX: 6, maxX: 600, maxY: 4}} width="320" height="150" xTitle=distance yTitle="[1 - exp(-b*d^2)]" fx=${target.attractionForce} id="target"/>`,
+                                            ]
+                                        ]
+                                    })
+                                ]
+                            })
                         ]
                     }),
                     Details({
@@ -484,6 +508,7 @@ const ParamsPanel = ({ vehicle, obstacles, canvasParamStates, canvasParamsAction
                 -ms-overflow-style: none;
                 scrollbar-width: none;
             }
+
         </style>
     `;
 };

@@ -59,6 +59,7 @@ const frameRates = new FrameRates();
 const paramsPanelProps = {
   vehicle,
   obstacles,
+  target,
   canvasParamStates,
   canvasParamsActions,
   canvasParamsPlotlyActions,

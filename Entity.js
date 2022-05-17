@@ -10,7 +10,7 @@ export class Target extends Vector {
         this.distributionWidth = distributionWidth;
         this.maxAttractionForce = maxAttractionForce;
     }
-    attractionForce(distance) {
+    attractionForce = distance => {
         return this.maxAttractionForce * (1 - Math.exp(
             -this.distributionWidth * Math.pow(distance, 2)
         ))

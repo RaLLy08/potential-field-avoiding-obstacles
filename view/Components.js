@@ -230,13 +230,13 @@ export class CanvasGraphic extends Component {
                     margin-top: 18px;
                 }
                 #${id}wrapper:before { 
-                  content: '${xTitle}';
+                  content: '${yTitle}';
                   position: absolute;
                   top: -22px;
                   font-size: 16px;
                 }
                 #${id}wrapper:after { 
-                  content: '${yTitle}';
+                  content: '${xTitle}';
                   position: absolute;
                   right: 6px;
                   bottom: -19px;
