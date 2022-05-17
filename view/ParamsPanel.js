@@ -217,11 +217,11 @@ const ParamsPanel = ({ vehicle, obstacles, canvasParamStates, canvasParamsAction
                                             InputDisplay({
                                                 value: selectedObstacle.x,
                                             }),
-                                            Title({ title: "X", text: "X" }),
+                                            Title({ title: "x", text: "x", fontSize: '18px' }),
                                             InputDisplay({
                                                 value: selectedObstacle.y,
                                             }),
-                                            Title({ title: "Y", text: "Y" }),
+                                            Title({ title: "y", text: "y", fontSize: '18px' }),
                                         ]
                                     ]
                                 }),
