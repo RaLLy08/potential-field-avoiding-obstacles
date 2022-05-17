@@ -220,7 +220,7 @@ export class CanvasRenderer extends Canvas {
         );
       }
 
-      if (!obstacleRepulsedForceNewVector) return;
+      if (!obstacleRepulsedForceNewVector) continue;
 
       if (this.state.repulsiveForceNewEach) {
         this.drawVector(
