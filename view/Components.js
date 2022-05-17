@@ -249,8 +249,9 @@ export class CanvasGraphic extends Component {
               <div>
                   <button class="btn" style="width: 25px; height: 25px;" data-y data-add onclick=${this.handleScale} >+</button>
                       y
-                  <button class="btn" style="margin-right: 20px; width: 25px; height: 25px;" data-y onclick=${this.handleScale}>-</button>
-                  <button class="btn" style="width: 25px; height: 25px;" data-x data-add onclick=${this.handleScale}>+</button>
+                  <button class="btn" style="margin-right: 10px; width: 25px; height: 25px;" data-y onclick=${this.handleScale}>-</button>
+                    zoom
+                  <button class="btn" style="margin-left: 10px; width: 25px; height: 25px;" data-x data-add onclick=${this.handleScale}>+</button>
                       x
                   <button class="btn" style="width: 25px; height: 25px;" data-x onclick=${this.handleScale}>-</button>
               </div>
