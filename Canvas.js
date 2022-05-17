@@ -306,8 +306,8 @@ export class CanvasGraphicRenderer extends Canvas {
   }
 
   update() {
-    this.stepX = this.maxX / 10;
-    this.stepY = this.maxY / 10;
+    this.stepX = this.maxX / this.quantityX;
+    this.stepY = this.maxY / this.quantityY;
     this.clear();
     this.init();
   }
