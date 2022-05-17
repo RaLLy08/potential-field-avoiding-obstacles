@@ -51,7 +51,6 @@ const ParamsPanel = ({ vehicle, obstacles, canvasParamStates, canvasParamsAction
 
     const obstacleItems = obstacles.getAll();
     const selectedObstacle = obstacleItems[canvasParamStates.selectedObstacleIdx] || {};
-    // console.log(obstacleItems[0].repulsiveForce(0));
 
     return html`
         <div class="wrapper" style=${style.paramsWrapper}>
@@ -61,43 +60,17 @@ const ParamsPanel = ({ vehicle, obstacles, canvasParamStates, canvasParamsAction
                     Details({
                         summary: "Vehicle",
                         children: [
-                            Details({
-                                summary: "Forces",
-                                open: false,
-                                children: [
-                                    [
-                                        Checkbox({
-                                            title: "Off Repulsive Force",
-                                            text: "Off Repulsive Force",
-                                            id: "Off Repulsive Force-plotly",
-                                            onChange: (value) => {
-                                                canvasParamStates.offRepulsiveForce = value;
-                                            },
-                                        }),
-                                    ],
-                                    [
-                                        Checkbox({
-                                            title: "Off Repulsive New Force",
-                                            text: "Off Repulsive New Force",
-                                            id: "Off Repulsive New Force-plotly",
-                                            onChange: (value) => {
-                                                canvasParamStates.offRepulsiveForceNew = value;
-                                            },
-                                        }),
-                                    ],    
-                                ]
-                            }),
                             Table({
                                 tableBody: [
                                         [
                                             InputDisplay({
                                                 value: vehicle.x,
                                             }),
-                                            Title({ title: "X", text: "X" }),
+                                            Title({ title: "x", text: "x", fontSize: '18px' }),
                                             InputDisplay({
                                                 value: vehicle.y,
                                             }),
-                                            Title({ title: "Y", text: "Y" }),
+                                            Title({ title: "y", text: "y", fontSize: '18px' }),
                                         ]
                                 ]
                             }),
@@ -116,8 +89,37 @@ const ParamsPanel = ({ vehicle, obstacles, canvasParamStates, canvasParamsAction
                                         Title({ title: "Target Destination Time", text: "Target Destination Time" }),
                                     ],
                                     [
-                                        [],
-                                        Title({ title: "Forces", text: "Forces:" }),
+                                        Title({ title: "Angles", text: "Angles", bold: true }),
+                                    ],
+                                    [
+                                        InputDisplay({
+                                            value: theta,
+                                            degree: true,
+                                        }),
+                                        Title({
+                                            text: "F(att) and F(tot) (Θ)",
+                                        }),
+                                    ],
+                                    [
+                                        InputDisplay({
+                                            value: sigma,
+                                            degree: true,
+                                        }),
+                                        Title({
+                                            text: "F(rep) and F(tot) (σ)",
+                                        }),
+                                    ],
+                                    [
+                                        InputDisplay({
+                                            value: gamma,
+                                            degree: true,
+                                        }),
+                                        Title({
+                                            text: "F(att) and F(rep) (γ)",
+                                        }),
+                                    ],
+                                    [
+                                        Title({ title: "Forces", text: "Forces", bold: true }),
                                     ],
                                     [
                                         InputDisplay({
@@ -155,38 +157,31 @@ const ParamsPanel = ({ vehicle, obstacles, canvasParamStates, canvasParamsAction
                                             text: "F(rep_new) total",
                                         }),
                                     ],
-                                    [
-                                        [],
-                                        Title({ title: "Angles", text: "Angles:" }),
-                                    ],
-                                    [
-                                        InputDisplay({
-                                            value: theta,
-                                            degree: true,
-                                        }),
-                                        Title({
-                                            text: "F(att) and F(tot) angle (Θ)",
-                                        }),
-                                    ],
-                                    [
-                                        InputDisplay({
-                                            value: sigma,
-                                            degree: true,
-                                        }),
-                                        Title({
-                                            text: "F(rep) and F(tot) angle (σ)",
-                                        }),
-                                    ],
-                                    [
-                                        InputDisplay({
-                                            value: gamma,
-                                            degree: true,
-                                        }),
-                                        Title({
-                                            text: "F(att) and F(rep) angle (γ)",
-                                        }),
-                                    ],
                                 ],
+                            }),
+                            Table({
+                                tableBody: [
+                                    [
+                                        Checkbox({
+                                            title: "Disable Repulsive Force",
+                                            text: "Disable Repulsive Force",
+                                            id: "Disable Repulsive Force-plotly",
+                                            onChange: (value) => {
+                                                canvasParamStates.offRepulsiveForce = value;
+                                            },
+                                        }),
+                                    ],
+                                    [
+                                        Checkbox({
+                                            title: "Disable Repulsive New Force",
+                                            text: "Disable Repulsive New Force",
+                                            id: "Disable Repulsive New Force-plotly",
+                                            onChange: (value) => {
+                                                canvasParamStates.offRepulsiveForceNew = value;
+                                            },
+                                        }),
+                                    ],  
+                                ]
                             }),
                             Details({
                                 open: false,

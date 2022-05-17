@@ -60,12 +60,14 @@ export function InputDisplay({ value, degree, maxWidth }) {
     `
 }
 
-export function Title({ title, text }) {
+export function Title({ title, text, fontSize, bold }) {
     const style = {
         span: {
             cursor: 'default',
             marginRight: '0.2rem',
             marginLeft: '0.2rem',
+            fontWeight: bold && 'bold',
+            fontSize
         },
     }
 
