@@ -135,8 +135,8 @@ export class CanvasRenderer extends Canvas {
   renderVehicle() {
     const {
       attractiveForce,
-      totalRepulsiveForce,
-      totalRepulsiveForceNew,
+      repulsiveForce,
+      repulsiveForceNew,
       totalForce,
     } = this.vehicle;
 
@@ -156,10 +156,10 @@ export class CanvasRenderer extends Canvas {
       );
     }
 
-    if (this.state.repulsiveForceNewTotal) {
+    if (this.state.repulsiveForceNew) {
       this.drawVector(
         this.vehicle,
-        totalRepulsiveForceNew.scaleBy(100).sum(this.vehicle),
+        repulsiveForceNew.scaleBy(100).sum(this.vehicle),
         4,
         2,
         COLOR.REPULSIVE_FORCE_NEW
@@ -175,14 +175,24 @@ export class CanvasRenderer extends Canvas {
         COLOR.ATTRACTIVE_FORCE
       );
     }
-    if (this.state.repulsiveForceTotal) {
+    if (this.state.repulsiveForce) {
       // display repulsive force direction
       this.drawVector(
         this.vehicle,
-        totalRepulsiveForce.scaleBy(100).sum(this.vehicle),
+        repulsiveForce.scaleBy(100).sum(this.vehicle),
         4,
         2,
         COLOR.REPULSIVE_FORCE
+      );
+    }
+    if (this.state.repulsiveForceTotal) {
+      // display repulsive force total direction
+      this.drawVector(
+        this.vehicle,
+        repulsiveForce.sum(repulsiveForceNew).scaleBy(100).sum(this.vehicle),
+        4,
+        2,
+        COLOR.REPULSIVE_FORCE_TOTAL
       );
     }
     // display total force direction
@@ -200,8 +210,7 @@ export class CanvasRenderer extends Canvas {
       const [obstacleRepulsedForceVector, obstacleRepulsedForceNewVector] =
         obstacleRepulsiveForce;
 
-
-      if (this.state.repulsiveForce) {
+      if (this.state.repulsiveForceEach) {
         this.drawVector(
           this.vehicle,
           obstacleRepulsedForceVector.scaleBy(100).sum(this.vehicle),
@@ -213,13 +222,23 @@ export class CanvasRenderer extends Canvas {
 
       if (!obstacleRepulsedForceNewVector) return;
 
-      if (this.state.repulsiveForceNew) {
+      if (this.state.repulsiveForceNewEach) {
         this.drawVector(
           this.vehicle,
           obstacleRepulsedForceNewVector.scaleBy(100).sum(this.vehicle),
           2,
           1,
           COLOR.REPULSIVE_FORCE_NEW
+        );
+      }
+
+      if (this.state.repulsiveForceTotalEach) { 
+        this.drawVector(
+          this.vehicle,
+          obstacleRepulsedForceVector.sum(obstacleRepulsedForceNewVector).scaleBy(100).sum(this.vehicle),
+          2,
+          1,
+          COLOR.REPULSIVE_FORCE_TOTAL
         );
       }
     }
@@ -264,7 +283,7 @@ export class CanvasRenderer extends Canvas {
         );
 
         !this.state.offRepulsiveForce && vectorAsVehicle.setRepulsiveForces(this.state.offRepulsiveForceNew);
-        vectorAsVehicle.setTotalRepulsiveForces();
+        vectorAsVehicle.setRepulsiveForces();
         vectorAsVehicle.setTotalForce();
 
         const totalForce = vectorAsVehicle.totalForce.scaleBy(arrowScale);

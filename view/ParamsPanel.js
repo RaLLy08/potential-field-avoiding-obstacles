@@ -26,10 +26,10 @@ const ParamsPanel = ({ vehicle, obstacles, target, canvasParamStates, canvasPara
 
     const totalForce = vehicle.totalForce.mag().toPrecision(3);
     const attractiveForce = vehicle.attractiveForce.mag().toPrecision(3);
-    const repulsiveForceTotal = vehicle.totalRepulsiveForce
+    const repulsiveForce = vehicle.repulsiveForce
         .mag()
         .toPrecision(3);
-    const repulsiveForceNewTotal = vehicle.totalRepulsiveForceNew
+    const repulsiveForceNew = vehicle.repulsiveForceNew
         .mag()
         .toPrecision(3);
     // angle between Total force and Attractive force (theta)
@@ -39,13 +39,13 @@ const ParamsPanel = ({ vehicle, obstacles, target, canvasParamStates, canvasPara
     // angle between Total force and Repulsive force (sigma)
     const sigma = Utils.toDegree(
         Utils.normalizeAngle(
-            vehicle.totalRepulsiveForce.fullAngle(vehicle.totalForce)
+            vehicle.repulsiveForce.fullAngle(vehicle.totalForce)
         )
     ).toFixed();
     // angle between Attractive force and Repulsive force (gamma)
     const gamma = Utils.toDegree(
         Utils.normalizeAngle(
-            vehicle.totalRepulsiveForce.fullAngle(vehicle.attractiveForce)
+            vehicle.repulsiveForce.fullAngle(vehicle.attractiveForce)
         )
     ).toFixed();
 
@@ -158,7 +158,7 @@ const ParamsPanel = ({ vehicle, obstacles, target, canvasParamStates, canvasPara
                                                     ],
                                                     [
                                                         InputDisplay({
-                                                            value: repulsiveForceTotal,
+                                                            value: repulsiveForce,
                                                         }),
                                                         Title({
                                                             title: "Repulsive Force",
@@ -167,7 +167,7 @@ const ParamsPanel = ({ vehicle, obstacles, target, canvasParamStates, canvasPara
                                                     ],
                                                     [
                                                         InputDisplay({
-                                                            value: repulsiveForceNewTotal,
+                                                            value: repulsiveForceNew,
                                                         }),
                                                         Title({
                                                             title: "Repulsive New Force",
@@ -447,29 +447,9 @@ const ParamsPanel = ({ vehicle, obstacles, target, canvasParamStates, canvasPara
                                 ],
                                 [
                                     Checkbox({
-                                        title: "F(rep) total",
-                                        text: "F(rep) total",
-                                        id: "repulsiveForceTotal",
-                                        color: COLOR.REPULSIVE_FORCE,
-                                        checked: canvasParamStates.repulsiveForceTotal,
-                                        onChange: (checked) => canvasParamStates.repulsiveForceTotal = checked,
-                                    }),
-                                ],
-                                [
-                                    Checkbox({
-                                        title: "F(rep_new) total",
-                                        text: "F(rep_new) total",
-                                        id: "repulsiveForceNewTotal",
-                                        color: COLOR.REPULSIVE_FORCE_NEW,
-                                        checked: canvasParamStates.repulsiveForceNewTotal,
-                                        onChange: (checked) => canvasParamStates.repulsiveForceNewTotal = checked,
-                                    }),
-                                ],
-                                [
-                                    Checkbox({
-                                        title: "F(rep) each obstacle",
-                                        text: "F(rep) each obstacle",
-                                        id: "repulsiveForceEach",
+                                        title: "F(rep)",
+                                        text: "F(rep)",
+                                        id: "repulsiveForce",
                                         color: COLOR.REPULSIVE_FORCE,
                                         checked: canvasParamStates.repulsiveForce,
                                         onChange: (checked) => canvasParamStates.repulsiveForce = checked,
@@ -477,12 +457,61 @@ const ParamsPanel = ({ vehicle, obstacles, target, canvasParamStates, canvasPara
                                 ],
                                 [
                                     Checkbox({
-                                        title: "F(rep_new) each obstacle",
-                                        text: "F(rep_new) each obstacle",
-                                        id: "repulsiveForceNewEach",
+                                        title: "F(rep_new)",
+                                        text: "F(rep_new)",
+                                        id: "repulsiveForceNew",
                                         color: COLOR.REPULSIVE_FORCE_NEW,
                                         checked: canvasParamStates.repulsiveForceNew,
                                         onChange: (checked) => canvasParamStates.repulsiveForceNew = checked,
+                                    }),
+                                ],
+                                [
+                                    Checkbox({
+                                        title: "F(rep) total",
+                                        text: "F(rep) total",
+                                        id: "repulsiveForce total",
+                                        color: COLOR.REPULSIVE_FORCE_TOTAL,
+                                        checked: canvasParamStates.repulsiveForceTotal,
+                                        onChange: (checked) => canvasParamStates.repulsiveForceTotal = checked,
+                                    }),
+                                ],
+                                [
+                                    Details({
+                                        summary: "Each Obstacle",
+                                        children: Table({
+                                            tableBody: [
+                                                [
+                                                    Checkbox({
+                                                        title: "F(rep)",
+                                                        text: "F(rep)",
+                                                        id: "repulsiveForceEach",
+                                                        color: COLOR.REPULSIVE_FORCE,
+                                                        checked: canvasParamStates.repulsiveForceEach,
+                                                        onChange: (checked) => canvasParamStates.repulsiveForceEach = checked,
+                                                    }),
+                                                ],
+                                                [
+                                                    Checkbox({
+                                                        title: "F(rep_new)",
+                                                        text: "F(rep_new)",
+                                                        id: "repulsiveForceNewEach",
+                                                        color: COLOR.REPULSIVE_FORCE_NEW,
+                                                        checked: canvasParamStates.repulsiveForceNewEach,
+                                                        onChange: (checked) => canvasParamStates.repulsiveForceNewEach = checked,
+                                                    }),
+                                                ],
+                                                [
+                                                    Checkbox({
+                                                        title: "F(rep) total",
+                                                        text: "F(rep) total",
+                                                        id: "repulsiveForceTotalEach",
+                                                        color: COLOR.REPULSIVE_FORCE_TOTAL,
+                                                        checked: canvasParamStates.repulsiveForceTotalEach,
+                                                        onChange: (checked) => canvasParamStates.repulsiveForceTotalEach = checked,
+                                                    }),
+                                                ],
+                                            ]
+                                        })
                                     }),
                                 ],
                                 [

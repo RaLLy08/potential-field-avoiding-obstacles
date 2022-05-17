@@ -86,8 +86,8 @@ export class Vehicle extends Vector {
         this.attractiveForce = new Vector(0, 0);
         this.repulsiveForces = [];
 
-        this.totalRepulsiveForce = new Vector(0, 0);
-        this.totalRepulsiveForceNew = new Vector(0, 0);
+        this.repulsiveForce = new Vector(0, 0);
+        this.repulsiveForceNew = new Vector(0, 0);
 
         this.totalForce = new Vector(0, 0);
 
@@ -136,8 +136,8 @@ export class Vehicle extends Vector {
     }
 
     move(lfps, offRep, offRepNew) {
-        !offRep && this.setRepulsiveForces(offRepNew);
-        this.setTotalRepulsiveForces();
+        !offRep && this.setRepulsiveForceEach(offRepNew);
+        this.setRepulsiveForces();
         this.setTotalForce();
 
         this.vx = this.totalForce.x;
@@ -164,31 +164,31 @@ export class Vehicle extends Vector {
     }
 
     /**
-     * sets Total Force from (attractiveForce, totalRepulsiveForce, totalRepulsiveForceNew) vectors
+     * sets Total Force from (attractiveForce, RepulsiveForce, RepulsiveForceNew) vectors
      */
     setTotalForce() {
-        this.totalForce = this.attractiveForce.sum(this.totalRepulsiveForce).sum(this.totalRepulsiveForceNew);
+        this.totalForce = this.attractiveForce.sum(this.repulsiveForce).sum(this.repulsiveForceNew);
     }
     /**
-     * sets totals for (totalRepulsiveForce, totalRepulsiveForceNew) vectors from repulsiveForces
+     * sets totals for (repulsiveForce, repulsiveForceNew) vectors from repulsiveForces
      */
-    setTotalRepulsiveForces() {
+    setRepulsiveForces() {
         // cleaning
-        this.totalRepulsiveForce = new Vector(0, 0);
-        this.totalRepulsiveForceNew = new Vector(0, 0);
+        this.repulsiveForce = new Vector(0, 0);
+        this.repulsiveForceNew = new Vector(0, 0);
 
         for (const obstacleRepulsiveForce of this.repulsiveForces) {
             const [obstacleRepulsedForceVector, obstacleRepulsedForceNewVector] = obstacleRepulsiveForce;
             
-            this.totalRepulsiveForce = this.totalRepulsiveForce.sum(obstacleRepulsedForceVector);
+            this.repulsiveForce = this.repulsiveForce.sum(obstacleRepulsedForceVector);
             if (!obstacleRepulsedForceNewVector) continue;
-            this.totalRepulsiveForceNew = this.totalRepulsiveForceNew.sum(obstacleRepulsedForceNewVector);
+            this.repulsiveForceNew = this.repulsiveForceNew.sum(obstacleRepulsedForceNewVector);
         }
     }
     /**
      * sets (repulsiveForces) from (obstaclesInRadius)
      */
-    setRepulsiveForces(exludeRepNew) {
+    setRepulsiveForceEach(exludeRepNew) {
         this.repulsiveForces.length = 0;
 
         for (const obstacle of this.obstacles) {
@@ -197,7 +197,6 @@ export class Vehicle extends Vector {
             const repulsiveForceVector = obstacle.getFieldRepulsion(this);
 
             result.push(repulsiveForceVector);
-
 
             if (!exludeRepNew) {
                 const totalForceVector = this.attractiveForce.sum(

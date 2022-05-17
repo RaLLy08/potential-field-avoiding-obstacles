@@ -137,7 +137,7 @@ export default class PlotlyRenderer {
     }
     forceTracesUpdate() {
       const totalForce = this.vehicle.totalForce.mag().toPrecision(3);
-      const repulsiveForceTotal = this.vehicle.totalRepulsiveForce
+      const repulsiveForceTotal = this.vehicle.repulsiveForce
           .mag()
           .toPrecision(3);
 
@@ -259,7 +259,7 @@ export default class PlotlyRenderer {
 
                 if (this.repulsiveForce) {
                     vectorAsVehicle.setRepulsiveForces(!this.repulsiveForceNew);
-                    vectorAsVehicle.setTotalRepulsiveForces();
+                    vectorAsVehicle.setRepulsiveForces();
                 }
 
                 if (this.totalize) {
@@ -276,11 +276,11 @@ export default class PlotlyRenderer {
                     );
                 this.repulsiveForce &&
                     this.repulsiveForcePlotly.z[i].push(
-                        vectorAsVehicle.totalRepulsiveForce.mag() / reduceCoef
+                        vectorAsVehicle.repulsiveForce.mag() / reduceCoef
                     );
                 this.repulsiveForceNew &&
                     this.repulsiveForceNewPlotly.z[i].push(
-                        vectorAsVehicle.totalRepulsiveForceNew.mag() /
+                        vectorAsVehicle.repulsiveForceNew.mag() /
                             reduceCoef
                     );
             }
