@@ -77,88 +77,106 @@ const ParamsPanel = ({ vehicle, obstacles, target, canvasParamStates, canvasPara
                             Table({
                                 tableBody: [
                                     [
-                                        Title({ title: "Outlay", text: "Outlay", bold: true }),
+                                        Details({
+                                            summary: "Estimation",
+                                            children: Table({
+                                                tableBody: [
+                                                    [
+                                                        InputDisplay({
+                                                            value: vehicle.distance.toFixed(3),
+                                                        }),
+                                                        Title({ title: "Distance traveled", text: "Distance traveled" }),
+                                                    ],
+                                                    [
+                                                        InputDisplay({
+                                                            value: vehicle.endTime ? Utils.toSeconds(vehicle.endTime - vehicle.startTime).toPrecision(3) : 'Not reached yet',
+                                                        }),
+                                                        Title({ title: "Target Destination Time", text: "Target Destination Time" }),
+                                                    ]
+                                                ]
+                                            })
+                                        })
                                     ],
                                     [
-                                        InputDisplay({
-                                            value: vehicle.distance.toFixed(3),
-                                        }),
-                                        Title({ title: "Distance traveled", text: "Distance traveled" }),
+                                        Details({
+                                            summary: "Angles",
+                                            children: Table({
+                                                tableBody: [
+                                                    [
+                                                        InputDisplay({
+                                                            value: theta,
+                                                            degree: true,
+                                                        }),
+                                                        Title({
+                                                            text: "F(att) and F(tot) (Θ)",
+                                                        }),
+                                                    ],
+                                                    [
+                                                        InputDisplay({
+                                                            value: sigma,
+                                                            degree: true,
+                                                        }),
+                                                        Title({
+                                                            text: "F(rep) and F(tot) (σ)",
+                                                        }),
+                                                    ],
+                                                    [
+                                                        InputDisplay({
+                                                            value: gamma,
+                                                            degree: true,
+                                                        }),
+                                                        Title({
+                                                            text: "F(att) and F(rep) (γ)",
+                                                        }),
+                                                    ],
+                                                ]
+                                            })
+                                        })
                                     ],
                                     [
-                                        InputDisplay({
-                                            value: vehicle.endTime ? Utils.toSeconds(vehicle.endTime - vehicle.startTime).toPrecision(3) : 'Not reached yet',
-                                        }),
-                                        Title({ title: "Target Destination Time", text: "Target Destination Time" }),
-                                    ],
-                                    [
-                                        Title({ title: "Angles", text: "Angles", bold: true }),
-                                    ],
-                                    [
-                                        InputDisplay({
-                                            value: theta,
-                                            degree: true,
-                                        }),
-                                        Title({
-                                            text: "F(att) and F(tot) (Θ)",
-                                        }),
-                                    ],
-                                    [
-                                        InputDisplay({
-                                            value: sigma,
-                                            degree: true,
-                                        }),
-                                        Title({
-                                            text: "F(rep) and F(tot) (σ)",
-                                        }),
-                                    ],
-                                    [
-                                        InputDisplay({
-                                            value: gamma,
-                                            degree: true,
-                                        }),
-                                        Title({
-                                            text: "F(att) and F(rep) (γ)",
-                                        }),
-                                    ],
-                                    [
-                                        Title({ title: "Forces", text: "Forces", bold: true }),
-                                    ],
-                                    [
-                                        InputDisplay({
-                                            value: totalForce,
-                                        }),
-                                        Title({
-                                            title: "Total Force/Speed",
-                                            text: "F(tot) or V",
-                                        }),
-                                    ],
-                                    [
-                                        InputDisplay({
-                                            value: attractiveForce,
-                                        }),
-                                        Title({
-                                            title: "Attractive Force",
-                                            text: "F(att)",
-                                        }),
-                                    ],
-                                    [
-                                        InputDisplay({
-                                            value: repulsiveForceTotal,
-                                        }),
-                                        Title({
-                                            title: "Repulsive Force",
-                                            text: "F(rep) total",
-                                        }),
-                                    ],
-                                    [
-                                        InputDisplay({
-                                            value: repulsiveForceNewTotal,
-                                        }),
-                                        Title({
-                                            title: "Repulsive New Force",
-                                            text: "F(rep_new) total",
-                                        }),
+                                        Details({
+                                            summary: "Forces",
+                                            children: Table({
+                                                tableBody: [
+                                                    [
+                                                        InputDisplay({
+                                                            value: totalForce,
+                                                        }),
+                                                        Title({
+                                                            title: "Total Force/Speed",
+                                                            text: "F(tot) or V",
+                                                        }),
+                                                    ],
+                                                    [
+                                                        InputDisplay({
+                                                            value: attractiveForce,
+                                                        }),
+                                                        Title({
+                                                            title: "Attractive Force",
+                                                            text: "F(att)",
+                                                        }),
+                                                    ],
+                                                    [
+                                                        InputDisplay({
+                                                            value: repulsiveForceTotal,
+                                                        }),
+                                                        Title({
+                                                            title: "Repulsive Force",
+                                                            text: "F(rep) total",
+                                                        }),
+                                                    ],
+                                                    [
+                                                        InputDisplay({
+                                                            value: repulsiveForceNewTotal,
+                                                        }),
+                                                        Title({
+                                                            title: "Repulsive New Force",
+                                                            text: "F(rep_new) total",
+                                                        }),
+                                                    ],
+                                                ]
+                                            })
+                                        })
                                     ],
                                 ],
                             }),
