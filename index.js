@@ -27,6 +27,7 @@ const canvasParamStates = withLsSubscribe({
 Object.assign(canvasParamStates, {
   offRepulsiveForce: 0,
   offRepulsiveForceNew: 0,
+  selectedObstacleIdx: 0,
 })
 
 const obstacles = new Obstacles(
@@ -57,6 +58,7 @@ const frameRates = new FrameRates();
 
 const paramsPanelProps = {
   vehicle,
+  obstacles,
   canvasParamStates,
   canvasParamsActions,
   canvasParamsPlotlyActions,

@@ -12,7 +12,7 @@ import {
 } from "./Components.js";
 
 
-const ParamsPanel = ({ vehicle, canvasParamStates, canvasParamsActions, canvasParamsPlotlyActions, frameRates }) => {
+const ParamsPanel = ({ vehicle, obstacles, canvasParamStates, canvasParamsActions, canvasParamsPlotlyActions, frameRates }) => {
     const style = {
         paramsWrapper: {
             fontSize: "0.9rem",
@@ -49,6 +49,9 @@ const ParamsPanel = ({ vehicle, canvasParamStates, canvasParamsActions, canvasPa
         )
     ).toFixed();
 
+    const obstacleItems = obstacles.getAll();
+    const selectedObstacle = obstacleItems[canvasParamStates.selectedObstacleIdx];
+    // console.log(obstacleItems[0].repulsiveForce(0));
 
     return html`
         <div class="wrapper" style=${style.paramsWrapper}>
@@ -86,18 +89,20 @@ const ParamsPanel = ({ vehicle, canvasParamStates, canvasParamsActions, canvasPa
                             }),
                             Table({
                                 tableBody: [
-                                    [
-                                        InputDisplay({
-                                            value: vehicle.x,
-                                        }),
-                                        Title({ title: "X", text: "X" }),
-                                    ],
-                                    [
-                                        InputDisplay({
-                                            value: vehicle.y,
-                                        }),
-                                        Title({ title: "Y", text: "Y" }),
-                                    ],
+                                        [
+                                            InputDisplay({
+                                                value: vehicle.x,
+                                            }),
+                                            Title({ title: "X", text: "X" }),
+                                            InputDisplay({
+                                                value: vehicle.y,
+                                            }),
+                                            Title({ title: "Y", text: "Y" }),
+                                        ]
+                                ]
+                            }),
+                            Table({
+                                tableBody: [
                                     [
                                         InputDisplay({
                                             value: vehicle.distance.toFixed(3),
@@ -187,32 +192,111 @@ const ParamsPanel = ({ vehicle, canvasParamStates, canvasParamsActions, canvasPa
                                 open: false,
                                 summary: "Graphics",
                                 children: [
-                                    Title({text: 'K(sigma)'}),
-                                    html`<${CanvasGraphic} opts=${{quantityX: 6, maxX: 8}} width="320" height="150" xTitle=σ yTitle="radian" fx=${vehicle.constructor.kSigma} id="sigma"/>`,
+                                    html`<${CanvasGraphic} opts=${{quantityX: 6, maxX: 8}} width="320" height="150" xTitle=K(σ) yTitle="radian" fx=${vehicle.constructor.kSigma} id="sigma"/>`,
                                 ]
                             })
                         ],
                     }),
                     Details({
                         summary: "Obstacles",
-                        children: Table({
-                            tableBody: [
-                                [
-                                    Select({
-                                        options: [
-                                            'Default',
-                                            'Walls',
-                                            'Single Obstacle'
+                        open: false,
+                        children: [
+                            [
+                                Table({
+                                    tableBody: [
+                                        [
+                                            Select({
+                                                defaultValue: canvasParamStates.selectedObstacleIdx,
+                                                options: obstacleItems.map((el, i) => {
+                                                    return "Obstacle: " + i
+                                                }),
+                                                onChange: (value) => canvasParamStates.selectedObstacleIdx = value,
+                                            }),
+                                        ]
+                                    ]
+                                }),
+                                Table({
+                                    tableBody: [
+                                        [
+                                            InputDisplay({
+                                                value: selectedObstacle.x,
+                                            }),
+                                            Title({ title: "X", text: "X" }),
+                                            InputDisplay({
+                                                value: selectedObstacle.y,
+                                            }),
+                                            Title({ title: "Y", text: "Y" }),
+                                        ]
+                                    ]
+                                }),
+                                Table({
+                                    tableBody: [
+                                        [
+                                            [
+                                                InputDisplay({
+                                                    value: selectedObstacle.fieldRadius,
+                                                }),
+                                                Title({
+                                                    text: "Field Radius",
+                                                }),
+                                            ],
+                                            [
+                                                InputDisplay({
+                                                    value: selectedObstacle.maxRepulsiveForce,
+                                                }),
+                                                Title({
+                                                    text: "Max Repulsive Force",
+                                                }),
+                                            ],
                                         ],
-                                        defaultValue: canvasParamStates.obstaclesMap,
-                                        onChange: (value) => {
-                                            canvasParamStates.obstaclesMap = value;
-                                            canvasParamsActions.obstaclesMap(value);
-                                        },
-                                    })
-                                ]
+                                    ]
+                                }),
+                                InputDisplay({
+                                    value: selectedObstacle.distributionWidth,
+                                }),
+                                Title({
+                                    text: "Distribution Width",
+                                }),
+                                Details({
+                                    summary: 'Graphics',
+                                    children: [
+                                        Table({
+                                            tableBody: [
+                                                [
+                                                    html`<${CanvasGraphic} opts=${{quantityX: 6, maxX: selectedObstacle.fieldRadius, maxY: selectedObstacle.maxRepulsiveForce}} width="320" height="150" xTitle=exp(b*d^2) yTitle=distance
+                                                        fx=${selectedObstacle.repulsiveForce} id=${"exp" + canvasParamStates.selectedObstacleIdx}/>`,
+                                                ]
+                                            ]
+                                        })
+                                    ]
+                                })
+                            ],
+                            [
+                                Details({
+                                    summary: 'Maps',
+                                    children: [
+                                        Table({
+                                            tableBody: [
+                                                [
+                                                    Select({
+                                                        options: [
+                                                            'Default',
+                                                            'Walls',
+                                                            'Single Obstacle'
+                                                        ],
+                                                        defaultValue: canvasParamStates.obstaclesMap,
+                                                        onChange: (value) => {
+                                                            canvasParamStates.obstaclesMap = value;
+                                                            canvasParamsActions.obstaclesMap(value);
+                                                        },
+                                                    })
+                                                ]
+                                            ]
+                                        })
+                                    ]
+                                })
                             ]
-                        })
+                        ]
                     }),
                     Details({
                         summary: "Canvas",

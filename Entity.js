@@ -45,7 +45,7 @@ export class Obstacle extends Vector {
         this.color = COLOR.OBSTACLE;
         // this show us direction when the vehicle is inside the fields
     }
-    repulsiveForce(distance) {
+    repulsiveForce = (distance) => {
         return this.maxRepulsiveForce * Math.exp(
             -this.distributionWidth * Math.pow(distance, 2)
         )
