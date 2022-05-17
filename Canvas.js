@@ -282,7 +282,7 @@ export class CanvasRenderer extends Canvas {
           this.obstacles.getObstaclesInVehicleRadius(vectorAsVehicle)
         );
 
-        !this.state.offRepulsiveForce && vectorAsVehicle.setRepulsiveForces(this.state.offRepulsiveForceNew);
+        !this.state.offRepulsiveForce && vectorAsVehicle.setRepulsiveForceEach(this.state.offRepulsiveForceNew);
         vectorAsVehicle.setRepulsiveForces();
         vectorAsVehicle.setTotalForce();
 
