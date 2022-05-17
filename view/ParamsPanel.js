@@ -221,7 +221,7 @@ const ParamsPanel = ({ vehicle, obstacles, target, canvasParamStates, canvasPara
                     }),
                     Details({
                         summary: "Obstacles",
-                        open: false,
+                        open: true,
                         children: [
                             [
                                 Table({
@@ -289,6 +289,7 @@ const ParamsPanel = ({ vehicle, obstacles, target, canvasParamStates, canvasPara
                                 }),
                                 Details({
                                     summary: 'Graphics',
+                                    open: false,
                                     children: [
                                         Table({
                                             tableBody: [
