@@ -22,12 +22,12 @@ const canvasParamStates = withLsSubscribe({
   vehicleFieldRadius:0,
   obstacles: 1,
   obstaclesMap: 0,
+  selectedObstacleIdx: 0,
 });
 
 Object.assign(canvasParamStates, {
   offRepulsiveForce: 0,
   offRepulsiveForceNew: 0,
-  selectedObstacleIdx: 0,
 })
 
 const obstacles = new Obstacles(

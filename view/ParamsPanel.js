@@ -50,7 +50,7 @@ const ParamsPanel = ({ vehicle, obstacles, canvasParamStates, canvasParamsAction
     ).toFixed();
 
     const obstacleItems = obstacles.getAll();
-    const selectedObstacle = obstacleItems[canvasParamStates.selectedObstacleIdx];
+    const selectedObstacle = obstacleItems[canvasParamStates.selectedObstacleIdx] || {};
     // console.log(obstacleItems[0].repulsiveForce(0));
 
     return html`
