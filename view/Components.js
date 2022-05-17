@@ -78,19 +78,21 @@ export function Title({ title, text, fontSize, bold }) {
 
 export function Details({ summary, children, open=true }) { 
     const style = {
-        details: {
-            marginLeft: "0.8em",
-        },
         summary: {
             fontSize: '1.2em',
             cursor: "pointer",
         },
+        content: {
+            marginLeft: '16px'
+        }
     }
 
     return html`
         <details style=${style.details} open=${open}>
             <summary style=${style.summary}>${summary}</summary>
-            ${children}
+            <div style=${style.content}>
+                ${children}
+            </div>
         </details>`
 }
 

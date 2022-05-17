@@ -540,7 +540,21 @@ const ParamsPanel = ({ vehicle, obstacles, target, canvasParamStates, canvasPara
             })}
         </div>
         <style>
+            details {
+                position: relative
+            }
+            details[open]::before {
+                content: "";
+                margin-top: 26px;
+                height: calc(100% - 26px);
+                opacity: 0.5;
+                width: 1px;
+                background-color: gray;
+                left: 5px;
+                position: absolute;
+            }
             .wrapper {
+                margin-left: 0.8em;
                 height: 100vh;
                 overflow: auto;
             }
@@ -551,7 +565,6 @@ const ParamsPanel = ({ vehicle, obstacles, target, canvasParamStates, canvasPara
                 -ms-overflow-style: none;
                 scrollbar-width: none;
             }
-
         </style>
     `;
 };
