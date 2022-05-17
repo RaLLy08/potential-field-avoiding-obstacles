@@ -200,6 +200,7 @@ export class CanvasRenderer extends Canvas {
       const [obstacleRepulsedForceVector, obstacleRepulsedForceNewVector] =
         obstacleRepulsiveForce;
 
+
       if (this.state.repulsiveForce) {
         this.drawVector(
           this.vehicle,
@@ -210,7 +211,9 @@ export class CanvasRenderer extends Canvas {
         );
       }
 
-      if (this.state.repulsiveForceNew && !this.state.offRepulsiveForceNew) {
+      if (!obstacleRepulsedForceNewVector) return;
+
+      if (this.state.repulsiveForceNew) {
         this.drawVector(
           this.vehicle,
           obstacleRepulsedForceNewVector.scaleBy(100).sum(this.vehicle),
