@@ -43,10 +43,10 @@ export function Checkbox({
     `
 }
 
-export function InputDisplay({ value, degree }) {
+export function InputDisplay({ value, degree, maxWidth }) {
     const style = {
         input: {
-            maxWidth: '40px',
+            maxWidth: maxWidth ? maxWidth : '40px',
             height: '12px',
             fontSize: '14px',
         }

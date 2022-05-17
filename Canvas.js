@@ -285,7 +285,7 @@ export class CanvasGraphicRenderer extends Canvas {
    */
   constructor(canvas, fx, opts={}) {
     super(canvas, canvas.width, canvas.height);
-    this.fx = fx;
+    this.fx = fx || (() => {});
 
     this.quantityX = opts.quantityX || 10;
     this.quantityY = opts.quantityY || 10;

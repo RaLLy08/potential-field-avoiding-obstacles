@@ -212,6 +212,7 @@ const ParamsPanel = ({ vehicle, obstacles, canvasParamStates, canvasParamsAction
                                                 }),
                                                 onChange: (value) => canvasParamStates.selectedObstacleIdx = value,
                                             }),
+                                            Title({ title: "Selected obstacle", text: "Selected obstacle" }),
                                         ]
                                     ]
                                 }),
@@ -252,7 +253,8 @@ const ParamsPanel = ({ vehicle, obstacles, canvasParamStates, canvasParamsAction
                                     ]
                                 }),
                                 InputDisplay({
-                                    value: selectedObstacle.distributionWidth,
+                                    value: selectedObstacle.distributionWidth?.toPrecision(4),
+                                    maxWidth: '70px'
                                 }),
                                 Title({
                                     text: "Distribution Width",
