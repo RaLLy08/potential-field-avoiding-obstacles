@@ -258,7 +258,7 @@ export default class PlotlyRenderer {
                 vectorAsVehicle.setObstacles(this.obstacles.getAll());
 
                 if (this.repulsiveForce) {
-                    vectorAsVehicle.setRepulsiveForces(!this.repulsiveForceNew);
+                    vectorAsVehicle.setRepulsiveForceEach(!this.repulsiveForceNew);
                     vectorAsVehicle.setRepulsiveForces();
                 }
 
