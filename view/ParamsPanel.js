@@ -512,44 +512,66 @@ const ParamsPanel = ({ vehicle, obstacles, target, canvasParamStates, canvasPara
                         children: Table({
                             tableBody: [
                                 [
-                                    Checkbox({
-                                        title: "Attractive Force",
-                                        text: "Attractive Force",
-                                        id: "Attractive-plotly",
-                                        onChange: canvasParamsPlotlyActions.attractiveForce,
-                                    }),
+                                    Details({
+                                        summary: "Surfaces",
+                                        children: [
+                                            Table({
+                                                tableBody: [
+                                                    [
+                                                        Checkbox({
+                                                            title: "Attractive Force",
+                                                            text: "Attractive Force",
+                                                            id: "Attractive-plotly",
+                                                            onChange: canvasParamsPlotlyActions.attractiveForce,
+                                                        }),
+                                                    ],
+                                                    [
+                                                        Checkbox({
+                                                            title: "Repulsive Force",
+                                                            text: "Repulsive Force",
+                                                            id: "Repulsive-plotly",
+                                                            onChange: canvasParamsPlotlyActions.repulsiveForce,
+                                                        }),
+                                                    ],
+                                                    [
+                                                        Checkbox({
+                                                            title: "Repulsive New Force",
+                                                            text: "Repulsive New Force",
+                                                            id: "RepulsiveNew-plotly",
+                                                            onChange: canvasParamsPlotlyActions.repulsiveForceNew,
+                                                        }),
+                                                    ],
+                                                    [
+                                                        Checkbox({
+                                                            title: "Totalize selected",
+                                                            text: "Totalize selected",
+                                                            id: "Totalize selected",
+                                                            onChange: canvasParamsPlotlyActions.totalizeSelected,
+                                                        }),
+                                                    ],
+                                                ]
+                                            })
+                                        ]
+                                    })
                                 ],
                                 [
-                                    Checkbox({
-                                        title: "Repulsive Force",
-                                        text: "Repulsive Force",
-                                        id: "Repulsive-plotly",
-                                        onChange: canvasParamsPlotlyActions.repulsiveForce,
-                                    }),
-                                ],
-                                [
-                                    Checkbox({
-                                        title: "Repulsive New Force",
-                                        text: "Repulsive New Force",
-                                        id: "RepulsiveNew-plotly",
-                                        onChange: canvasParamsPlotlyActions.repulsiveForceNew,
-                                    }),
-                                ],
-                                [
-                                    Checkbox({
-                                        title: "Totalize selected",
-                                        text: "Totalize selected",
-                                        id: "Totalize selected",
-                                        onChange: canvasParamsPlotlyActions.totalizeSelected,
-                                    }),
-                                ],
-                                [
-                                    Checkbox({
-                                        title: "Force Traces",
-                                        text: "Force Traces",
-                                        id: "Force Traces",
-                                        onChange: canvasParamsPlotlyActions.forceTraces,
-                                    }),
+                                    Details({
+                                        summary: "Trace",
+                                        children: [
+                                            Table({
+                                                tableBody: [
+                                                   [
+                                                        Checkbox({
+                                                            title: "Repulsive, Total Force Traces",
+                                                            text: "Repulsive, Total Force Traces",
+                                                            id: "Repulsive, Total Force Traces",
+                                                            onChange: canvasParamsPlotlyActions.forceTraces,
+                                                        }),
+                                                   ]
+                                                ]
+                                            })
+                                        ]
+                                    })
                                 ]
                             ],
                         }),
