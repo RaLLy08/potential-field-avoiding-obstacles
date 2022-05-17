@@ -247,12 +247,19 @@ const ParamsPanel = ({ vehicle, obstacles, canvasParamStates, canvasParamsAction
                                         ],
                                     ]
                                 }),
-                                InputDisplay({
-                                    value: selectedObstacle.distributionWidth?.toPrecision(4),
-                                    maxWidth: '70px'
-                                }),
-                                Title({
-                                    text: "Distribution Width",
+
+                                Table({ 
+                                    tableBody: [
+                                        [
+                                            InputDisplay({
+                                                value: selectedObstacle.distributionWidth?.toPrecision(4),
+                                                maxWidth: '68px'
+                                            }),
+                                            Title({
+                                                text: "Distribution Width",
+                                            }),
+                                        ]
+                                    ]
                                 }),
                                 Details({
                                     summary: 'Graphics',

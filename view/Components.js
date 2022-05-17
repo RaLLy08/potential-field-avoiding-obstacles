@@ -222,6 +222,9 @@ export class CanvasGraphic extends Component {
       return html`
           <div>
               <style>
+                .btn {
+                    margin: 6px
+                } 
                 #${id}wrapper {
                     position: relative;
                     margin-top: 18px;
@@ -242,12 +245,12 @@ export class CanvasGraphic extends Component {
                 </style>
                 <div id=${id}wrapper><canvas width=${width} height=${height} style="border: 1px solid;" id=${id}></canvas></div>
               <div>
-                  <button style="width: 30px; height: 25px;" data-y data-add onclick=${this.handleScale} >+</button>
+                  <button class="btn" style="width: 25px; height: 25px;" data-y data-add onclick=${this.handleScale} >+</button>
                       y
-                  <button style="margin-right: 30px; width: 30px; height: 25px;" data-y onclick=${this.handleScale}>-</button>
-                  <button style="width: 30px; height: 25px;" data-x data-add onclick=${this.handleScale}>+</button>
+                  <button class="btn" style="margin-right: 20px; width: 25px; height: 25px;" data-y onclick=${this.handleScale}>-</button>
+                  <button class="btn" style="width: 25px; height: 25px;" data-x data-add onclick=${this.handleScale}>+</button>
                       x
-                  <button style="width: 30px; height: 25px;" data-x onclick=${this.handleScale}>-</button>
+                  <button class="btn" style="width: 25px; height: 25px;" data-x onclick=${this.handleScale}>-</button>
               </div>
           </div>
       `
