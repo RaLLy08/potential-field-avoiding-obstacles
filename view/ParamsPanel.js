@@ -547,7 +547,7 @@ const ParamsPanel = ({ vehicle, obstacles, target, canvasParamStates, canvasPara
                         }),
                     }),
                     Details({
-                        summary: "Force surfaces (Plotly.js)",
+                        summary: "Force Graphics (Plotly.js)",
                         children: Table({
                             tableBody: [
                                 [
