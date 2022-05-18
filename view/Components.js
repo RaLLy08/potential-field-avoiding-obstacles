@@ -145,11 +145,13 @@ export function CanvasComponent({
             justifyContent: 'space-between',
         },
         resetVehicle: {
+            zIndex: 999,
             height: '40px',
             display: 'flex',
             alignItems: 'center',
         },
         pauseResume: {
+            zIndex: 999,
             height: '40px',
         }
     }
