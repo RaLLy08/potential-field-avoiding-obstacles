@@ -449,14 +449,34 @@ const ParamsPanel = ({ vehicle, obstacles, target, canvasParamStates, canvasPara
                         summary: "Obstacles",
                         children: [
                             [
+                                Details({
+                                    summary: 'Maps',
+                                    children: [
+                                        Table({
+                                            tableBody: [
+                                                [
+                                                    Select({
+                                                        options: obstacles.constructor.MAPS.map((_, i) => `Map: ${i + 1}`),
+                                                        defaultValue: canvasParamStates.obstaclesMap,
+                                                        onChange: (value) => {
+                                                            canvasParamStates.obstaclesMap = value;
+                                                            canvasParamsActions.obstaclesMap(value);
+                                                        },
+                                                    }),
+                                                    Title({ title: "Selected map", text: "Selected map" }),
+                                                ]
+                                            ]
+                                        })
+                                    ]
+                                })
+                            ],
+                            [
                                 Table({
                                     tableBody: [
                                         [
                                             Select({
                                                 defaultValue: canvasParamStates.selectedObstacleIdx,
-                                                options: obstacleItems.map((el, i) => {
-                                                    return "Obstacle: " + i
-                                                }),
+                                                options: obstacleItems.map((_, i) => `Obstacle: ${i + 1}`),
                                                 onChange: (value) => canvasParamStates.selectedObstacleIdx = value,
                                             }),
                                             Title({ title: "Selected obstacle", text: "Selected obstacle" }),
@@ -518,39 +538,14 @@ const ParamsPanel = ({ vehicle, obstacles, target, canvasParamStates, canvasPara
                                         Table({
                                             tableBody: [
                                                 [
-                                                    html`<${CanvasGraphic} opts=${{quantityX: 6, maxX: selectedObstacle.fieldRadius, maxY: selectedObstacle.maxRepulsiveForce}} width="320" height="150" yTitle=exp(-b*d^2) xTitle=distance
-                                                        fx=${selectedObstacle.repulsiveForce} id=${"exp" + canvasParamStates.selectedObstacleIdx}/>`,
-                                                ]
+                                                    html`<${CanvasGraphic} opts=${{quantityX: 6, maxX: selectedObstacle.fieldRadius, maxY: selectedObstacle.maxRepulsiveForce}} width="320" height="150" yTitle="Rep. Force Magnitude: a * exp(-b*d^2)" xTitle=distance
+                                                        fx=${selectedObstacle.repulsiveForce} id=${"exp" + canvasParamStates.selectedObstacleIdx + canvasParamStates.obstaclesMap}/>`,                                                    
+                                                ],
                                             ]
                                         })
                                     ]
                                 })
                             ],
-                            [
-                                Details({
-                                    summary: 'Maps',
-                                    children: [
-                                        Table({
-                                            tableBody: [
-                                                [
-                                                    Select({
-                                                        options: [
-                                                            'Default',
-                                                            'Walls',
-                                                            'Single Obstacle'
-                                                        ],
-                                                        defaultValue: canvasParamStates.obstaclesMap,
-                                                        onChange: (value) => {
-                                                            canvasParamStates.obstaclesMap = value;
-                                                            canvasParamsActions.obstaclesMap(value);
-                                                        },
-                                                    })
-                                                ]
-                                            ]
-                                        })
-                                    ]
-                                })
-                            ]
                         ]
                     }),
                     Details({
@@ -603,7 +598,7 @@ const ParamsPanel = ({ vehicle, obstacles, target, canvasParamStates, canvasPara
                                     Table({
                                         tableBody: [
                                             [
-                                                html`<${CanvasGraphic} opts=${{quantityX: 6, maxX: 600, maxY: 4}} width="320" height="150" xTitle=distance yTitle="[1 - exp(-b*d^2)]" fx=${target.attractionForce} id="target"/>`,
+                                                html`<${CanvasGraphic} opts=${{quantityX: 6, maxX: 600, maxY: 4}} width="320" height="150" xTitle=distance yTitle="Attr. Force Magnitude: a * [1 - exp(-b*d^2)]" fx=${target.attractionForce} id="target"/>`,
                                             ]
                                         ]
                                     })

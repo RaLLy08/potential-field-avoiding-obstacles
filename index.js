@@ -1,11 +1,12 @@
 import { CanvasRenderer } from './Canvas.js';
-import { Obstacles, Vehicle, Target } from './Entity.js';
+import { Obstacles, vehicle, target } from './Entity.js';
 import html, { Component, render } from './preact/index.js';
 import ParamsPanel from './view/ParamsPanel.js';
 import { withLsSubscribe } from './view/helpers.js';
 import { CanvasComponent } from './view/Components.js';
 import PlotlyRenderer from './Plotly.js';
 import FrameRates from './FrameRates.js';
+import { CANVAS_HEIGHT, CANVAS_WIDTH } from './consts.js';
 
 // mutatable params 
 const canvasParamStates = withLsSubscribe({
@@ -35,8 +36,6 @@ Object.assign(canvasParamStates, {
 const obstacles = new Obstacles(
     Obstacles.MAPS[canvasParamStates.obstaclesMap]
 );
-const target = new Target(1000, CanvasRenderer.HEIGHT/2, 2.5, 0.00015);
-const vehicle = new Vehicle(100, CanvasRenderer.HEIGHT/2, 150)
 
 const canvasParamsPlotlyActions = {
   attractiveForce: () => {},
@@ -126,6 +125,8 @@ class App extends Component {
             onPauseResume,
             onResetVehicle,
             isPaused: pause,
+            height: CANVAS_HEIGHT,
+            width: CANVAS_WIDTH,
           })}
         </div>
         <div id='plotly-force-traces' style="display:none; width: 80%; margin-left: auto; margin-right: auto;"></div>
@@ -143,7 +144,7 @@ var pressed = false;
 function onResetVehicle() {
     vehicle.init();
     vehicle.x = 100;
-    vehicle.y = CanvasRenderer.HEIGHT/2;
+    vehicle.y = CANVAS_HEIGHT / 2;
     canvasParamsPlotlyActions.resetVehicle();
 }
 

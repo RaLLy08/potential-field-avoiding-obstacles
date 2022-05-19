@@ -1,6 +1,5 @@
 import "https://cdn.plot.ly/plotly-2.12.1.min.js";
-import { CanvasRenderer } from "./Canvas.js";
-import { COLOR } from "./consts.js";
+import { CANVAS_HEIGHT, CANVAS_WIDTH, COLOR } from "./consts.js";
 import { Vehicle } from "./Entity.js";
 
 export default class PlotlyRenderer {
@@ -233,10 +232,10 @@ export default class PlotlyRenderer {
     plotlyDrawForces() {
         const reduceCoef = 2;
 
-        const xPoints = CanvasRenderer.WIDTH / reduceCoef;
-        const yPoints = CanvasRenderer.HEIGHT / reduceCoef;
-        const spaceX = CanvasRenderer.WIDTH / xPoints;
-        const spaceY = CanvasRenderer.HEIGHT / yPoints;
+        const xPoints = CANVAS_WIDTH / reduceCoef;
+        const yPoints = CANVAS_HEIGHT / reduceCoef;
+        const spaceX = CANVAS_WIDTH / xPoints;
+        const spaceY = CANVAS_HEIGHT / yPoints;
 
         for (let i = 0; i <= xPoints; i++) {
             if (this.totalize) {

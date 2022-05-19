@@ -125,6 +125,8 @@ export function CanvasComponent({
     onPauseResume=()=>{},
     onResetVehicle=()=>{},
     isPaused,
+    height,
+    width,
 }) {
     const pauseResume = isPaused ? 'Resume' : 'Pause';
 
@@ -158,7 +160,7 @@ export function CanvasComponent({
 
     return html`
         <div class="canvasWrapper" style=${style.canvasWrapper}>
-            <canvas id=${id} style=${style.canvas}></canvas>
+            <canvas height=${height} width=${width} id=${id} style=${style.canvas}></canvas>
             <div style=${style.actions}>
                 <button onclick=${onResetVehicle} style=${style.resetVehicle}>Reset vehicle</button>
                 <button onclick=${onPauseResume} style=${style.pauseResume}>${pauseResume}</button>

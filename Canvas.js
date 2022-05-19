@@ -87,10 +87,8 @@ class Canvas {
 }
 
 export class CanvasRenderer extends Canvas {
-  static WIDTH = 1128;
-  static HEIGHT = 768;
   constructor(canvas, state, vehicle, target, obstacles) {
-    super(canvas, CanvasRenderer.WIDTH, CanvasRenderer.HEIGHT);
+    super(canvas, canvas.width, canvas.height);
     this.vehicle = vehicle;
     this.target = target;
     this.obstacles = obstacles;
@@ -269,8 +267,8 @@ export class CanvasRenderer extends Canvas {
   drawTargetVectorsFlow(r) {
     const xPoints = 50;
     const yPoints = 50;
-    const spaceX = CanvasRenderer.WIDTH / xPoints;
-    const spaceY = CanvasRenderer.HEIGHT / yPoints;
+    const spaceX = this.canvas.width / xPoints;
+    const spaceY = this.canvas.height / yPoints;
     const arrowScale = 5;
 
     for (let i = 0; i <= xPoints; i++) {

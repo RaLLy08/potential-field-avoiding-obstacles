@@ -10,3 +10,6 @@ export const COLOR = {
     VECTORS_FLOW: '#0096FF',
     VEHICLE: '#1bb21b',
 }
+
+export const CANVAS_HEIGHT = 768;
+export const CANVAS_WIDTH = 1128;

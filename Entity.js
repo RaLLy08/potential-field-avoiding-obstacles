@@ -1,21 +1,29 @@
 import Vector from "./Vector.js";
-import { COLOR } from "./consts.js";
+import { CANVAS_HEIGHT, COLOR } from "./consts.js";
+import { CanvasRenderer } from "./Canvas.js";
 
 /**
  * define target with own attraction field
  */
-export class Target extends Vector {
+class Target extends Vector {
     constructor(x, y, maxAttractionForce, distributionWidth) {
         super(x, y);
         this.distributionWidth = distributionWidth;
         this.maxAttractionForce = maxAttractionForce;
     }
+    /** 
+     * the magnitude of attractive force depending on distance: a * [1 - exp(-b * d^2)]
+     */
     attractionForce = distance => {
-        return this.maxAttractionForce * (1 - Math.exp(
+        const reducingCoef = (1 - Math.exp(
             -this.distributionWidth * Math.pow(distance, 2)
-        ))
-    }
+        ));
 
+        return this.maxAttractionForce * reducingCoef;
+    }
+    /**
+        returns attraction force affected to the vehicle
+    */
     getFieldAttraction(vehicle) { 
         const difference = vehicle.sub(this);
         const distance = difference.mag(); 
@@ -43,26 +51,27 @@ export class Obstacle extends Vector {
         this.maxRepulsiveForce = maxRepulsiveForce || 0;
         this.distributionWidth = distributionWidth;
         this.color = COLOR.OBSTACLE;
-        // this show us direction when the vehicle is inside the fields
+    }
+    /** 
+     * the magnitude of repulsive force depending on distance: a * exp(-b * d^2)
+     */
+    repulsiveForce = distance => {
+        const reducingCoef = Math.exp(
+            -this.distributionWidth * Math.pow(distance, 2)
+        );
+
+        // const koef = (this.maxRepulsiveForce / this.distributionWidth);
+        // return this.maxRepulsiveForce -  koef * (distance);
+
+        return this.maxRepulsiveForce * reducingCoef;
     }
     /**
-     * returns exp coeficent for the repulsive force (b*)  
-     */
-    repulsiveForce = (distance) => {
-        return this.maxRepulsiveForce * Math.exp(
-            -this.distributionWidth * Math.pow(distance, 2)
-        )
-    }
-    /*
-        returns repulsiion force for vehicle
+        returns repulsion force affected to the vehicle
     */
     getFieldRepulsion(vehicle) {
         const difference = vehicle.sub(this);
 
-        const distance = difference.mag(); 
-        // const k = (this.maxRepulsiveForce / this.distributionWidth);
-        // let forceAtPoint = this.maxRepulsiveForce -  k * (distance);
-        
+        const distance = difference.mag();    
 
         const forceAtPoint = this.repulsiveForce(distance)
         // normalize by force
@@ -115,12 +124,14 @@ export class Vehicle extends Vector {
         let rXrYTan = r.x / r.y;
         if (Number.isNaN(rXrYTan)) rXrYTan = 0;
 
-        // normilize vector by Repilsive force magniture, reduce by angle between TF. and AF.  // robot turning direction towards the goal
+        // shifts angle between TF and AF by 90 degrees
         const clockShift = (Math.PI/2) * Math.sign(Math.atan(rXrYTan));
 
+        // robot turning direction towards the goal with the 90 degrees' shifting
         const vxDirection = Math.sin(Math.atan(Math.abs(rXrYTan)) - clockShift * newRepulsionDirection ) * Math.sign(r.x);
         const vyDirection = Math.cos(Math.atan(Math.abs(rXrYTan)) - clockShift * newRepulsionDirection ) * Math.sign(r.y);
 
+        // normilize vector by Repilsive force magniture, reduce by angle between TF. and AF.  
         const vx = kSigma * r.mag() * vxDirection;
         const vy = kSigma * r.mag() * vyDirection;
 
@@ -157,6 +168,9 @@ export class Vehicle extends Vector {
         this.setDistance();
     }
 
+    /*
+        sets distance traveled by vehicle
+    */
     setDistance() {
         const dv = this.getSpeed();
 
@@ -172,13 +186,13 @@ export class Vehicle extends Vector {
     }
 
     /**
-     * sets Total Force from (attractiveForce, RepulsiveForce, RepulsiveForceNew) vectors
+     * sets Total Force by the sum (attractiveForce, RepulsiveForce, RepulsiveForceNew) vectors
      */
     setTotalForce() {
         this.totalForce = this.attractiveForce.sum(this.repulsiveForce).sum(this.repulsiveForceNew);
     }
     /**
-     * sets totals for (repulsiveForce, repulsiveForceNew) vectors from repulsiveForces
+     * sets sum (repulsiveForce, repulsiveForceNew) vectors from repulsiveForces
      */
     setRepulsiveForces() {
         // cleaning
@@ -194,7 +208,7 @@ export class Vehicle extends Vector {
         }
     }
     /**
-     * sets (repulsiveForces) from (obstaclesInRadius)
+     * sets (repulsiveForces) vector affected to each obstacle in the vehicle redius (obstaclesInRadius)
      */
     setRepulsiveForceEach(exludeRepNew) {
         this.repulsiveForces.length = 0;
@@ -237,7 +251,7 @@ export class Obstacles {
     }
 
     /**
-     * sets (obstaclesInRadius) under the conditions
+     * gets obstacles in vehicle radius
      */
     getObstaclesInVehicleRadius(vehicle) {
         const vehicleObstacles = [];
@@ -317,6 +331,9 @@ export class Obstacles {
         [
             new Obstacle(540, 390, 400, 25, 1/25000, 190),
         ],
-        []
     ]
 }
+
+
+export const target = new Target(1000, CANVAS_HEIGHT / 2, 2.5, 0.00015);
+export const vehicle = new Vehicle(100, CANVAS_HEIGHT / 2, 150);
