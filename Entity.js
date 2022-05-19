@@ -45,12 +45,17 @@ export class Obstacle extends Vector {
         this.color = COLOR.OBSTACLE;
         // this show us direction when the vehicle is inside the fields
     }
+    /**
+     * returns exp coeficent for the repulsive force (b*)  
+     */
     repulsiveForce = (distance) => {
         return this.maxRepulsiveForce * Math.exp(
             -this.distributionWidth * Math.pow(distance, 2)
         )
     }
-
+    /*
+        returns repulsiion force for vehicle
+    */
     getFieldRepulsion(vehicle) {
         const difference = vehicle.sub(this);
 
@@ -125,6 +130,9 @@ export class Vehicle extends Vector {
         return newRepulsionVector;
     }
 
+    /**
+     * set end time when vehicle destinated traget 
+     */
     checkReachedTarget(target) {
         const difference = this.sub(target);
 
