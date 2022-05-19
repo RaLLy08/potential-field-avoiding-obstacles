@@ -1,6 +1,5 @@
 import Vector from "./Vector.js";
 import { CANVAS_HEIGHT, COLOR } from "./consts.js";
-import { CanvasRenderer } from "./Canvas.js";
 
 /**
  * define target with own attraction field
