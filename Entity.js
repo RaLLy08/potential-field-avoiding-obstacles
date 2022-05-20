@@ -330,6 +330,10 @@ export class Obstacles {
         [
             new Obstacle(540, 390, 400, 25, 1/25000, 190),
         ],
+        [ 
+            new Obstacle(550, 390, 190, 12, 1/9000, 90)
+        ],
+        []
     ]
 }
 
