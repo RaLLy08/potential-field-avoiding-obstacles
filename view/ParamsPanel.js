@@ -344,7 +344,7 @@ const ParamsPanel = ({ vehicle, obstacles, target, canvasParamStates, canvasPara
                                                             degree: true,
                                                         }),
                                                         Title({
-                                                            text: "F(rep) and F(tot) (σ)",
+                                                            text: "F(rep) and F(tot) (δ)",
                                                         }),
                                                     ],
                                                     [
@@ -437,7 +437,7 @@ const ParamsPanel = ({ vehicle, obstacles, target, canvasParamStates, canvasPara
                                     Table({
                                         tableBody: [
                                             [
-                                                html`<${CanvasGraphic} opts=${{quantityX: 6, maxX: 8}} width="320" height="150" yTitle=K(σ) xTitle="radian" fx=${vehicle.constructor.kSigma} id="sigma"/>`,
+                                                html`<${CanvasGraphic} opts=${{quantityX: 6, maxX: 8}} width="320" height="150" yTitle=K(δ) xTitle="radian δ" fx=${vehicle.constructor.kSigma} id="sigma"/>`,
                                             ]
                                         ]
                                     })
