@@ -130,7 +130,7 @@ export class Vehicle extends Vector {
         const vxDirection = Math.sin(Math.atan(Math.abs(rXrYTan)) - clockShift * newRepulsionDirection ) * Math.sign(r.x);
         const vyDirection = Math.cos(Math.atan(Math.abs(rXrYTan)) - clockShift * newRepulsionDirection ) * Math.sign(r.y);
 
-        // normilize vector by Repilsive force magniture, reduce by angle between TF. and AF.  
+        // normalize vector by Repulsive force magnitude, reduce by angle between TF. and AF.   
         const vx = kSigma * r.mag() * vxDirection;
         const vy = kSigma * r.mag() * vyDirection;
 
