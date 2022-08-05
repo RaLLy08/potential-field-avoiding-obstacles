@@ -28,13 +28,13 @@ export default class Vector {
         return Math.atan2(this.x * other.y - this.y* other.x, this.x*other.x + this.y*other.y)
     }
     sum(other) {
-        return new Vector(other.x + this.x, other.y + this.y, this.params);
+        return new Vector(other.x + this.x, other.y + this.y);
     }
     sub(other) {
-        return new Vector(this.x - other.x, this.y - other.y, this.params);
+        return new Vector(this.x - other.x, this.y - other.y);
     }
     scaleBy(koef) {
-        return new Vector(this.x * koef, this.y * koef, this.params);
+        return new Vector(this.x * koef, this.y * koef);
     }
     normalize() {
         const mag = this.mag();
